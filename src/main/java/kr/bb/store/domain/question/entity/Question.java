@@ -1,5 +1,6 @@
 package kr.bb.store.domain.question.entity;
 
+import kr.bb.store.domain.common.BaseEntity;
 import kr.bb.store.domain.store.entity.Store;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

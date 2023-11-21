@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.entity;
 
+import kr.bb.store.domain.common.BaseEntity;
 import kr.bb.store.domain.common.Gugun;
 import kr.bb.store.domain.common.Sido;
 import lombok.AccessLevel;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class StoreAddress {
+public class StoreAddress extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
