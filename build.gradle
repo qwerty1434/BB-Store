@@ -52,6 +52,8 @@ dependencies {
     // querydsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '0.1.0-alpha1'
 }
 
 dependencyManagement {
