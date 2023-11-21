@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -29,14 +30,19 @@ public class StoreAddress extends BaseEntity {
     @JoinColumn(name="gugun_code")
     private Gugun gugun;
 
+    @NotNull
     private String address;
 
+    @NotNull
     private String detailAddress;
 
+    @NotNull
     private String zipCode;
 
+    @NotNull
     private Float lat;
 
+    @NotNull
     private Float lon;
 
 }
