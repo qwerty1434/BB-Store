@@ -1,5 +1,6 @@
 package kr.bb.store.domain.cargo.entity;
 
+import kr.bb.store.domain.common.BaseEntity;
 import kr.bb.store.domain.store.entity.Store;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class FlowerCargo {
+public class FlowerCargo extends BaseEntity {
     @EmbeddedId
     private FlowerCargoId id;
 

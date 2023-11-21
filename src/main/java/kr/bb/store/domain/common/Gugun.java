@@ -12,8 +12,10 @@ import javax.persistence.*;
 public class Gugun {
     @Id
     private String code;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sido_code", nullable = false)
     private Sido sido;
+
     private String name;
 }

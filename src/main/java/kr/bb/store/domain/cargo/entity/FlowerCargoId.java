@@ -7,6 +7,7 @@ import java.util.Objects;
 @Embeddable
 public class FlowerCargoId implements Serializable {
     private Long storeId;
+
     private Long flowerId;
 
 
