@@ -7,15 +7,6 @@ spring:
     activate:
       on-profile: local, dev, local
     import: optional:configserver:http://localhost:8888
-  jpa:
-    defer-datasource-initialization: true
-    hibernate:
-      ddl-auto:
-        create-drop
-  sql:
-    init:
-      mode:
-        always
 management:
   endpoints:
     web:
