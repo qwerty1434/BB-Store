@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -19,5 +20,6 @@ public class IssuedCoupon {
     @JoinColumn(name="coupon_id")
     private Coupon coupon;
 
+    @NotNull
     private boolean isUsed;
 }

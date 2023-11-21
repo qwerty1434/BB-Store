@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,6 +21,9 @@ public class Answer {
     @JoinColumn(name="id")
     private Question question;
 
+    @NotNull
     private String content;
+
+    @NotNull
     private LocalDateTime repliedAt;
 }
