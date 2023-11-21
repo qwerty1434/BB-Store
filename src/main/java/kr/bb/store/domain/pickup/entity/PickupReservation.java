@@ -21,16 +21,22 @@ public class PickupReservation extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="store_id", nullable = false)
     private Store store;
+
     @NotNull
     private Long userId;
+
     @NotNull
     private Long orderPickupId;
+
     @NotNull
     private Long productId;
+
     @NotNull
     private String reservationCode;
+
     @NotNull
     private LocalDateTime pickupDate;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;

@@ -19,18 +19,25 @@ public class Coupon extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     private Long storeId;
+
     @NotNull
     private Integer limitCount;
+
     @NotNull
     private String couponName;
+
     @NotNull
     private Long discountPrice;
+
     @NotNull
     private Long minPrice;
+
     @NotNull
     private LocalDate startDate;
+
     @NotNull
     private LocalDate endDate;
 

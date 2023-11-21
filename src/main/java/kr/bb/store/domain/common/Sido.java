@@ -13,5 +13,6 @@ import javax.persistence.Id;
 public class Sido {
     @Id
     private String code;
+
     private String name;
 }

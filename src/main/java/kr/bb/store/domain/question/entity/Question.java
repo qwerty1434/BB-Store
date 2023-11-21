@@ -20,16 +20,22 @@ public class Question extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="store_id")
     private Store store;
+
     @NotNull
     private Long userId;
+
     @NotNull
     private Long productId;
+
     @NotNull
     private String title;
+
     @NotNull
     private String content;
+
     @NotNull
     private Boolean isSecret;
+
     @NotNull
     private Boolean isRead;
 }

@@ -20,12 +20,17 @@ public class Subscription extends BaseEntity {
     @ManyToOne
     @JoinColumn(name="store_id",nullable = false)
     private Store store;
+
     @NotNull
     private Long orderSubscriptionId;
+
     @NotNull
     private Long userId;
+
     @NotNull
     private Long subscriptionProductId;
+
     @NotNull
     private String subscriptionCode;
+
 }

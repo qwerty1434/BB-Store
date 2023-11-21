@@ -17,22 +17,31 @@ public class Store extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotNull
     private Long storeManagerId;
+
     @NotNull
     private String storeCode;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String storeName;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String detailInfo;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String storeThumbnailImage;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private Float averageRating;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String phoneNumber;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String accountNumber;
+
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String bank;
 

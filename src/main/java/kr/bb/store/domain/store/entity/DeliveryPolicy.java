@@ -15,13 +15,17 @@ public class DeliveryPolicy extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @OneToOne
     @JoinColumn(name="store_id")
     private Store store;
+
     @NotNull
     private Long minOrderPrice;
+
     @NotNull
     private Long freeDeliveryMinPrice;
+
     @NotNull
     private Long deliveryPrice;
 }
