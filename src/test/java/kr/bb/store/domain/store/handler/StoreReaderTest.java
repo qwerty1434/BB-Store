@@ -9,6 +9,7 @@ import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
+import kr.bb.store.domain.store.handler.response.StoreInfoManagerResponse;
 import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
@@ -151,7 +152,31 @@ class StoreReaderTest {
         assertThat(response.getIsLiked()).isEqualTo(isLiked);
 
     }
+    @DisplayName("가게 사장에게 반환하기 위한 가게정보를 가져온다")
+    @Test
+    void readForManager() {
+        Long userId = 1L;
 
+        Store store = createStore(userId);
+        storeRepository.save(store);
+
+        StoreAddress storeAddress = createStoreAddress(store);
+        storeAddressRepository.save(storeAddress);
+
+        DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
+        deliveryPolicyRepository.save(deliveryPolicy);
+
+        em.flush();
+        em.clear();
+
+        // when
+        StoreInfoManagerResponse response = storeReader.readForManager(store.getId());
+
+        // then
+        assertThat(response.getStoreName()).isEqualTo("가게");
+        assertThat(response.getAddress()).isEqualTo("서울 강남구 남부순환로");
+
+    }
 
     private StoreAddress createStoreAddress(Store store) {
         Sido sido = new Sido("011", "서울");

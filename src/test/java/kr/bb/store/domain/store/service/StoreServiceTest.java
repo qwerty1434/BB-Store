@@ -9,11 +9,10 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
-import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
-import kr.bb.store.domain.store.handler.response.SimpleStorePagingResponse;
-import kr.bb.store.domain.store.handler.response.SimpleStoreResponse;
+import kr.bb.store.domain.store.handler.response.*;
+import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
+import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +37,10 @@ class StoreServiceTest {
     private SidoRepository sidoRepository;
     @Autowired
     private GugunRepository gugunRepository;
+    @Autowired
+    private StoreAddressRepository storeAddressRepository;
+    @Autowired
+    private DeliveryPolicyRepository deliveryPolicyRepository;
     @Autowired
     private EntityManager em;
 
@@ -164,7 +166,56 @@ class StoreServiceTest {
         assertThat(response.getSimpleStores().get(0)).isInstanceOf(SimpleStoreResponse.class);
     }
 
+    @DisplayName("유저에게 보이는 가게정보를 반환한다")
+    @Test
+    public void getStoreInfoForUser() {
+        Long userId = 1L;
 
+        Store store = createStoreEntity(userId);
+        storeRepository.save(store);
+
+        StoreAddress storeAddress = createStoreAddressEntity(store);
+        storeAddressRepository.save(storeAddress);
+
+        DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store);
+        deliveryPolicyRepository.save(deliveryPolicy);
+
+        em.flush();
+        em.clear();
+
+        // when
+        StoreInfoUserResponse response = storeService.getStoreInfoForUser(store.getId());
+
+        // then
+        assertThat(response.getStoreName()).isEqualTo("가게");
+        assertThat(response.getAverageRating()).isEqualTo(0.0F);
+    }
+
+    @DisplayName("가게 사장에게 보이는 가게정보를 반환한다")
+    @Test
+    public void getStoreInfoForManager() {
+        Long userId = 1L;
+
+        Store store = createStoreEntity(userId);
+        storeRepository.save(store);
+
+        StoreAddress storeAddress = createStoreAddressEntity(store);
+        storeAddressRepository.save(storeAddress);
+
+        DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store);
+        deliveryPolicyRepository.save(deliveryPolicy);
+
+        em.flush();
+        em.clear();
+
+        // when
+        StoreInfoManagerResponse response = storeService.getStoreInfoForManager(store.getId());
+
+        // then
+        assertThat(response.getStoreName()).isEqualTo("가게");
+        assertThat(response.getAddress()).isEqualTo("서울 강남구 남부순환로");
+
+    }
 
 
 
