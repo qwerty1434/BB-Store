@@ -9,6 +9,7 @@ import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
+import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -118,6 +119,36 @@ class StoreReaderTest {
         assertThat(stores.getTotalPages()).isEqualTo(2);
         assertThat(stores.getContent()).hasSize(2);
         assertThat(stores.getTotalElements()).isEqualTo(7);
+
+    }
+
+    @DisplayName("일반 고객에게 반환하기 위한 가게정보를 가져온다")
+    @Test
+    void readForUser() {
+        Long userId = 1L;
+
+        Store store = createStore(userId);
+        storeRepository.save(store);
+
+        StoreAddress storeAddress = createStoreAddress(store);
+        storeAddressRepository.save(storeAddress);
+
+        DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
+        deliveryPolicyRepository.save(deliveryPolicy);
+
+        em.flush();
+        em.clear();
+
+        Boolean isLiked = true;
+        Boolean isSubscribed = true;
+
+        // when
+        StoreInfoUserResponse response = storeReader.readForUser(store.getId(),isLiked, isSubscribed);
+
+        // then
+        assertThat(response.getStoreName()).isEqualTo("가게");
+        assertThat(response.getAverageRating()).isEqualTo(0.0F);
+        assertThat(response.getIsLiked()).isEqualTo(isLiked);
 
     }
 
