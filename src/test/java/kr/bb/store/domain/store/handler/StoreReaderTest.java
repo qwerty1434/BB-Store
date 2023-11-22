@@ -5,6 +5,7 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.exception.StoreNotFoundException;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
 import kr.bb.store.domain.store.service.StoreService;
 import org.assertj.core.api.Assertions;
@@ -56,7 +57,22 @@ class StoreReaderTest {
         assertThat(response.getSido()).isEqualTo("서울");
     }
 
+    @DisplayName("존재하지 않는 가게 Id로 요청하면 가게가 존재하지 않는다는 예외가 발생한다")
+    @Test
+    public void cannotReadWhenUseInvalidStoreId() {
+        // given
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+        Long storeId = 1L;
 
+        // when
+        Assertions.assertThatThrownBy(() -> storeReader.readDetailInfo(storeId))
+                .isInstanceOf(StoreNotFoundException.class)
+                .hasMessage("해당 가게가 존재하지 않습니다.");
+
+    }
 
 
     private StoreCreateRequest createStoreCreateRequest() {

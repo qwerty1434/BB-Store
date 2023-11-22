@@ -9,6 +9,7 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -97,6 +98,33 @@ class StoreServiceTest {
 
         assertThat(changedStore.getStoreName()).isEqualTo("가게2");
     }
+
+    @DisplayName("가게아이디를 통해 가게 상세정보를 받아온다")
+    @Test
+    void getStoreInfo() {
+        // given
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+
+        Long userId = 1L;
+        StoreCreateRequest request = createStoreCreateRequest();
+        Long storeId = storeService.createStore(userId, request);
+        em.flush();
+        em.clear();
+
+        // when
+        DetailInfoResponse response = storeService.getStoreInfo(storeId);
+
+        // then
+        assertThat(response.getStoreName()).isEqualTo("가게1");
+        assertThat(response.getMinOrderPrice()).isEqualTo(10_000L);
+        assertThat(response.getSido()).isEqualTo("서울");
+    }
+
+
+
 
 
     private StoreCreateRequest createStoreCreateRequest() {
