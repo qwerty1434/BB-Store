@@ -1,9 +1,9 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.domain.common.entity.Gugun;
-import kr.bb.store.domain.common.entity.GugunRepository;
-import kr.bb.store.domain.common.entity.Sido;
-import kr.bb.store.domain.common.entity.SidoRepository;
+import kr.bb.store.domain.store.entity.address.Gugun;
+import kr.bb.store.domain.store.entity.address.GugunRepository;
+import kr.bb.store.domain.store.entity.address.Sido;
+import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;

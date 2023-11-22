@@ -1,8 +1,8 @@
 package kr.bb.store.domain.store.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
-import kr.bb.store.domain.common.entity.Gugun;
-import kr.bb.store.domain.common.entity.Sido;
+import kr.bb.store.domain.store.entity.address.Gugun;
+import kr.bb.store.domain.store.entity.address.Sido;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

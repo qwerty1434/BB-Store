@@ -1,4 +1,4 @@
-package kr.bb.store.domain.common.entity;
+package kr.bb.store.domain.store.entity.address;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
