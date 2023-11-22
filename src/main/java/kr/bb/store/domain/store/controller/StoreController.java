@@ -30,4 +30,9 @@ public class StoreController {
         storeService.editStoreInfo(storeId, storeInfoEditRequest);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{storeId}")
+    public ResponseEntity getStoreInfo(@PathVariable Long storeId) {
+        return ResponseEntity.ok().body(storeService.getStoreInfo(storeId));
+    }
 }

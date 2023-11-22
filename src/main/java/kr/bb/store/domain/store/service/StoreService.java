@@ -3,10 +3,8 @@ package kr.bb.store.domain.store.service;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.Store;
-import kr.bb.store.domain.store.handler.DeliveryPolicyCreator;
-import kr.bb.store.domain.store.handler.StoreAddressCreator;
-import kr.bb.store.domain.store.handler.StoreCreator;
-import kr.bb.store.domain.store.handler.StoreManager;
+import kr.bb.store.domain.store.handler.*;
+import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +17,7 @@ public class StoreService {
     private final StoreManager storeManager;
     private final StoreAddressCreator storeAddressCreator;
     private final DeliveryPolicyCreator deliveryPolicyCreator;
+    private final StoreReader storeReader;
 
     @Transactional
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
@@ -32,5 +31,9 @@ public class StoreService {
     @Transactional
     public void editStoreInfo(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
         storeManager.edit(storeId, storeInfoEditRequest);
+    }
+
+    public DetailInfoResponse getStoreInfo(Long storeId) {
+        return storeReader.readDetailInfo(storeId);
     }
 }
