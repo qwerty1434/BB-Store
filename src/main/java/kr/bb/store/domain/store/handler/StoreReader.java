@@ -7,6 +7,7 @@ import kr.bb.store.domain.store.exception.DeliveryPolicyNotFoundException;
 import kr.bb.store.domain.store.exception.StoreAddressNotFoundException;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
+import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -37,4 +38,19 @@ public class StoreReader {
         return storeRepository.getStoresWithPaging(pageable);
     }
 
+    public StoreInfoUserResponse readForUser(Long storeId, Boolean isLiked, Boolean isSubscribed) {
+        Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
+        StoreAddress storeAddress = storeAddressRepository.findByStoreId(storeId)
+                .orElseThrow(StoreAddressNotFoundException::new);
+        return StoreInfoUserResponse.builder()
+                .storeName(store.getStoreName())
+                .storeThumbnailImage(store.getStoreThumbnailImage())
+                .address(storeAddress.getAddress())
+                .averageRating(store.getAverageRating())
+                .detailInfo(store.getDetailInfo())
+                .phoneNumber(store.getPhoneNumber())
+                .isLiked(isLiked)
+                .isSubscribed(isSubscribed)
+                .build();
+    }
 }

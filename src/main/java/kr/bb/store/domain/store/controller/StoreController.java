@@ -41,4 +41,9 @@ public class StoreController {
     public ResponseEntity getStores(Pageable pageable) {
         return ResponseEntity.ok().body(storeService.getStoresWithPaging(pageable));
     }
+
+    @GetMapping("/{storeId}/user")
+    public ResponseEntity getStoreInfoForUser(@PathVariable Long storeId){
+        return ResponseEntity.ok().body(storeService.getStoreInfoForUser(storeId));
+    }
 }
