@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.service;
+package kr.bb.store.domain.store.handler;
 
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
@@ -9,7 +9,10 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
+import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import kr.bb.store.domain.store.service.StoreService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +25,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class StoreServiceTest {
+class StoreManagerTest {
+    @Autowired
+    private StoreManager storeManager;
     @Autowired
     private StoreService storeService;
     @Autowired
     private StoreRepository storeRepository;
+    @Autowired
+    private StoreAddressRepository storeAddressRepository;
+    @Autowired
+    private DeliveryPolicyRepository deliveryPolicyRepository;
     @Autowired
     private SidoRepository sidoRepository;
     @Autowired
@@ -34,30 +43,7 @@ class StoreServiceTest {
     @Autowired
     private EntityManager em;
 
-    @DisplayName("회원 번호를 전달받아 가게를 생성한다")
-    @Test
-    void createStore() {
-        // given
-        Long userId = 1L;
-        StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
-        Sido sido = new Sido("011", "서울");
-        sidoRepository.save(sido);
-        Gugun gugun = new Gugun("110011",sido,"강남구");
-        gugunRepository.save(gugun);
-
-        // when
-        storeService.createStore(userId, storeCreateRequest);
-        em.flush();
-        em.clear();
-
-        Store store = storeRepository.findByStoreManagerId(userId).get();
-        // then
-        assertThat(store.getId()).isNotNull();
-        assertThat(store.getStoreManagerId()).isEqualTo(userId);
-    }
-
-
-    @DisplayName("요청받은 내용으로 가게 정보를 수정한다 - 가게명 수정 예시")
+    @DisplayName("요청받은 내용으로 가게 정보를 수정한다 - 가게명, 위도, 최소주문금액 수정")
     @Test
     public void editStore() {
         Sido sido = new Sido("011", "서울");
@@ -75,7 +61,7 @@ class StoreServiceTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(10_000L)
+                .minOrderPrice(99_999L) // 수정됨
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
@@ -83,21 +69,25 @@ class StoreServiceTest {
                 .address("서울 강남구 남부순환로")
                 .detailAddress("202호")
                 .zipCode("001112")
-                .lat(33.33322F)
+                .lat(-11.1111F) // 수정됨
                 .lon(127.13123F)
                 .build();
         em.flush();
         em.clear();
 
-        storeService.editStoreInfo(storeId, storeEditRequest);
+        storeManager.edit(storeId, storeEditRequest);
         em.flush();
         em.clear();
 
         Store changedStore = storeRepository.findById(storeId).get();
+        StoreAddress changedStoreAddress = storeAddressRepository.findByStoreId(storeId).get();
+        DeliveryPolicy changedDeliveryPolicy = deliveryPolicyRepository.findByStoreId(storeId).get();
 
         assertThat(changedStore.getStoreName()).isEqualTo("가게2");
-    }
+        assertThat(changedStoreAddress.getLat()).isEqualTo(-11.1111F);
+        assertThat(changedDeliveryPolicy.getMinOrderPrice()).isEqualTo(99_999L);
 
+    }
 
     private StoreCreateRequest createStoreCreateRequest() {
         return StoreCreateRequest.builder()
