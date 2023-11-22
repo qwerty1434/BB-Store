@@ -5,6 +5,7 @@ import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,5 +35,10 @@ public class StoreController {
     @GetMapping("/{storeId}")
     public ResponseEntity getStoreInfo(@PathVariable Long storeId) {
         return ResponseEntity.ok().body(storeService.getStoreInfo(storeId));
+    }
+
+    @GetMapping("/list?page={page}&size={size}")
+    public ResponseEntity getStores(Pageable pageable) {
+        return ResponseEntity.ok().body(storeService.getStoresWithPaging(pageable));
     }
 }

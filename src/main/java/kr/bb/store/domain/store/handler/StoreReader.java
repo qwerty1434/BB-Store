@@ -11,7 +11,10 @@ import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
 
 @RequiredArgsConstructor
 @Component
@@ -28,6 +31,10 @@ public class StoreReader {
                 .orElseThrow(StoreAddressNotFoundException::new);
 
         return DetailInfoResponse.of(store,deliveryPolicy,storeAddress);
+    }
+
+    public Page<Store> readStoresWithPaging(Pageable pageable) {
+        return storeRepository.getStoresWithPaging(pageable);
     }
 
 }
