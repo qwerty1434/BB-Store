@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.entity;
 
-import kr.bb.store.domain.common.BaseEntity;
+import kr.bb.store.domain.common.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +34,7 @@ public class Store extends BaseEntity {
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String storeThumbnailImage;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    @Column(nullable = false, columnDefinition = "float default 0.0")
     private Float averageRating;
 
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")

@@ -1,4 +1,4 @@
-package kr.bb.store.domain.common;
+package kr.bb.store.domain.common.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

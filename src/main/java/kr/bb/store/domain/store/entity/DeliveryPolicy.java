@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.entity;
 
-import kr.bb.store.domain.common.BaseEntity;
+import kr.bb.store.domain.common.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
