@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.PositiveOrZero;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -17,8 +19,11 @@ public class StoreInfoEditRequest {
     private String accountNumber;
     private String bank;
 
+    @PositiveOrZero(message = "minOrderPrice cannot be negative")
     private Long minOrderPrice;
+    @PositiveOrZero(message = "deliveryPrice cannot be negative")
     private Long deliveryPrice;
+    @PositiveOrZero(message = "freeDeliveryMinPrice cannot be negative")
     private Long freeDeliveryMinPrice;
 
     private String sido;

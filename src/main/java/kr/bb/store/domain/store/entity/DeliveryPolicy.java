@@ -2,6 +2,7 @@ package kr.bb.store.domain.store.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,6 +29,15 @@ public class DeliveryPolicy extends BaseEntity {
 
     @NotNull
     private Long deliveryPrice;
+
+    @Builder
+    public DeliveryPolicy(Store store, Long minOrderPrice, Long freeDeliveryMinPrice, Long deliveryPrice) {
+        this.store = store;
+        this.minOrderPrice = minOrderPrice;
+        this.freeDeliveryMinPrice = freeDeliveryMinPrice;
+        this.deliveryPrice = deliveryPrice;
+    }
+
 
     public void update(Long minOrderPrice, Long deliveryPrice, Long freeDeliveryMinPrice) {
         this.minOrderPrice = minOrderPrice;
