@@ -1,6 +1,5 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
@@ -9,13 +8,11 @@ import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
-import kr.bb.store.domain.store.handler.request.StoreAddressRequest;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -121,6 +117,7 @@ class StoreReaderTest {
         // then
         assertThat(stores.getTotalPages()).isEqualTo(2);
         assertThat(stores.getContent()).hasSize(2);
+        assertThat(stores.getTotalElements()).isEqualTo(7);
 
     }
 

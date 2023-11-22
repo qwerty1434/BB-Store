@@ -10,14 +10,21 @@ import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
+import kr.bb.store.domain.store.handler.response.SimpleStorePagingResponse;
+import kr.bb.store.domain.store.handler.response.SimpleStoreResponse;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -123,6 +130,40 @@ class StoreServiceTest {
         assertThat(response.getSido()).isEqualTo("서울");
     }
 
+    @DisplayName("사용자가 요청한 가게 페이징 데이터를 필요한 값만 담아서 반환한다")
+    @Test
+    public void getStoresWithPaing() {
+        // given
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+
+        Store s1 = createStoreEntity(1L);
+        Store s2 = createStoreEntity(1L);
+        Store s3 = createStoreEntity(1L);
+        Store s4 = createStoreEntity(1L);
+        Store s5 = createStoreEntity(1L);
+        Store s6 = createStoreEntity(1L);
+        Store s7 = createStoreEntity(1L);
+
+        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5,s6,s7));
+
+        em.flush();
+        em.clear();
+
+        int page = 1;
+        int size = 5;
+        Pageable pageable = PageRequest.of(page,size);
+
+        // when
+        SimpleStorePagingResponse response = storeService.getStoresWithPaging(pageable);
+
+        // then
+        assertThat(response.getTotalCnt()).isEqualTo(7);
+        assertThat(response.getSimpleStores().get(0)).isInstanceOf(SimpleStoreResponse.class);
+    }
+
 
 
 
@@ -145,6 +186,46 @@ class StoreServiceTest {
                 .zipCode("001112")
                 .lat(33.33322F)
                 .lon(127.13123F)
+                .build();
+    }
+
+    private StoreAddress createStoreAddressEntity(Store store) {
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+
+        return StoreAddress.builder()
+                .store(store)
+                .sido(sido)
+                .gugun(gugun)
+                .address("서울 강남구 남부순환로")
+                .detailAddress("202호")
+                .zipCode("001112")
+                .lat(33.33322F)
+                .lon(127.13123F)
+                .build();
+    }
+
+    private Store createStoreEntity(Long userId) {
+        return Store.builder()
+                .storeManagerId(userId)
+                .storeCode("가게코드")
+                .storeName("가게")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
+
+    private DeliveryPolicy createDeliveryPolicyEntity(Store store) {
+        return DeliveryPolicy.builder()
+                .store(store)
+                .minOrderPrice(10_000L)
+                .deliveryPrice(5_000L)
+                .freeDeliveryMinPrice(10_000L)
                 .build();
     }
 

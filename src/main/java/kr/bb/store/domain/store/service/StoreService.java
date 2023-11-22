@@ -51,7 +51,7 @@ public class StoreService {
 
         return SimpleStorePagingResponse.builder()
                 .simpleStores(contents)
-                .totalCnt(storePages.getTotalPages())
+                .totalCnt(storePages.getTotalElements())
                 .build();
     }
 }
