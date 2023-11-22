@@ -31,7 +31,6 @@ public class StoreService {
         Store store = storeCreator.create(userId, storeCreateRequest.toStoreRequest());
         storeAddressCreator.create(store, storeCreateRequest.toStoreAddressRequest());
         deliveryPolicyCreator.create(store, storeCreateRequest.toDeliveryPolicyRequest());
-
         return store.getId();
     }
 
