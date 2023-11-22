@@ -45,4 +45,15 @@ public class StoreAddress extends BaseEntity {
     @NotNull
     private Float lon;
 
+    public void update(Sido sido, Gugun gugun, String address, String detailAddress,
+                       String zipCode, Float lat, Float lon) {
+        this.sido = sido;
+        this.gugun = gugun;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.zipCode = zipCode;
+        this.lat = lat;
+        this.lon = lon;
+    }
+
 }

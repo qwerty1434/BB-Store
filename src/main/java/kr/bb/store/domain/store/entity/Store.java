@@ -51,4 +51,14 @@ public class Store extends BaseEntity {
         this.storeManagerId = storeManagerId;
         this.storeCode = storeCode;
     }
+
+    public void update(String storeName, String detailInfo, String storeThumbnailImage,
+                       String phoneNumber, String accountNumber, String bank) {
+        this.storeName = storeName;
+        this.detailInfo = detailInfo;
+        this.storeThumbnailImage = storeThumbnailImage;
+        this.phoneNumber = phoneNumber;
+        this.accountNumber = accountNumber;
+        this.bank = bank;
+    }
 }

@@ -28,4 +28,10 @@ public class DeliveryPolicy extends BaseEntity {
 
     @NotNull
     private Long deliveryPrice;
+
+    public void update(Long minOrderPrice, Long deliveryPrice, Long freeDeliveryMinPrice) {
+        this.minOrderPrice = minOrderPrice;
+        this.deliveryPrice = deliveryPrice;
+        this.freeDeliveryMinPrice = freeDeliveryMinPrice;
+    }
 }
