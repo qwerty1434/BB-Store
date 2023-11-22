@@ -4,10 +4,7 @@ import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.*;
-import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
-import kr.bb.store.domain.store.handler.response.SimpleStorePagingResponse;
-import kr.bb.store.domain.store.handler.response.SimpleStoreResponse;
-import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
+import kr.bb.store.domain.store.handler.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,5 +58,9 @@ public class StoreService {
         Boolean isLiked = false;
         Boolean isSubscribed = false;
         return storeReader.readForUser(storeId, isLiked, isSubscribed);
+    }
+
+    public StoreInfoManagerResponse getStoreInfoForManager(Long storeId) {
+        return storeReader.readForManager(storeId);
     }
 }

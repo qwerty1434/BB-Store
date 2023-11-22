@@ -46,4 +46,11 @@ public class StoreController {
     public ResponseEntity getStoreInfoForUser(@PathVariable Long storeId){
         return ResponseEntity.ok().body(storeService.getStoreInfoForUser(storeId));
     }
+
+    @GetMapping("/{storeId}/manager")
+    public ResponseEntity getStoreInfoForManager(@PathVariable Long storeId){
+        return ResponseEntity.ok().body(storeService.getStoreInfoForManager(storeId));
+    }
+
+
 }
