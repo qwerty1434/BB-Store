@@ -2,6 +2,7 @@ package kr.bb.store.domain.store.entity;
 
 import kr.bb.store.domain.common.BaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -45,4 +46,9 @@ public class Store extends BaseEntity {
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
     private String bank;
 
+    @Builder
+    public Store(Long storeManagerId, String storeCode) {
+        this.storeManagerId = storeManagerId;
+        this.storeCode = storeCode;
+    }
 }
