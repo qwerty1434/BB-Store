@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.ws.rs.QueryParam;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -37,7 +38,7 @@ public class StoreController {
         return ResponseEntity.ok().body(storeService.getStoreInfo(storeId));
     }
 
-    @GetMapping("/list?page={page}&size={size}")
+    @GetMapping("/list")
     public ResponseEntity getStores(Pageable pageable) {
         return ResponseEntity.ok().body(storeService.getStoresWithPaging(pageable));
     }
@@ -52,13 +53,13 @@ public class StoreController {
         return ResponseEntity.ok().body(storeService.getStoreInfoForManager(storeId));
     }
 
-    @GetMapping("/map/location?lat={lat}&lon={lon}")
-    public ResponseEntity getNearbyStores(@PathVariable Double lat, @PathVariable Double lon) {
+    @GetMapping("/map/location")
+    public ResponseEntity getNearbyStores(@RequestParam Double lat, @RequestParam Double lon) {
         return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon));
     }
 
-    @GetMapping("/map/region?sido={sido}&gugun={gugun}")
-    public ResponseEntity getStoresWithRegion(@PathVariable String sido, @PathVariable String gugun) {
+    @GetMapping("/map/region")
+    public ResponseEntity getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun) {
         return ResponseEntity.ok().body(storeService.getStoresWithRegion(sido,gugun));
     }
 }
