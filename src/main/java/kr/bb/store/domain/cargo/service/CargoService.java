@@ -29,11 +29,17 @@ public class CargoService {
         });
     }
 
-    public void PlusStockCount(Long storeId, Long flowerId, Long stock) {
+    public void plusStockCount(Long storeId, Long flowerId, Long stock) {
         FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
                 .orElseThrow(FlowerCargoNotFoundException::new);
         flowerCargo.updateStock(stock);
+    }
+    public void minusStockCount(Long storeId, Long flowerId, Long stock) {
+        FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
+        FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
+                .orElseThrow(FlowerCargoNotFoundException::new);
+        flowerCargo.updateStock(-1 * stock);
     }
 
     private FlowerCargoId makeKeys(Long storeId, Long flowerId) {

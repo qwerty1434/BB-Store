@@ -14,7 +14,13 @@ public class CargoFeignController {
     private final CargoService cargoService;
     @PutMapping("/add")
     public ResponseEntity addStock(@RequestBody StockFeignRequest stockFeignRequest) {
-        cargoService.PlusStockCount(stockFeignRequest.getStoreId(), stockFeignRequest.getFlowerId(), stockFeignRequest.getStock());
+        cargoService.plusStockCount(stockFeignRequest.getStoreId(), stockFeignRequest.getFlowerId(), stockFeignRequest.getStock());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/substract")
+    public ResponseEntity substractStock(@RequestBody StockFeignRequest stockFeignRequest) {
+        cargoService.minusStockCount(stockFeignRequest.getStoreId(), stockFeignRequest.getFlowerId(), stockFeignRequest.getStock());
         return ResponseEntity.ok().build();
     }
 }
