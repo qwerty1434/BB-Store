@@ -139,6 +139,32 @@ class CargoServiceTest {
         assertThat(flowerCargoFromDB.getStock()).isEqualTo(0L);
 
     }
+    @DisplayName("재고는 음수가 될 수 없다")
+    @Test
+    void stockCannotBeNegative2() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+
+        FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
+        FlowerCargo fc1 = createFlowerCargo(flowerCargoId, 100L, "장미", store);
+
+        flowerCargoRepository.saveAll(List.of(fc1));
+
+        StockModifyDto s1 = createStockModifyDto(1L, -3L);
+
+        // when
+        cargoService.modifyAllStocks(store.getId(), List.of(s1));
+
+        em.flush();
+        em.clear();
+
+        FlowerCargo flowerCargoFromDB = flowerCargoRepository.findById(flowerCargoId).get();
+
+        // then
+        assertThat(flowerCargoFromDB.getStock()).isEqualTo(0L);
+
+    }
 
     @DisplayName("해당 가게의 모든 재고정보를 가져온다")
     @Test
