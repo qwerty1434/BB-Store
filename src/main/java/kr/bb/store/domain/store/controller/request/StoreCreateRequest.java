@@ -47,9 +47,9 @@ public class StoreCreateRequest {
     @NotNull(message = "zipCode cannot be null")
     private String zipCode;
     @NotNull(message = "lat cannot be null")
-    private Float lat;
+    private Double lat;
     @NotNull(message = "lon cannot be null")
-    private Float lon;
+    private Double lon;
 
     public StoreRequest toStoreRequest() {
         return StoreRequest.builder()

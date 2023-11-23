@@ -15,12 +15,12 @@ public class StoreForMapResponse {
     private String storeName;
     private Boolean isLiked;
     private String detailInfo;
-    private Float averageRating;
-    private Float lat;
-    private Float lon;
+    private Double averageRating;
+    private Double lat;
+    private Double lon;
 
     @QueryProjection
-    public StoreForMapResponse(Long storeId, String storeName,String detailInfo, Float averageRating, Float lat, Float lon) {
+    public StoreForMapResponse(Long storeId, String storeName,String detailInfo, Double averageRating, Double lat, Double lon) {
         this.storeId = storeId;
         this.storeName = storeName;
         this.detailInfo = detailInfo;

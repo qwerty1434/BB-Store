@@ -15,7 +15,7 @@ public class SimpleStoreResponse {
     private String storeThumbnailImage;
     private String storeName;
     private String detailInfo;
-    private Float averageRating;
+    private Double averageRating;
 
     public static SimpleStoreResponse from(Store store) {
         return SimpleStoreResponse.builder()

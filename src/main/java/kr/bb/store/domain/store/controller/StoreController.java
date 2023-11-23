@@ -53,7 +53,7 @@ public class StoreController {
     }
 
     @GetMapping("/map/location?lat={lat}&lon={lon}")
-    public ResponseEntity getNearbyStores(@PathVariable Float lat, @PathVariable Float lon) {
+    public ResponseEntity getNearbyStores(@PathVariable Double lat, @PathVariable Double lon) {
         return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon));
     }
 }

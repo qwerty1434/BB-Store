@@ -35,7 +35,7 @@ public class Store extends BaseEntity {
     private String storeThumbnailImage;
 
     @Column(nullable = false, columnDefinition = "float default 0.0")
-    private Float averageRating;
+    private Double averageRating;
 
     @NotNull
     private String phoneNumber;

@@ -10,5 +10,5 @@ import java.util.List;
 public interface StoreRepositoryCustom {
     Page<Store> getStoresWithPaging(Pageable pageable);
 
-    List<StoreForMapResponse> getNearbyStores(Float lat, Float lon, Float radius);
+    List<StoreForMapResponse> getNearbyStores(double lat, double lon, double radius);
 }

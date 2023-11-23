@@ -31,6 +31,6 @@ public class StoreInfoEditRequest {
     private String address;
     private String detailAddress;
     private String zipCode;
-    private Float lat;
-    private Float lon;
+    private Double lat;
+    private Double lon;
 }

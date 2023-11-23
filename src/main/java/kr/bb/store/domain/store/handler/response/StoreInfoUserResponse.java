@@ -13,7 +13,7 @@ public class StoreInfoUserResponse {
     private String storeName;
     private String storeThumbnailImage;
     private String address;
-    private Float averageRating;
+    private Double averageRating;
     private String detailInfo;
     private String phoneNumber;
     private Boolean isLiked;

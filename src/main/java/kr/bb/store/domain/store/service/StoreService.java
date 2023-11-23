@@ -64,7 +64,7 @@ public class StoreService {
         return storeReader.readForManager(storeId);
     }
 
-    public StoresByLocationResponse getNearbyStores(Float lat, Float lon) {
+    public StoresByLocationResponse getNearbyStores(Double lat, Double lon) {
         return null;
     }
 }

@@ -42,7 +42,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
     }
 
     @Override
-    public List<StoreForMapResponse> getNearbyStores(Float lat, Float lon, Float radius) {
+    public List<StoreForMapResponse> getNearbyStores(double lat, double lon, double radius) {
         return queryFactory.select(new QStoreForMapResponse(
                     store.id,
                     store.storeName,
@@ -65,13 +65,13 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
     }
 
     private double calculateLatDifference(double radius) {
-        // 위도1 == 111km
+        // 위도 1도 == 111km
         return radius / 111.0;
     }
 
     private double calculateLonDifference(double centerLat, double radius) {
         double latRadians = Math.toRadians(centerLat);
-        // 경도1 == 111 * cos(위도) km
+        // 경도 1도 == 111 * cos(위도) km
         return radius / (111.0 * Math.cos(latRadians));
     }
 

@@ -41,14 +41,14 @@ public class StoreAddress extends BaseEntity {
     private String zipCode;
 
     @NotNull
-    private Float lat;
+    private Double lat;
 
     @NotNull
-    private Float lon;
+    private Double lon;
 
     @Builder
     public StoreAddress(Store store, Sido sido, Gugun gugun, String address,
-                        String detailAddress, String zipCode, Float lat, Float lon) {
+                        String detailAddress, String zipCode, Double lat, Double lon) {
         this.store = store;
         this.sido = sido;
         this.gugun = gugun;
@@ -60,7 +60,7 @@ public class StoreAddress extends BaseEntity {
     }
 
     public void update(Sido sido, Gugun gugun, String address, String detailAddress,
-                       String zipCode, Float lat, Float lon) {
+                       String zipCode, Double lat, Double lon) {
         this.sido = sido;
         this.gugun = gugun;
         this.address = address;

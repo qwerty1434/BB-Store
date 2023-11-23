@@ -29,8 +29,8 @@ public class DetailInfoResponse {
     private String address;
     private String detailAddress;
     private String zipCode;
-    private Float lat;
-    private Float lon;
+    private Double lat;
+    private Double lon;
 
     public static DetailInfoResponse of(Store store, DeliveryPolicy deliveryPolicy, StoreAddress storeAddress) {
         return DetailInfoResponse.builder()
