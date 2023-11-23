@@ -222,7 +222,6 @@ class StoreReaderTest {
         Sido sido2 = new Sido("2", "부산");
         Gugun gugun1 = new Gugun("100",sido1,"강남구");
         Gugun gugun2 = new Gugun("200",sido1,"종로구");
-        Gugun gugun3 = new Gugun("300",sido2,"해운대구");
 
 
         Store s1 = createStore(1L,"가게1");

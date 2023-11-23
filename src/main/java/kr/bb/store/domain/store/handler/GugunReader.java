@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class GugunReader {
     private final GugunRepository gugunRepository;
 
-    public Gugun readGugun(Sido sido, String gugunName) {
+    public Gugun readGugunCorrespondingSido(Sido sido, String gugunName) {
         Gugun gugun = gugunRepository.findByName(gugunName)
                 .orElseThrow(GugunNotFoundException::new);
         if(!gugun.getSido().getCode().equals(sido.getCode())) {
