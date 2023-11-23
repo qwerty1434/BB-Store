@@ -73,7 +73,7 @@ public class StoreReader {
                 .build();
     }
 
-    public StoresByLocationResponse getNearbyStores(Float lat, Float lon) {
+    public StoresByLocationResponse getNearbyStores(Double lat, Double lon) {
         List<StoreForMapResponse> nearbyStores = storeRepository.getNearbyStores(lat, lon, RADIUS_FOR_MAP);
         // TODO : 좋아요 여부 feign으로 받아와서 채우기
         return StoresByLocationResponse.builder()

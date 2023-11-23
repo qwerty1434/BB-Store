@@ -93,7 +93,7 @@ class StoreManagerTest {
         DeliveryPolicy changedDeliveryPolicy = deliveryPolicyRepository.findByStoreId(store.getId()).get();
 
         assertThat(changedStore.getStoreName()).isEqualTo("가게2");
-        assertThat(changedStoreAddress.getLat()).isEqualTo(-11.1111F);
+        assertThat(changedStoreAddress.getLat()).isEqualTo(-11.1111D);
         assertThat(changedDeliveryPolicy.getMinOrderPrice()).isEqualTo(99_999L);
 
     }

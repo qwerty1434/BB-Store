@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
 @Transactional
@@ -57,7 +58,7 @@ class StoreReaderTest {
         Store store = createStore(userId);
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddress(store);
+        StoreAddress storeAddress = createStoreAddress(store,0F,0F);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
@@ -132,7 +133,7 @@ class StoreReaderTest {
         Store store = createStore(userId);
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddress(store);
+        StoreAddress storeAddress = createStoreAddress(store,0F,0F);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
@@ -161,7 +162,7 @@ class StoreReaderTest {
         Store store = createStore(userId);
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddress(store);
+        StoreAddress storeAddress = createStoreAddress(store,0F,0F);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
@@ -179,7 +180,52 @@ class StoreReaderTest {
 
     }
 
-    private StoreAddress createStoreAddress(Store store) {
+    @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아온다")
+    @Test
+    void getNearbyStores() {
+
+        // given
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+        Double centerLat = 0.0D;
+        Double centerLON = 0.0D;
+
+        Store s1 = createStore(1L);
+        Store s2 = createStore(1L);
+        Store s3 = createStore(1L);
+        Store s4 = createStore(1L);
+        Store s5 = createStore(1L);
+        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
+
+        StoreAddress sa1 = createStoreAddress(s1,0.0D, 5D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이내
+        StoreAddress sa2 = createStoreAddress(s2,0.0D, 5.001D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이외
+
+        StoreAddress sa3 = createStoreAddress(s3,-5D/111D,0.0D); // 반경 5KM 이내
+        StoreAddress sa4 = createStoreAddress(s4,-5.001D/111D,0.0D); // 반경 5KM 이외
+
+        StoreAddress sa5 = createStoreAddress(s5,100D,100D); // 반경 5KM 이외
+        storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
+
+        em.flush();
+        em.clear();
+
+        // when
+        StoresByLocationResponse nearbyStores = storeReader.getNearbyStores(centerLat, centerLON);
+
+        // then
+        assertThat(nearbyStores.getStores()).hasSize(2);
+        assertThat(nearbyStores.getStores()).extracting("storeId","lat","lon")
+                .containsExactlyInAnyOrder(
+                        tuple(1L,0.0D,5D / (111.0 * Math.cos(0.0D))),
+                        tuple(3L,-5D/111D,0.0D)
+                );
+
+    }
+
+
+    private StoreAddress createStoreAddress(Store store, double lat, double lon) {
         Sido sido = new Sido("011", "서울");
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
@@ -192,8 +238,8 @@ class StoreReaderTest {
                 .address("서울 강남구 남부순환로")
                 .detailAddress("202호")
                 .zipCode("001112")
-                .lat(33.33322F)
-                .lon(127.13123F)
+                .lat(lat)
+                .lon(lon)
                 .build();
     }
 
