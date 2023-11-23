@@ -30,8 +30,9 @@ public class StoreService {
     private final StoreAddressCreator storeAddressCreator;
     private final DeliveryPolicyCreator deliveryPolicyCreator;
     private final StoreReader storeReader;
-    private final SidoRepository sidoRepository;
-    private final GugunRepository gugunRepository;
+    private final SidoReader sidoReader;
+    private final GugunReader gugunReader;
+
 
     @Transactional
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
@@ -81,13 +82,9 @@ public class StoreService {
     }
     public StoreListForMapResponse getStoresWithRegion(String sidoName, String gugunName) {
         // TODO : 좋아요 여부 feign으로 받아와서 채우기
-        Sido sido = sidoRepository.findByName(sidoName).orElseThrow(SidoNotFoundException::new);
-        Gugun gugun = gugunRepository.findByName(gugunName).orElse(null);
-        if(!gugun.getSido().getCode().equals(sido.getCode())){
-            throw new InvalidParentException();
-        }
+        Sido sido = sidoReader.readSido(sidoName);
+        Gugun gugun = "".equals(gugunName) ? null : gugunReader.readGugun(sido, gugunName);
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido, gugun);
-
         return storesWithRegion;
     }
 }
