@@ -9,6 +9,8 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.exception.address.InvalidParentException;
+import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
 import kr.bb.store.domain.store.handler.response.*;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
@@ -25,6 +27,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
@@ -137,11 +140,6 @@ class StoreServiceTest {
     @Test
     public void getStoresWithPaing() {
         // given
-        Sido sido = new Sido("011", "서울");
-        sidoRepository.save(sido);
-        Gugun gugun = new Gugun("110011",sido,"강남구");
-        gugunRepository.save(gugun);
-
         Store s1 = createStoreEntity(1L,"가게1");
         Store s2 = createStoreEntity(1L,"가게1");
         Store s3 = createStoreEntity(1L,"가게1");
@@ -221,12 +219,7 @@ class StoreServiceTest {
     @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아 반환한다")
     @Test
     void getNearbyStores() {
-
         // given
-        Sido sido = new Sido("011", "서울");
-        sidoRepository.save(sido);
-        Gugun gugun = new Gugun("110011",sido,"강남구");
-        gugunRepository.save(gugun);
         Double centerLat = 0.0D;
         Double centerLON = 0.0D;
 
@@ -259,6 +252,32 @@ class StoreServiceTest {
                         tuple("가게1",0.0D,5D / (111.0 * Math.cos(0.0D))),
                         tuple("가게3",-5D/111D,0.0D)
                 );
+
+    }
+
+    @DisplayName("지역으로 검색할 때 시/도 값은 필수로 입력해야 한다")
+    @Test
+    void sidoMustNotBeNullWhenGetStoresWithRegion() {
+        // when // then
+        assertThatThrownBy(() -> storeService.getStoresWithRegion(null,"강남구"))
+                .isInstanceOf(SidoNotFoundException.class)
+                .hasMessage("해당 시/도가 존재하지 않습니다.");
+
+    }
+    @DisplayName("시에 맞지 않는 군을 입력하면 안된다")
+    @Test
+    void gugunHasRightSidoWhenGetStoresWithRegion() {
+        // given
+        Sido sido1 = new Sido("1", "서울");
+        Sido sido2 = new Sido("2", "부산");
+        Gugun gugun1 = new Gugun("300",sido2,"해운대구");
+        sidoRepository.saveAll(List.of(sido1, sido2));
+        gugunRepository.save(gugun1);
+
+        // when // then
+        assertThatThrownBy(() -> storeService.getStoresWithRegion(sido1.getName(),gugun1.getName()))
+                .isInstanceOf(InvalidParentException.class)
+                .hasMessage("선택한 시/도와 구/군이 맞지 않습니다.");
 
     }
 

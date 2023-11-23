@@ -8,6 +8,7 @@ import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
+import kr.bb.store.domain.store.exception.address.InvalidParentException;
 import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
 import kr.bb.store.domain.store.handler.*;
 import kr.bb.store.domain.store.handler.response.*;
@@ -81,7 +82,10 @@ public class StoreService {
     public StoreListForMapResponse getStoresWithRegion(String sidoName, String gugunName) {
         // TODO : 좋아요 여부 feign으로 받아와서 채우기
         Sido sido = sidoRepository.findByName(sidoName).orElseThrow(SidoNotFoundException::new);
-        Gugun gugun = gugunRepository.findByName(gugunName).orElseThrow(GugunNotFoundException::new);
+        Gugun gugun = gugunRepository.findByName(gugunName).orElse(null);
+        if(!gugun.getSido().getCode().equals(sido.getCode())){
+            throw new InvalidParentException();
+        }
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido, gugun);
 
         return storesWithRegion;

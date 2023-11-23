@@ -75,7 +75,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 .leftJoin(storeAddress.store, store)
                 .where(
                         storeAddress.sido.eq(sido),
-                        storeAddress.gugun.eq(gugun)
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null
                 )
                 .fetch();
     }

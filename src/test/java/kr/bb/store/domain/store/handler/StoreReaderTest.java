@@ -93,11 +93,6 @@ class StoreReaderTest {
     @Test
     void readStoresWithPaging() {
         // given
-        Sido sido = new Sido("011", "서울");
-        sidoRepository.save(sido);
-        Gugun gugun = new Gugun("110011",sido,"강남구");
-        gugunRepository.save(gugun);
-
         Store s1 = createStore(1L,"가게1");
         Store s2 = createStore(1L,"가게1");
         Store s3 = createStore(1L,"가게1");
@@ -183,12 +178,7 @@ class StoreReaderTest {
     @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아 반환한다")
     @Test
     void getNearbyStores() {
-
         // given
-        Sido sido = new Sido("011", "서울");
-        sidoRepository.save(sido);
-        Gugun gugun = new Gugun("110011",sido,"강남구");
-        gugunRepository.save(gugun);
         Double centerLat = 0.0D;
         Double centerLON = 0.0D;
 
@@ -224,6 +214,93 @@ class StoreReaderTest {
 
     }
 
+    @DisplayName("시와 군을 입력받아 해당 지역에 해당하는 가게 정보를 가져온다")
+    @Test
+    public void getStoresWithRegion() {
+        // given
+        Sido sido1 = new Sido("1", "서울");
+        Sido sido2 = new Sido("2", "부산");
+        Gugun gugun1 = new Gugun("100",sido1,"강남구");
+        Gugun gugun2 = new Gugun("200",sido1,"종로구");
+        Gugun gugun3 = new Gugun("300",sido2,"해운대구");
+
+
+        Store s1 = createStore(1L,"가게1");
+        Store s2 = createStore(1L,"가게2");
+        Store s3 = createStore(1L,"가게3");
+        Store s4 = createStore(1L,"가게4");
+        Store s5 = createStore(1L,"가게5");
+        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
+
+        StoreAddress sa1 = createStoresAddressWithSidoGugun(s1, sido1, gugun1);
+        StoreAddress sa2 = createStoresAddressWithSidoGugun(s2, sido1, gugun1);
+        StoreAddress sa3 = createStoresAddressWithSidoGugun(s3, sido1, gugun2);
+        StoreAddress sa4 = createStoresAddressWithSidoGugun(s4, sido1, gugun2);
+        StoreAddress sa5 = createStoresAddressWithSidoGugun(s5, sido1, gugun2);
+        storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
+
+        em.flush();
+        em.clear();
+
+        StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido1, gugun1);
+        assertThat(storesWithRegion.getStores()).hasSize(2)
+                .extracting("storeName")
+                .containsExactlyInAnyOrder(
+                        "가게1","가게2"
+                );
+
+    }
+    @DisplayName("시만 입력하면 해당 시에 해당하는 가게 정보를 가져온다")
+    @Test
+    public void getStoresWithRegionOnlySido() {
+        // given
+        Sido sido1 = new Sido("1", "서울");
+        Sido sido2 = new Sido("2", "부산");
+        Gugun gugun1 = new Gugun("100",sido1,"강남구");
+        Gugun gugun2 = new Gugun("200",sido1,"종로구");
+        Gugun gugun3 = new Gugun("300",sido2,"해운대구");
+
+        Store s1 = createStore(1L,"가게1");
+        Store s2 = createStore(1L,"가게2");
+        Store s3 = createStore(1L,"가게3");
+        Store s4 = createStore(1L,"가게4");
+        Store s5 = createStore(1L,"가게5");
+        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
+
+        StoreAddress sa1 = createStoresAddressWithSidoGugun(s1, sido1, gugun1);
+        StoreAddress sa2 = createStoresAddressWithSidoGugun(s2, sido1, gugun1);
+        StoreAddress sa3 = createStoresAddressWithSidoGugun(s3, sido1, gugun1);
+        StoreAddress sa4 = createStoresAddressWithSidoGugun(s4, sido1, gugun2);
+        StoreAddress sa5 = createStoresAddressWithSidoGugun(s5, sido2, gugun3);
+        storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
+
+        em.flush();
+        em.clear();
+
+        StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido1, null);
+        assertThat(storesWithRegion.getStores()).hasSize(4)
+                .extracting("storeName")
+                .containsExactlyInAnyOrder(
+                        "가게1","가게2","가게3","가게4"
+                );
+
+    }
+
+
+    private StoreAddress createStoresAddressWithSidoGugun(Store store, Sido sido, Gugun gugun) {
+        sidoRepository.save(sido);
+        gugunRepository.save(gugun);
+        return StoreAddress.builder()
+                .store(store)
+                .sido(sido)
+                .gugun(gugun)
+                .address("서울 강남구 남부순환로")
+                .detailAddress("202호")
+                .zipCode("001112")
+                .lat(0.0D)
+                .lon(0.0D)
+                .build();
+    }
 
     private StoreAddress createStoreAddress(Store store, double lat, double lon) {
         Sido sido = new Sido("011", "서울");
