@@ -19,4 +19,9 @@ public class CargoController {
         cargoService.modifyAllStocks(storeId,stockModifyRequest.getStockModifyDtos());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("{storeId}/fowers/stocks")
+    public ResponseEntity getAllStocks(@PathVariable Long storeId) {
+        return ResponseEntity.ok().body(cargoService.getAllStocks(storeId));
+    }
 }

@@ -1,6 +1,8 @@
 package kr.bb.store.domain.cargo.service;
 
 
+import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
+import kr.bb.store.domain.cargo.dto.StockInfoDto;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
@@ -11,9 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class CargoService {
 
@@ -43,6 +45,18 @@ public class CargoService {
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
                 .orElseThrow(FlowerCargoNotFoundException::new);
         flowerCargo.updateStock(-1 * stock);
+    }
+
+    @Transactional(readOnly = true)
+    public RemainingStocksResponse getAllStocks(Long storeId) {
+        List<FlowerCargo> flowerCargos = flowerCargoRepository.findAllByStoreId(storeId);
+        List<StockInfoDto> stockInfoDtos = flowerCargos.stream()
+                .map(StockInfoDto::fromEntity)
+                .collect(Collectors.toList());
+
+        return RemainingStocksResponse.builder()
+                .stockInfoDtos(stockInfoDtos)
+                .build();
     }
 
     private FlowerCargoId makeKeys(Long storeId, Long flowerId) {

@@ -22,6 +22,8 @@ public class FlowerCargo extends BaseEntity {
 
     private Long stock;
 
+    private String flowerName;
+
     public void modifyStock(Long stock) {
         this.stock = (stock < 0) ? 0L : stock;
     }
