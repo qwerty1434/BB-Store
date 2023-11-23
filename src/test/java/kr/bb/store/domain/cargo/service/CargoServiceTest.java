@@ -70,9 +70,9 @@ class CargoServiceTest {
                 );
     }
 
-    @DisplayName("특정 가게, 특정 꽃의 재고를 수정한다")
+    @DisplayName("특정 가게, 특정 꽃의 재고를 더한다")
     @Test
-    void modifyStock() {
+    void addStock() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -81,17 +81,41 @@ class CargoServiceTest {
         flowerCargoRepository.save(flowerCargo);
 
         // when
-        cargoService.PlusStockCount(store.getId(), 1L, 10L);
+        cargoService.plusStockCount(store.getId(), 1L, 10L);
 
         em.flush();
         em.clear();
 
         FlowerCargo flowerCargoFromDB = flowerCargoRepository.findById(flowerCargoId).get();
+
         // then
         assertThat(flowerCargoFromDB.getStock()).isEqualTo(110L);
 
     }
     
+    @DisplayName("특정 가게, 특정 꽃의 재고를 차감한다")
+    @Test
+    void substractStock() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+        FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
+        FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, store);
+        flowerCargoRepository.save(flowerCargo);
+
+        // when
+        cargoService.minusStockCount(store.getId(), 1L, 10L);
+
+        em.flush();
+        em.clear();
+
+        FlowerCargo flowerCargoFromDB = flowerCargoRepository.findById(flowerCargoId).get();
+
+        // then
+        assertThat(flowerCargoFromDB.getStock()).isEqualTo(90L);
+
+    }
+
     @DisplayName("재고는 음수가 될 수 없다")
     @Test
     void stockCannotBeNegative() {
@@ -103,7 +127,7 @@ class CargoServiceTest {
         flowerCargoRepository.save(flowerCargo);
 
         // when
-        cargoService.PlusStockCount(store.getId(), 1L, -10000L);
+        cargoService.plusStockCount(store.getId(), 1L, -10000L);
 
         em.flush();
         em.clear();
@@ -113,6 +137,9 @@ class CargoServiceTest {
         assertThat(flowerCargoFromDB.getStock()).isEqualTo(0L);
 
     }
+
+
+
 
     private FlowerCargo createFlowerCargo(FlowerCargoId flowerCargoId, Long stock, Store store) {
         return FlowerCargo.builder()
