@@ -1,9 +1,10 @@
 package kr.bb.store.domain.store.entity;
 
-import kr.bb.store.domain.common.BaseEntity;
-import kr.bb.store.domain.common.Gugun;
-import kr.bb.store.domain.common.Sido;
+import kr.bb.store.domain.common.entity.BaseEntity;
+import kr.bb.store.domain.store.entity.address.Gugun;
+import kr.bb.store.domain.store.entity.address.Sido;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,9 +41,33 @@ public class StoreAddress extends BaseEntity {
     private String zipCode;
 
     @NotNull
-    private Float lat;
+    private Double lat;
 
     @NotNull
-    private Float lon;
+    private Double lon;
+
+    @Builder
+    public StoreAddress(Store store, Sido sido, Gugun gugun, String address,
+                        String detailAddress, String zipCode, Double lat, Double lon) {
+        this.store = store;
+        this.sido = sido;
+        this.gugun = gugun;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.zipCode = zipCode;
+        this.lat = lat;
+        this.lon = lon;
+    }
+
+    public void update(Sido sido, Gugun gugun, String address, String detailAddress,
+                       String zipCode, Double lat, Double lon) {
+        this.sido = sido;
+        this.gugun = gugun;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.zipCode = zipCode;
+        this.lat = lat;
+        this.lon = lon;
+    }
 
 }

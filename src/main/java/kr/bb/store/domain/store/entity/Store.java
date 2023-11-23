@@ -1,7 +1,8 @@
 package kr.bb.store.domain.store.entity;
 
-import kr.bb.store.domain.common.BaseEntity;
+import kr.bb.store.domain.common.entity.BaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -24,25 +25,47 @@ public class Store extends BaseEntity {
     @NotNull
     private String storeCode;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    @NotNull
     private String storeName;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    @NotNull
     private String detailInfo;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    @NotNull
     private String storeThumbnailImage;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
-    private Float averageRating;
+    @Column(nullable = false, columnDefinition = "float default 0.0")
+    private Double averageRating;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    @NotNull
     private String phoneNumber;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    @NotNull
     private String accountNumber;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    @NotNull
     private String bank;
 
+    @Builder
+    public Store(Long storeManagerId, String storeCode, String storeName, String detailInfo,
+                 String storeThumbnailImage, String phoneNumber, String accountNumber, String bank) {
+        this.storeManagerId = storeManagerId;
+        this.storeCode = storeCode;
+        this.storeName = storeName;
+        this.detailInfo = detailInfo;
+        this.storeThumbnailImage = storeThumbnailImage;
+        this.phoneNumber = phoneNumber;
+        this.accountNumber = accountNumber;
+        this.bank = bank;
+    }
+
+    public void update(String storeName, String detailInfo, String storeThumbnailImage,
+                       String phoneNumber, String accountNumber, String bank) {
+        this.storeName = storeName;
+        this.detailInfo = detailInfo;
+        this.storeThumbnailImage = storeThumbnailImage;
+        this.phoneNumber = phoneNumber;
+        this.accountNumber = accountNumber;
+        this.bank = bank;
+    }
 }

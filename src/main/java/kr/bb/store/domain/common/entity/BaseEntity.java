@@ -1,4 +1,4 @@
-package kr.bb.store.domain.common;
+package kr.bb.store.domain.common.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,5 +23,5 @@ public class BaseEntity {
     private LocalDateTime updatedAt;
 
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 }
