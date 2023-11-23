@@ -59,8 +59,8 @@ class StoreControllerTest {
                 .address("서울 강남구 남부순환로")
                 .detailAddress("202호")
                 .zipCode("001112")
-                .lat(33.33322F)
-                .lon(127.13123F)
+                .lat(33.33322D)
+                .lon(127.13123D)
                 .build();
 
         // when // then
@@ -91,8 +91,8 @@ class StoreControllerTest {
                 .address("서울 강남구 남부순환로")
                 .detailAddress("202호")
                 .zipCode("001112")
-                .lat(33.33322F)
-                .lon(127.13123F)
+                .lat(33.33322D)
+                .lon(127.13123D)
                 .build();
     }
 
