@@ -29,12 +29,15 @@ public class CargoService {
         });
     }
 
+    @Transactional
     public void plusStockCount(Long storeId, Long flowerId, Long stock) {
         FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
                 .orElseThrow(FlowerCargoNotFoundException::new);
         flowerCargo.updateStock(stock);
     }
+
+    @Transactional
     public void minusStockCount(Long storeId, Long flowerId, Long stock) {
         FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
