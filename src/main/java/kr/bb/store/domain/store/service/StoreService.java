@@ -65,6 +65,9 @@ public class StoreService {
     }
 
     public StoresByLocationResponse getNearbyStores(Double lat, Double lon) {
-        return null;
+        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+        StoresByLocationResponse nearbyStores = storeReader.getNearbyStores(lat, lon);
+
+        return nearbyStores;
     }
 }

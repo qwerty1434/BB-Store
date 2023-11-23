@@ -55,10 +55,10 @@ class StoreReaderTest {
     void readDetailInfo() {
         Long userId = 1L;
 
-        Store store = createStore(userId);
+        Store store = createStore(userId,"가게1");
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddress(store,0F,0F);
+        StoreAddress storeAddress = createStoreAddress(store,0D,0D);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
@@ -71,7 +71,7 @@ class StoreReaderTest {
         DetailInfoResponse response = storeReader.readDetailInfo(store.getId());
 
         // then
-        assertThat(response.getStoreName()).isEqualTo("가게");
+        assertThat(response.getStoreName()).isEqualTo("가게1");
         assertThat(response.getMinOrderPrice()).isEqualTo(10_000L);
         assertThat(response.getSido()).isEqualTo("서울");
     }
@@ -98,13 +98,13 @@ class StoreReaderTest {
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
 
-        Store s1 = createStore(1L);
-        Store s2 = createStore(1L);
-        Store s3 = createStore(1L);
-        Store s4 = createStore(1L);
-        Store s5 = createStore(1L);
-        Store s6 = createStore(1L);
-        Store s7 = createStore(1L);
+        Store s1 = createStore(1L,"가게1");
+        Store s2 = createStore(1L,"가게1");
+        Store s3 = createStore(1L,"가게1");
+        Store s4 = createStore(1L,"가게1");
+        Store s5 = createStore(1L,"가게1");
+        Store s6 = createStore(1L,"가게1");
+        Store s7 = createStore(1L,"가게1");
 
         storeRepository.saveAll(List.of(s1,s2,s3,s4,s5,s6,s7));
 
@@ -130,10 +130,10 @@ class StoreReaderTest {
     void readForUser() {
         Long userId = 1L;
 
-        Store store = createStore(userId);
+        Store store = createStore(userId,"가게1");
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddress(store,0F,0F);
+        StoreAddress storeAddress = createStoreAddress(store,0D,0D);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
@@ -149,8 +149,8 @@ class StoreReaderTest {
         StoreInfoUserResponse response = storeReader.readForUser(store.getId(),isLiked, isSubscribed);
 
         // then
-        assertThat(response.getStoreName()).isEqualTo("가게");
-        assertThat(response.getAverageRating()).isEqualTo(0.0F);
+        assertThat(response.getStoreName()).isEqualTo("가게1");
+        assertThat(response.getAverageRating()).isEqualTo(0.0D);
         assertThat(response.getIsLiked()).isEqualTo(isLiked);
 
     }
@@ -159,10 +159,10 @@ class StoreReaderTest {
     void readForManager() {
         Long userId = 1L;
 
-        Store store = createStore(userId);
+        Store store = createStore(userId,"가게1");
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddress(store,0F,0F);
+        StoreAddress storeAddress = createStoreAddress(store,0D,0D);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
@@ -175,12 +175,12 @@ class StoreReaderTest {
         StoreInfoManagerResponse response = storeReader.readForManager(store.getId());
 
         // then
-        assertThat(response.getStoreName()).isEqualTo("가게");
+        assertThat(response.getStoreName()).isEqualTo("가게1");
         assertThat(response.getAddress()).isEqualTo("서울 강남구 남부순환로");
 
     }
 
-    @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아온다")
+    @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아 반환한다")
     @Test
     void getNearbyStores() {
 
@@ -192,11 +192,11 @@ class StoreReaderTest {
         Double centerLat = 0.0D;
         Double centerLON = 0.0D;
 
-        Store s1 = createStore(1L);
-        Store s2 = createStore(1L);
-        Store s3 = createStore(1L);
-        Store s4 = createStore(1L);
-        Store s5 = createStore(1L);
+        Store s1 = createStore(1L,"가게1");
+        Store s2 = createStore(1L,"가게2");
+        Store s3 = createStore(1L,"가게3");
+        Store s4 = createStore(1L,"가게4");
+        Store s5 = createStore(1L,"가게5");
         storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
 
         StoreAddress sa1 = createStoreAddress(s1,0.0D, 5D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이내
@@ -216,10 +216,10 @@ class StoreReaderTest {
 
         // then
         assertThat(nearbyStores.getStores()).hasSize(2);
-        assertThat(nearbyStores.getStores()).extracting("storeId","lat","lon")
+        assertThat(nearbyStores.getStores()).extracting("storeName","lat","lon")
                 .containsExactlyInAnyOrder(
-                        tuple(1L,0.0D,5D / (111.0 * Math.cos(0.0D))),
-                        tuple(3L,-5D/111D,0.0D)
+                        tuple("가게1",0.0D,5D / (111.0 * Math.cos(0.0D))),
+                        tuple("가게3",-5D/111D,0.0D)
                 );
 
     }
@@ -243,11 +243,11 @@ class StoreReaderTest {
                 .build();
     }
 
-    private Store createStore(Long userId) {
+    private Store createStore(Long userId, String storeName) {
         return Store.builder()
                 .storeManagerId(userId)
                 .storeCode("가게코드")
-                .storeName("가게")
+                .storeName(storeName)
                 .detailInfo("가게 상세정보")
                 .storeThumbnailImage("가게 썸네일")
                 .phoneNumber("가게 전화번호")

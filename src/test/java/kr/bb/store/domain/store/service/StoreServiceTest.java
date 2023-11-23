@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
 @Transactional
@@ -141,13 +142,13 @@ class StoreServiceTest {
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
 
-        Store s1 = createStoreEntity(1L);
-        Store s2 = createStoreEntity(1L);
-        Store s3 = createStoreEntity(1L);
-        Store s4 = createStoreEntity(1L);
-        Store s5 = createStoreEntity(1L);
-        Store s6 = createStoreEntity(1L);
-        Store s7 = createStoreEntity(1L);
+        Store s1 = createStoreEntity(1L,"가게1");
+        Store s2 = createStoreEntity(1L,"가게1");
+        Store s3 = createStoreEntity(1L,"가게1");
+        Store s4 = createStoreEntity(1L,"가게1");
+        Store s5 = createStoreEntity(1L,"가게1");
+        Store s6 = createStoreEntity(1L,"가게1");
+        Store s7 = createStoreEntity(1L,"가게1");
 
         storeRepository.saveAll(List.of(s1,s2,s3,s4,s5,s6,s7));
 
@@ -171,10 +172,10 @@ class StoreServiceTest {
     public void getStoreInfoForUser() {
         Long userId = 1L;
 
-        Store store = createStoreEntity(userId);
+        Store store = createStoreEntity(userId,"가게1");
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddressEntity(store);
+        StoreAddress storeAddress = createStoreAddressEntity(store,0D,0D);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store);
@@ -187,8 +188,8 @@ class StoreServiceTest {
         StoreInfoUserResponse response = storeService.getStoreInfoForUser(store.getId());
 
         // then
-        assertThat(response.getStoreName()).isEqualTo("가게");
-        assertThat(response.getAverageRating()).isEqualTo(0.0F);
+        assertThat(response.getStoreName()).isEqualTo("가게1");
+        assertThat(response.getAverageRating()).isEqualTo(0.0D);
     }
 
     @DisplayName("가게 사장에게 보이는 가게정보를 반환한다")
@@ -196,10 +197,10 @@ class StoreServiceTest {
     public void getStoreInfoForManager() {
         Long userId = 1L;
 
-        Store store = createStoreEntity(userId);
+        Store store = createStoreEntity(userId,"가게1");
         storeRepository.save(store);
 
-        StoreAddress storeAddress = createStoreAddressEntity(store);
+        StoreAddress storeAddress = createStoreAddressEntity(store,0D,0D);
         storeAddressRepository.save(storeAddress);
 
         DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store);
@@ -212,10 +213,55 @@ class StoreServiceTest {
         StoreInfoManagerResponse response = storeService.getStoreInfoForManager(store.getId());
 
         // then
-        assertThat(response.getStoreName()).isEqualTo("가게");
+        assertThat(response.getStoreName()).isEqualTo("가게1");
         assertThat(response.getAddress()).isEqualTo("서울 강남구 남부순환로");
 
     }
+
+    @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아 반환한다")
+    @Test
+    void getNearbyStores() {
+
+        // given
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+        Double centerLat = 0.0D;
+        Double centerLON = 0.0D;
+
+        Store s1 = createStoreEntity(1L,"가게1");
+        Store s2 = createStoreEntity(1L,"가게2");
+        Store s3 = createStoreEntity(1L,"가게3");
+        Store s4 = createStoreEntity(1L,"가게4");
+        Store s5 = createStoreEntity(1L,"가게5");
+        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
+
+        StoreAddress sa1 = createStoreAddressEntity(s1,0.0D, 5D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이내
+        StoreAddress sa2 = createStoreAddressEntity(s2,0.0D, 5.001D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이외
+
+        StoreAddress sa3 = createStoreAddressEntity(s3,-5D/111D,0.0D); // 반경 5KM 이내
+        StoreAddress sa4 = createStoreAddressEntity(s4,-5.001D/111D,0.0D); // 반경 5KM 이외
+
+        StoreAddress sa5 = createStoreAddressEntity(s5,100D,100D); // 반경 5KM 이외
+        storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
+
+        em.flush();
+        em.clear();
+
+        // when
+        StoresByLocationResponse nearbyStores = storeService.getNearbyStores(centerLat, centerLON);
+
+        // then
+        assertThat(nearbyStores.getStores()).hasSize(2);
+        assertThat(nearbyStores.getStores()).extracting("storeName","lat","lon")
+                .containsExactlyInAnyOrder(
+                        tuple("가게1",0.0D,5D / (111.0 * Math.cos(0.0D))),
+                        tuple("가게3",-5D/111D,0.0D)
+                );
+
+    }
+
 
 
 
@@ -240,7 +286,7 @@ class StoreServiceTest {
                 .build();
     }
 
-    private StoreAddress createStoreAddressEntity(Store store) {
+    private StoreAddress createStoreAddressEntity(Store store, double lat, double lon) {
         Sido sido = new Sido("011", "서울");
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
@@ -253,16 +299,16 @@ class StoreServiceTest {
                 .address("서울 강남구 남부순환로")
                 .detailAddress("202호")
                 .zipCode("001112")
-                .lat(33.33322D)
-                .lon(127.13123D)
+                .lat(lat)
+                .lon(lon)
                 .build();
     }
 
-    private Store createStoreEntity(Long userId) {
+    private Store createStoreEntity(Long userId, String storeName) {
         return Store.builder()
                 .storeManagerId(userId)
                 .storeCode("가게코드")
-                .storeName("가게")
+                .storeName(storeName)
                 .detailInfo("가게 상세정보")
                 .storeThumbnailImage("가게 썸네일")
                 .phoneNumber("가게 전화번호")
