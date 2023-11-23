@@ -1,5 +1,6 @@
 package kr.bb.store.domain.cargo.service;
 
+import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
@@ -16,6 +17,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
 @Transactional
@@ -44,9 +46,9 @@ class CargoServiceTest {
         FlowerCargoId flowerCargoId2 = createFlowerCargoId(store.getId(),1L);
         FlowerCargoId flowerCargoId3 = createFlowerCargoId(store.getId(),3L);
 
-        FlowerCargo fc1 = createFlowerCargo(flowerCargoId1, 100L, store);
-        FlowerCargo fc2 = createFlowerCargo(flowerCargoId2, 100L, store);
-        FlowerCargo fc3 = createFlowerCargo(flowerCargoId3, 100L, store);
+        FlowerCargo fc1 = createFlowerCargo(flowerCargoId1, 100L, "장미", store);
+        FlowerCargo fc2 = createFlowerCargo(flowerCargoId2, 100L, "장미", store);
+        FlowerCargo fc3 = createFlowerCargo(flowerCargoId3, 100L, "장미", store);
 
         flowerCargoRepository.saveAll(List.of(fc1,fc2,fc3));
 
@@ -77,7 +79,7 @@ class CargoServiceTest {
         Store store = createStore();
         storeRepository.save(store);
         FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
-        FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, store);
+        FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
         flowerCargoRepository.save(flowerCargo);
 
         // when
@@ -100,7 +102,7 @@ class CargoServiceTest {
         Store store = createStore();
         storeRepository.save(store);
         FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
-        FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, store);
+        FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
         flowerCargoRepository.save(flowerCargo);
 
         // when
@@ -123,7 +125,7 @@ class CargoServiceTest {
         Store store = createStore();
         storeRepository.save(store);
         FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
-        FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, store);
+        FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
         flowerCargoRepository.save(flowerCargo);
 
         // when
@@ -138,14 +140,43 @@ class CargoServiceTest {
 
     }
 
+    @DisplayName("해당 가게의 모든 재고정보를 가져온다")
+    @Test
+    void getAllStocks() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
 
+        FlowerCargoId flowerCargoId1 = createFlowerCargoId(store.getId(),2L);
+        FlowerCargoId flowerCargoId2 = createFlowerCargoId(store.getId(),1L);
+        FlowerCargoId flowerCargoId3 = createFlowerCargoId(store.getId(),3L);
 
+        FlowerCargo fc1 = createFlowerCargo(flowerCargoId1, 100L, "장미", store);
+        FlowerCargo fc2 = createFlowerCargo(flowerCargoId2, 100L, "튤립", store);
+        FlowerCargo fc3 = createFlowerCargo(flowerCargoId3, 100L, "백합", store);
 
-    private FlowerCargo createFlowerCargo(FlowerCargoId flowerCargoId, Long stock, Store store) {
+        flowerCargoRepository.saveAll(List.of(fc1,fc2,fc3));
+
+        // when
+        RemainingStocksResponse stocks = cargoService.getAllStocks(store.getId());
+
+        // then
+        assertThat(stocks.getStockInfoDtos()).hasSize(3)
+                .extracting("flowerId","name")
+                .containsExactlyInAnyOrder(
+                        tuple(2L,"장미"),
+                        tuple(1L,"튤립"),
+                        tuple(3L,"백합")
+                );
+
+    }
+
+    private FlowerCargo createFlowerCargo(FlowerCargoId flowerCargoId, Long stock, String name, Store store) {
         return FlowerCargo.builder()
                 .id(flowerCargoId)
                 .store(store)
                 .stock(stock)
+                .flowerName(name)
                 .build();
     }
 
