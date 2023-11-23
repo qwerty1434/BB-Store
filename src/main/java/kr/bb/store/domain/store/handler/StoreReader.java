@@ -3,6 +3,8 @@ package kr.bb.store.domain.store.handler;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
+import kr.bb.store.domain.store.entity.address.Gugun;
+import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.exception.DeliveryPolicyNotFoundException;
 import kr.bb.store.domain.store.exception.StoreAddressNotFoundException;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
@@ -73,10 +75,17 @@ public class StoreReader {
                 .build();
     }
 
-    public StoresByLocationResponse getNearbyStores(Double lat, Double lon) {
+    public StoreListForMapResponse getNearbyStores(Double lat, Double lon) {
         List<StoreForMapResponse> nearbyStores = storeRepository.getNearbyStores(lat, lon, RADIUS_FOR_MAP);
-        return StoresByLocationResponse.builder()
+        return StoreListForMapResponse.builder()
                 .stores(nearbyStores)
+                .build();
+    }
+
+    public StoreListForMapResponse getStoresWithRegion(Sido sido, Gugun gugun) {
+        List<StoreForMapResponse> storesWithRegion = storeRepository.getStoresWithRegion(sido, gugun);
+        return StoreListForMapResponse.builder()
+                .stores(storesWithRegion)
                 .build();
     }
 }

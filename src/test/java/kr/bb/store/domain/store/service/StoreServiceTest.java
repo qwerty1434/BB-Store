@@ -250,7 +250,7 @@ class StoreServiceTest {
         em.clear();
 
         // when
-        StoresByLocationResponse nearbyStores = storeService.getNearbyStores(centerLat, centerLON);
+        StoreListForMapResponse nearbyStores = storeService.getNearbyStores(centerLat, centerLON);
 
         // then
         assertThat(nearbyStores.getStores()).hasSize(2);

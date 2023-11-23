@@ -3,6 +3,8 @@ package kr.bb.store.domain.store.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.store.entity.Store;
+import kr.bb.store.domain.store.entity.address.Gugun;
+import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.handler.response.QStoreForMapResponse;
 import kr.bb.store.domain.store.handler.response.StoreForMapResponse;
 import org.springframework.data.domain.Page;
@@ -58,6 +60,27 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 )
                 .fetch();
     }
+
+    @Override
+    public List<StoreForMapResponse> getStoresWithRegion(Sido sido, Gugun gugun) {
+        return queryFactory.select(new QStoreForMapResponse(
+                        store.id,
+                        store.storeName,
+                        store.detailInfo,
+                        store.averageRating,
+                        storeAddress.lat,
+                        storeAddress.lon
+                ))
+                .from(storeAddress)
+                .leftJoin(storeAddress.store, store)
+                .where(
+                        storeAddress.sido.eq(sido),
+                        storeAddress.gugun.eq(gugun)
+                )
+                .fetch();
+    }
+
+
 
     private BooleanExpression withinRadius(double centerLat, double centerLon, double radius) {
         return storeAddress.lat.between(centerLat - calculateLatDifference(radius), centerLat + calculateLatDifference(radius))

@@ -11,7 +11,7 @@ import kr.bb.store.domain.store.exception.StoreNotFoundException;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
 import kr.bb.store.domain.store.handler.response.StoreInfoManagerResponse;
 import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
-import kr.bb.store.domain.store.handler.response.StoresByLocationResponse;
+import kr.bb.store.domain.store.handler.response.StoreListForMapResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -212,7 +212,7 @@ class StoreReaderTest {
         em.clear();
 
         // when
-        StoresByLocationResponse nearbyStores = storeReader.getNearbyStores(centerLat, centerLON);
+        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(centerLat, centerLON);
 
         // then
         assertThat(nearbyStores.getStores()).hasSize(2);

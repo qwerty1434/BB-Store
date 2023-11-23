@@ -56,4 +56,9 @@ public class StoreController {
     public ResponseEntity getNearbyStores(@PathVariable Double lat, @PathVariable Double lon) {
         return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon));
     }
+
+    @GetMapping("/map/region?sido={sido}&gugun={gugun}")
+    public ResponseEntity getStoresWithRegion(@PathVariable String sido, @PathVariable String gugun) {
+        return ResponseEntity.ok().body(storeService.getStoresWithRegion(sido,gugun));
+    }
 }
