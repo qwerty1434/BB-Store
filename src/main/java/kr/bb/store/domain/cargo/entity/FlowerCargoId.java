@@ -1,11 +1,21 @@
 package kr.bb.store.domain.cargo.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Getter
+@Builder
 @Embeddable
-public class FlowerCargoId implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+public class FlowerCargoId implements Serializable{
     private Long storeId;
 
     private Long flowerId;
@@ -27,4 +37,5 @@ public class FlowerCargoId implements Serializable {
     public int hashCode() {
         return Objects.hash(storeId, flowerId);
     }
+
 }
