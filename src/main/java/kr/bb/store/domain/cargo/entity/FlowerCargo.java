@@ -22,7 +22,11 @@ public class FlowerCargo extends BaseEntity {
 
     private Long stock;
 
+    public void modifyStock(Long stock) {
+        this.stock = (stock < 0) ? 0L : stock;
+    }
+
     public void updateStock(Long stock) {
-        this.stock = stock;
+        this.stock = (this.stock + stock < 0) ? 0L : this.stock + stock;
     }
 }

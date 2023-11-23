@@ -4,6 +4,7 @@ package kr.bb.store.domain.cargo.service;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
+import kr.bb.store.domain.cargo.exception.FlowerCargoNotFoundException;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,15 +20,21 @@ public class CargoService {
     private final FlowerCargoRepository flowerCargoRepository;
 
     @Transactional
-    public void modifyStock(Long storeId, List<StockModifyDto> stockModifyDtos) {
+    public void modifyAllStocks(Long storeId, List<StockModifyDto> stockModifyDtos) {
         stockModifyDtos.forEach(stockModifyDto -> {
             FlowerCargoId flowerCargoId = makeKeys(storeId, stockModifyDto.getFlowerId());
-            FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId).orElseThrow();
-            flowerCargo.updateStock(stockModifyDto.getStock());
+            FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
+                    .orElseThrow(FlowerCargoNotFoundException::new);
+            flowerCargo.modifyStock(stockModifyDto.getStock());
         });
     }
 
-
+    public void PlusStockCount(Long storeId, Long flowerId, Long stock) {
+        FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
+        FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
+                .orElseThrow(FlowerCargoNotFoundException::new);
+        flowerCargo.updateStock(stock);
+    }
 
     private FlowerCargoId makeKeys(Long storeId, Long flowerId) {
         return FlowerCargoId.builder()

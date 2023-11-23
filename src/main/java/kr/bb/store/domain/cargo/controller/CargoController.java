@@ -16,7 +16,7 @@ public class CargoController {
     @PutMapping("/{storeId}/flowers/stock")
     public ResponseEntity modifyAllStocks(@PathVariable Long storeId,
                                           @RequestBody StockModifyRequest stockModifyRequest) {
-        cargoService.modifyStock(storeId,stockModifyRequest.getStockModifyDtos());
+        cargoService.modifyAllStocks(storeId,stockModifyRequest.getStockModifyDtos());
         return ResponseEntity.ok().build();
     }
 }
