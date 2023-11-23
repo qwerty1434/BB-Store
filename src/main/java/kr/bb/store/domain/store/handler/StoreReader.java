@@ -6,9 +6,7 @@ import kr.bb.store.domain.store.entity.StoreAddress;
 import kr.bb.store.domain.store.exception.DeliveryPolicyNotFoundException;
 import kr.bb.store.domain.store.exception.StoreAddressNotFoundException;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
-import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
-import kr.bb.store.domain.store.handler.response.StoreInfoManagerResponse;
-import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
+import kr.bb.store.domain.store.handler.response.*;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -17,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @Component
@@ -24,6 +24,8 @@ public class StoreReader {
     private final StoreRepository storeRepository;
     private final StoreAddressRepository storeAddressRepository;
     private final DeliveryPolicyRepository deliveryPolicyRepository;
+
+    private final Float RADIUS_FOR_MAP = 5F;
 
     public DetailInfoResponse readDetailInfo(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
@@ -68,6 +70,14 @@ public class StoreReader {
                 .detailInfo(store.getDetailInfo())
                 .address(storeAddress.getAddress())
                 .addressDetail(storeAddress.getDetailAddress())
+                .build();
+    }
+
+    public StoresByLocationResponse getNearbyStores(Float lat, Float lon) {
+        List<StoreForMapResponse> nearbyStores = storeRepository.getNearbyStores(lat, lon, RADIUS_FOR_MAP);
+        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+        return StoresByLocationResponse.builder()
+                .stores(nearbyStores)
                 .build();
     }
 }

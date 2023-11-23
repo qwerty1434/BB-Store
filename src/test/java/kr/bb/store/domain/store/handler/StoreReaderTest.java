@@ -11,6 +11,7 @@ import kr.bb.store.domain.store.exception.StoreNotFoundException;
 import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
 import kr.bb.store.domain.store.handler.response.StoreInfoManagerResponse;
 import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
+import kr.bb.store.domain.store.handler.response.StoresByLocationResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;

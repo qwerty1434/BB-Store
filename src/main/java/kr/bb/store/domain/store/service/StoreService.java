@@ -63,4 +63,8 @@ public class StoreService {
     public StoreInfoManagerResponse getStoreInfoForManager(Long storeId) {
         return storeReader.readForManager(storeId);
     }
+
+    public StoresByLocationResponse getNearbyStores(Float lat, Float lon) {
+        return null;
+    }
 }
