@@ -4,7 +4,11 @@ import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.address.Gugun;
+import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
+import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
+import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
 import kr.bb.store.domain.store.handler.*;
 import kr.bb.store.domain.store.handler.response.*;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +29,8 @@ public class StoreService {
     private final StoreAddressCreator storeAddressCreator;
     private final DeliveryPolicyCreator deliveryPolicyCreator;
     private final StoreReader storeReader;
-    private final SidoReader sidoReader;
-    private final GugunReader gugunReader;
+    private final SidoRepository sidoRepository;
+    private final GugunRepository gugunRepository;
 
     @Transactional
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
@@ -76,8 +80,8 @@ public class StoreService {
     }
     public StoreListForMapResponse getStoresWithRegion(String sidoName, String gugunName) {
         // TODO : 좋아요 여부 feign으로 받아와서 채우기
-        Sido sido = sidoReader.readSido(sidoName);
-        Gugun gugun = gugunReader.readGugun(gugunName);
+        Sido sido = sidoRepository.findByName(sidoName).orElseThrow(SidoNotFoundException::new);
+        Gugun gugun = gugunRepository.findByName(gugunName).orElseThrow(GugunNotFoundException::new);
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido, gugun);
 
         return storesWithRegion;
