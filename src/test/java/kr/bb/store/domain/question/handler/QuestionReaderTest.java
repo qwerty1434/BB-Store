@@ -1,6 +1,7 @@
 package kr.bb.store.domain.question.handler;
 
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
+import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.repository.AnswerRepository;
@@ -11,9 +12,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -102,6 +106,107 @@ class QuestionReaderTest {
         assertThat(savedQuestion.getIsRead()).isTrue();
 
     }
+
+    @DisplayName("isReplied가 null일 때 해당 가게의 모든 질문을 가져온다")
+    @Test
+    void readQuestionsForStoreOwner() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Question q1 = createQuestion(store);
+        Question q2 = createQuestion(store);
+        Question q3 = createQuestion(store);
+        Question q4 = createQuestion(store);
+        Question q5 = createQuestion(store);
+        questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
+
+        Answer a1 = createAnswer(q1);
+        Answer a2 = createAnswer(q2);
+        Answer a3 = createAnswer(q3);
+        answerRepository.saveAll(List.of(a1,a2,a3));
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Boolean isReplied = null;
+
+        // when
+        Page<QuestionForOwnerDto> result =
+                questionReader.readQuestionsForStoreOwner(store.getId(), isReplied, pageRequest);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(5);
+        assertThat(result.getContent()).extracting("isReplied")
+                .containsExactlyInAnyOrder(
+                        true,true,true,false,false
+                );
+
+    }
+
+    @DisplayName("isReplied가 true일 때 해당 가게의 질문 중 답변한 질문만 가져온다")
+    @Test
+    void readRepliedQuestionsForStoreOwner() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Question q1 = createQuestion(store);
+        Question q2 = createQuestion(store);
+        Question q3 = createQuestion(store);
+        Question q4 = createQuestion(store);
+        Question q5 = createQuestion(store);
+        questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
+
+        Answer a1 = createAnswer(q1);
+        Answer a2 = createAnswer(q2);
+        Answer a3 = createAnswer(q3);
+        answerRepository.saveAll(List.of(a1,a2,a3));
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Boolean isReplied = true;
+
+        // when
+        Page<QuestionForOwnerDto> result =
+                questionReader.readQuestionsForStoreOwner(store.getId(), isReplied, pageRequest);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(3);
+
+    }
+
+    @DisplayName("isReplied가 false일 때 해당 가게의 질문 중 답변하지 않은 질문만 가져온다")
+    @Test
+    void readNonRepliedQuestionsForStoreOwner() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Question q1 = createQuestion(store);
+        Question q2 = createQuestion(store);
+        Question q3 = createQuestion(store);
+        Question q4 = createQuestion(store);
+        Question q5 = createQuestion(store);
+        questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
+
+        Answer a1 = createAnswer(q1);
+        Answer a2 = createAnswer(q2);
+        Answer a3 = createAnswer(q3);
+        answerRepository.saveAll(List.of(a1,a2,a3));
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Boolean isReplied = false;
+
+        // when
+        Page<QuestionForOwnerDto> result =
+                questionReader.readQuestionsForStoreOwner(store.getId(), isReplied, pageRequest);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(2);
+
+    }
+
 
 
     private Question createQuestion(Store store) {
