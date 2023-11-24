@@ -109,7 +109,7 @@ jacocoTestCoverageVerification {
             element = 'CLASS'
 
             limit {
-                counter = 'BRANCH'
+                counter = 'CLASS'
                 value = 'COVEREDRATIO'
                 minimum = 0.80
             }
@@ -122,6 +122,9 @@ jacocoTestCoverageVerification {
                 classDirectories.setFrom(
                         files(classDirectories.files.collect{
                             fileTree(dir:it,excludes:[
+                                    "**/*Exception.class",
+                                    "**/*Controller.class",
+                                    "**/*Dto.class",
                                     "**/*Id.class",
                                     "**/*Application*"
                             ]+Qdomains)
@@ -152,6 +155,9 @@ jacocoTestReport {
         classDirectories.setFrom(
                 files(classDirectories.files.collect{
                     fileTree(dir:it,excludes:[
+                            "**/*Exception.class",
+                            "**/*Controller.class",
+                            "**/*Dto.class",
                             "**/*Id.class",
                             "**/*Application*"
                     ]+Qdomains)

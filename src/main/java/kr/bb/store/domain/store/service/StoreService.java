@@ -42,7 +42,7 @@ public class StoreService {
         storeManager.edit(storeId, storeInfoEditRequest);
     }
 
-    public DetailInfoResponse getStoreInfo(Long storeId) {
+    public StoreDetailInfoResponse getStoreInfo(Long storeId) {
         return storeReader.readDetailInfo(storeId);
     }
 

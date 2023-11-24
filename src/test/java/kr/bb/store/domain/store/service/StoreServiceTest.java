@@ -128,7 +128,7 @@ class StoreServiceTest {
         em.clear();
 
         // when
-        DetailInfoResponse response = storeService.getStoreInfo(storeId);
+        StoreDetailInfoResponse response = storeService.getStoreInfo(storeId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
