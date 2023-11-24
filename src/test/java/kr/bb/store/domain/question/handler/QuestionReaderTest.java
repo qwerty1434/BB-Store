@@ -2,6 +2,7 @@ package kr.bb.store.domain.question.handler;
 
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
+import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.repository.AnswerRepository;
@@ -207,7 +208,44 @@ class QuestionReaderTest {
 
     }
 
+    @DisplayName("해당 상품에 달린 문의를 조회한다")
+    @Test
+    void readQuestionsInProduct() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
 
+        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
+
+        Long productId = 1L;
+        Long userId = 2L;
+        Boolean isReplied = false;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<QuestionInProductDto> result = questionReader.readQuestionsInProduct(userId, productId, isReplied, pageRequest);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(3);
+    }
+
+
+    private Question createQuestionWithProductIdAndUserId(Store store, Long productId, Long userId) {
+        return Question.builder()
+                .store(store)
+                .userId(userId)
+                .nickname("닉네임")
+                .productId(productId)
+                .title("질문제목")
+                .content("질문내용")
+                .isSecret(true)
+                .build();
+    }
 
     private Question createQuestion(Store store) {
         return Question.builder()
