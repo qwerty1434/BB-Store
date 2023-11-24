@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Entity
 public class Answer extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @MapsId

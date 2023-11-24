@@ -1,5 +1,6 @@
 package kr.bb.store.domain.question.controller;
 
+import kr.bb.store.domain.question.controller.request.AnswerCreateRequest;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.service.QuestionService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,12 @@ public class QuestionController {
     @GetMapping("/questions/{questionId}")
     public ResponseEntity getQuestionDetail(@PathVariable Long questionId) {
         return ResponseEntity.ok().body(questionService.getQuestionInfo(questionId));
+    }
+
+    @PostMapping("/questions/{questionId}/answers")
+    public ResponseEntity createQuestion(@PathVariable Long questionId,
+                                         @RequestBody AnswerCreateRequest answerCreateRequest) {
+        questionService.createAnswer(questionId, answerCreateRequest.getContent());
+        return ResponseEntity.ok().build();
     }
 }

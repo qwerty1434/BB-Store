@@ -2,7 +2,9 @@ package kr.bb.store.domain.question.service;
 
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
+import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
+import kr.bb.store.domain.question.handler.AnswerCreator;
 import kr.bb.store.domain.question.handler.QuestionCreator;
 import kr.bb.store.domain.question.handler.QuestionReader;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class QuestionService {
     private final QuestionCreator questionCreator;
+    private final AnswerCreator answerCreator;
     private final QuestionReader questionReader;
 
     @Transactional
@@ -26,6 +29,11 @@ public class QuestionService {
         String nickname = "유저명";
         String productName = "제품명";
         return questionReader.readDetailInfo(questionId, nickname, productName);
+    }
+
+    @Transactional
+    public Answer createAnswer(Long questionId, String content) {
+        return answerCreator.create(questionId, content);
     }
 
 }
