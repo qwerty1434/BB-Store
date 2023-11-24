@@ -8,7 +8,7 @@ import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
-import kr.bb.store.domain.store.handler.response.DetailInfoResponse;
+import kr.bb.store.domain.store.handler.response.StoreDetailInfoResponse;
 import kr.bb.store.domain.store.handler.response.StoreInfoManagerResponse;
 import kr.bb.store.domain.store.handler.response.StoreInfoUserResponse;
 import kr.bb.store.domain.store.handler.response.StoreListForMapResponse;
@@ -68,7 +68,7 @@ class StoreReaderTest {
         em.clear();
 
         // when
-        DetailInfoResponse response = storeReader.readDetailInfo(store.getId());
+        StoreDetailInfoResponse response = storeReader.readDetailInfo(store.getId());
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");

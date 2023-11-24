@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DetailInfoResponse {
+public class StoreDetailInfoResponse {
     private String storeName;
     private String detailInfo;
     private String storeThumbnailImage;
@@ -32,8 +32,8 @@ public class DetailInfoResponse {
     private Double lat;
     private Double lon;
 
-    public static DetailInfoResponse of(Store store, DeliveryPolicy deliveryPolicy, StoreAddress storeAddress) {
-        return DetailInfoResponse.builder()
+    public static StoreDetailInfoResponse of(Store store, DeliveryPolicy deliveryPolicy, StoreAddress storeAddress) {
+        return StoreDetailInfoResponse.builder()
                 .storeName(store.getStoreName())
                 .detailInfo(store.getDetailInfo())
                 .storeThumbnailImage(store.getStoreThumbnailImage())

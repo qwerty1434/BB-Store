@@ -29,14 +29,14 @@ public class StoreReader {
 
     private final Double RADIUS_FOR_MAP = 5D;
 
-    public DetailInfoResponse readDetailInfo(Long storeId) {
+    public StoreDetailInfoResponse readDetailInfo(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         DeliveryPolicy deliveryPolicy = deliveryPolicyRepository.findByStoreId(storeId)
                 .orElseThrow(DeliveryPolicyNotFoundException::new);
         StoreAddress storeAddress = storeAddressRepository.findByStoreId(storeId)
                 .orElseThrow(StoreAddressNotFoundException::new);
 
-        return DetailInfoResponse.of(store,deliveryPolicy,storeAddress);
+        return StoreDetailInfoResponse.of(store,deliveryPolicy,storeAddress);
     }
 
     public Page<Store> readStoresWithPaging(Pageable pageable) {
