@@ -3,7 +3,9 @@ package kr.bb.store.domain.question.service;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.controller.response.QuestionsForOwnerPagingResponse;
+import kr.bb.store.domain.question.controller.response.QuestionsInProductPagingResponse;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
+import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.handler.AnswerCreator;
@@ -14,6 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -43,9 +48,18 @@ public class QuestionService {
 
     public QuestionsForOwnerPagingResponse getQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {
         Page<QuestionForOwnerDto> questionForOwnerDtos = questionReader.readQuestionsForStoreOwner(storeId, isReplied, pageable);
+        // TODO : Feign통신으로 productName 받아와 값 채우기
         return QuestionsForOwnerPagingResponse.builder()
                 .data(questionForOwnerDtos.getContent())
                 .totalCnt(questionForOwnerDtos.getTotalElements())
+                .build();
+    }
+
+    public QuestionsInProductPagingResponse getQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+        Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(userId, productId, isReplied, pageable);
+        return QuestionsInProductPagingResponse.builder()
+                .data(questionInProductDtos.getContent())
+                .totalCnt(questionInProductDtos.getTotalElements())
                 .build();
     }
 }

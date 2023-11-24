@@ -31,7 +31,7 @@ public class QuestionController {
     }
 
     @PostMapping("/questions/{questionId}/answers")
-    public ResponseEntity createQuestion(@PathVariable Long questionId,
+    public ResponseEntity createAnswer(@PathVariable Long questionId,
                                          @RequestBody AnswerCreateRequest answerCreateRequest) {
         questionService.createAnswer(questionId, answerCreateRequest.getContent());
         return ResponseEntity.ok().build();
@@ -40,6 +40,13 @@ public class QuestionController {
     @GetMapping("/{storeId}/questions/is-replied/{isReplied}")
     public ResponseEntity storeQuestions(@PathVariable Long storeId, @PathVariable Boolean isReplied, Pageable pageable) {
         return ResponseEntity.ok().body(questionService.getQuestionsForStoreOwner(storeId,isReplied,pageable));
+    }
+
+    @GetMapping("/questions/product/{productid}/is-replied/{isReplied}")
+    public ResponseEntity productQuestions(@PathVariable Long productId, @PathVariable Boolean isReplied, Pageable pageable) {
+        // TODO : header값으로 바꾸기
+        Long userId = 1L;
+        return ResponseEntity.ok().body(questionService.getQuestionsInProduct(userId, productId, isReplied, pageable));
     }
 
 }

@@ -3,6 +3,7 @@ package kr.bb.store.domain.question.handler;
 import kr.bb.store.domain.question.dto.AnswerDto;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
+import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.exception.QuestionNotFoundException;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -42,5 +42,9 @@ public class QuestionReader {
 
     public Page<QuestionForOwnerDto> readQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getQuestionsForStoreOwnerWithPaging(storeId, isReplied, pageable);
+    }
+
+    public Page<QuestionInProductDto> readQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+        return questionRepository.getQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 }

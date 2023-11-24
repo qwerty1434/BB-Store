@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionForOwnerDto {
-    private String key;
+    private Long key;
     private String productName;
     private String nickname;
     private String title;
@@ -23,8 +23,9 @@ public class QuestionForOwnerDto {
     private Boolean isRead;
 
     @QueryProjection
-    public QuestionForOwnerDto(Long key, String title, LocalDateTime createdAt, Boolean isReplied, Boolean isRead) {
-        this.key = key.toString();
+    public QuestionForOwnerDto(Long key, String nickname, String title, LocalDateTime createdAt, Boolean isReplied, Boolean isRead) {
+        this.key = key;
+        this.nickname = nickname;
         this.title = title;
         this.createdAt = createdAt.toLocalDate();
         this.isReplied = isReplied;

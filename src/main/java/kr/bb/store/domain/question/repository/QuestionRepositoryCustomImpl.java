@@ -4,8 +4,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.question.dto.QQuestionForOwnerDto;
+import kr.bb.store.domain.question.dto.QQuestionInProductDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
-import kr.bb.store.domain.question.entity.Question;
+import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     public Page<QuestionForOwnerDto> getQuestionsForStoreOwnerWithPaging(Long storeId, Boolean isReplied, Pageable pageable) {
         List<QuestionForOwnerDto> contents = queryFactory.select(new QQuestionForOwnerDto(
                         question.id,
+                        question.nickname,
                         question.title,
                         question.createdAt,
                         Expressions.asBoolean(answer.question.id.isNotNull()),
@@ -37,6 +39,40 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .rightJoin(answer.question, question)
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null
+                )
+                .fetch();
+
+        Long count = queryFactory
+                .select(question.id.count())
+                .from(answer)
+                .rightJoin(answer.question, question)
+                .where(
+                        isReplied != null ? checkRepliedCondition(isReplied) : null
+                )
+                .fetchOne();
+        return new PageImpl<>(contents,pageable,count);
+
+    }
+
+    @Override
+    public Page<QuestionInProductDto> getQuestionsInProductWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+        List<QuestionInProductDto> contents = queryFactory.select(new QQuestionInProductDto(
+                        question.id,
+                        Expressions.asBoolean(answer.question.id.isNotNull()),
+                        question.title,
+                        question.content,
+                        question.nickname,
+                        question.createdAt,
+                        question.isSecret,
+                        question.userId.eq(userId),
+                        answer.content,
+                        answer.createdAt
+                ))
+                .from(answer)
+                .rightJoin(answer.question, question)
+                .where(
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.productId.eq(productId)
                 )
                 .fetch();
 
