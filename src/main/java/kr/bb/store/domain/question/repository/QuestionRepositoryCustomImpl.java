@@ -3,10 +3,7 @@ package kr.bb.store.domain.question.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.bb.store.domain.question.dto.QQuestionForOwnerDto;
-import kr.bb.store.domain.question.dto.QQuestionInProductDto;
-import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
-import kr.bb.store.domain.question.dto.QuestionInProductDto;
+import kr.bb.store.domain.question.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -76,6 +73,37 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 )
                 .fetch();
 
+        Long count = queryFactory
+                .select(question.id.count())
+                .from(answer)
+                .rightJoin(answer.question, question)
+                .where(
+                        isReplied != null ? checkRepliedCondition(isReplied) : null
+                )
+                .fetchOne();
+        return new PageImpl<>(contents,pageable,count);
+
+    }
+
+    @Override
+    public Page<MyQuestionInProductDto> getMyQuestionsInMypageWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+        List<MyQuestionInProductDto> contents = queryFactory.select(new QMyQuestionInMypageDto(
+                        question.id,
+                        Expressions.asBoolean(answer.question.id.isNotNull()),
+                        question.title,
+                        question.content,
+                        question.nickname,
+                        question.createdAt,
+                        answer.content,
+                        answer.createdAt))
+                .from(answer)
+                .rightJoin(answer.question, question)
+                .where(
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.productId.eq(productId),
+                        question.userId.eq(userId)
+                )
+                .fetch();
         Long count = queryFactory
                 .select(question.id.count())
                 .from(answer)
