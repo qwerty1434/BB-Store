@@ -56,7 +56,7 @@ public class QuestionController {
         return ResponseEntity.ok().body(questionService.getMyQuestionsInProduct(userId, productId, isReplied, pageable));
     }
 
-    @GetMapping("/questions/myPage")
+    @GetMapping("/questions/my-page")
     public ResponseEntity myQuestions(@RequestParam(required = false) Boolean isReplied, Pageable pageable) {
         // TODO : header값으로 바꾸기
         Long userId = 1L;
