@@ -21,4 +21,9 @@ public class QuestionController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/questions/{questionId}")
+    public ResponseEntity getQuestionDetail(@PathVariable Long questionId) {
+        return ResponseEntity.ok().body(questionService.getQuestionInfo(questionId));
+    }
 }

@@ -2,6 +2,7 @@ package kr.bb.store.domain.question.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,6 +26,9 @@ public class Answer extends BaseEntity {
     @NotNull
     private String content;
 
-    @NotNull
-    private LocalDateTime repliedAt;
+    @Builder
+    public Answer(Question question, String content) {
+        this.question = question;
+        this.content = content;
+    }
 }

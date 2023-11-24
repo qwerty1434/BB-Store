@@ -51,4 +51,8 @@ public class Question extends BaseEntity {
         this.content = content;
         this.isSecret = isSecret;
     }
+
+    public void check() {
+        this.isRead = true;
+    }
 }
