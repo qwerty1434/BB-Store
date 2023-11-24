@@ -1,10 +1,8 @@
 package kr.bb.store.domain.question.service;
 
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
-import kr.bb.store.domain.question.controller.response.MyQuestionsInProductPagingResponse;
-import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
-import kr.bb.store.domain.question.controller.response.QuestionsForOwnerPagingResponse;
-import kr.bb.store.domain.question.controller.response.QuestionsInProductPagingResponse;
+import kr.bb.store.domain.question.controller.response.*;
+import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
 import kr.bb.store.domain.question.dto.MyQuestionInProductDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.dto.QuestionInProductDto;
@@ -62,11 +60,19 @@ public class QuestionService {
                 .build();
     }
 
-    public MyQuestionsInProductPagingResponse getMyQuestionsInMypage(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
-        Page<MyQuestionInProductDto> questionInProductDtos = questionReader.readQuestionsForMypage(userId, productId, isReplied, pageable);
+    public MyQuestionsInProductPagingResponse getMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+        Page<MyQuestionInProductDto> questionInProductDtos = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageable);
         return MyQuestionsInProductPagingResponse.builder()
                 .data(questionInProductDtos.getContent())
                 .totalCnt(questionInProductDtos.getTotalElements())
+                .build();
+    }
+
+    public MyQuestionsInMypagePagingResponse getMyQuestions(Long userId, Boolean isReplied, Pageable pageable) {
+        Page<MyQuestionInMypageDto> myQuestionInMypageDtos = questionReader.readQuestionsForMypage(userId, isReplied, pageable);
+        return MyQuestionsInMypagePagingResponse.builder()
+                .data(myQuestionInMypageDtos.getContent())
+                .totalCnt(myQuestionInMypageDtos.getTotalElements())
                 .build();
     }
 }

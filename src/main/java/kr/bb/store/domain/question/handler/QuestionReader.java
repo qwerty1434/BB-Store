@@ -1,10 +1,7 @@
 package kr.bb.store.domain.question.handler;
 
-import kr.bb.store.domain.question.dto.AnswerDto;
+import kr.bb.store.domain.question.dto.*;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
-import kr.bb.store.domain.question.dto.MyQuestionInProductDto;
-import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
-import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.exception.QuestionNotFoundException;
@@ -49,7 +46,11 @@ public class QuestionReader {
         return questionRepository.getQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 
-    public Page<MyQuestionInProductDto> readQuestionsForMypage(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
-        return questionRepository.getMyQuestionsInMypageWithPaging(userId, productId, isReplied, pageable);
+    public Page<MyQuestionInProductDto> readMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+        return questionRepository.getMyQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
+    }
+
+    public Page<MyQuestionInMypageDto> readQuestionsForMypage(Long userId, Boolean isReplied, Pageable pageable) {
+        return questionRepository.getMyQuestionsWithPaging(userId, isReplied, pageable);
     }
 }

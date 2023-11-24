@@ -78,7 +78,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .from(answer)
                 .rightJoin(answer.question, question)
                 .where(
-                        isReplied != null ? checkRepliedCondition(isReplied) : null
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.productId.eq(productId)
                 )
                 .fetchOne();
         return new PageImpl<>(contents,pageable,count);
@@ -86,8 +87,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     }
 
     @Override
-    public Page<MyQuestionInProductDto> getMyQuestionsInMypageWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
-        List<MyQuestionInProductDto> contents = queryFactory.select(new QMyQuestionInMypageDto(
+    public Page<MyQuestionInProductDto> getMyQuestionsInProductWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+        List<MyQuestionInProductDto> contents = queryFactory.select(new QMyQuestionInProductDto(
                         question.id,
                         Expressions.asBoolean(answer.question.id.isNotNull()),
                         question.title,
@@ -95,7 +96,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.nickname,
                         question.createdAt,
                         answer.content,
-                        answer.createdAt))
+                        answer.createdAt
+                ))
                 .from(answer)
                 .rightJoin(answer.question, question)
                 .where(
@@ -104,12 +106,47 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.userId.eq(userId)
                 )
                 .fetch();
+
         Long count = queryFactory
                 .select(question.id.count())
                 .from(answer)
                 .rightJoin(answer.question, question)
                 .where(
-                        isReplied != null ? checkRepliedCondition(isReplied) : null
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.productId.eq(productId),
+                        question.userId.eq(userId)
+                )
+                .fetchOne();
+        return new PageImpl<>(contents,pageable,count);
+
+    }
+
+    public Page<MyQuestionInMypageDto> getMyQuestionsWithPaging(Long userId, Boolean isReplied, Pageable pageable) {
+        List<MyQuestionInMypageDto> contents = queryFactory.select(new QMyQuestionInMypageDto(
+                        question.id,
+                        Expressions.asBoolean(answer.question.id.isNotNull()),
+                        question.title,
+                        question.content,
+                        question.nickname,
+                        question.createdAt,
+                        answer.content,
+                        answer.createdAt
+                ))
+                .from(answer)
+                .rightJoin(answer.question, question)
+                .where(
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.userId.eq(userId)
+                )
+                .fetch();
+
+        Long count = queryFactory
+                .select(question.id.count())
+                .from(answer)
+                .rightJoin(answer.question, question)
+                .where(
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.userId.eq(userId)
                 )
                 .fetchOne();
         return new PageImpl<>(contents,pageable,count);
