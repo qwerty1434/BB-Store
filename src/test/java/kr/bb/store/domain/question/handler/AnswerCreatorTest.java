@@ -82,6 +82,7 @@ class AnswerCreatorTest {
         return Question.builder()
                 .store(store)
                 .userId(1L)
+                .nickname("닉네임")
                 .productId(1L)
                 .title("질문제목")
                 .content("질문내용")

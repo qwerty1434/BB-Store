@@ -105,6 +105,7 @@ class QuestionServiceTest {
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)
+                .nickname("닉네임")
                 .build();
     }
 
@@ -116,6 +117,7 @@ class QuestionServiceTest {
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)
+                .nickname("닉네임")
                 .build();
     }
 
