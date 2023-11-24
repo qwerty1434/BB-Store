@@ -1,4 +1,4 @@
-package kr.bb.store.domain.question.controller.dto;
+package kr.bb.store.domain.question.dto;
 
 import kr.bb.store.domain.question.entity.Answer;
 import lombok.AllArgsConstructor;

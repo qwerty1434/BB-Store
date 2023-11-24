@@ -1,6 +1,6 @@
 package kr.bb.store.domain.question.controller.response;
 
-import kr.bb.store.domain.question.controller.dto.AnswerDto;
+import kr.bb.store.domain.question.dto.AnswerDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

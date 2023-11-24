@@ -1,6 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
-import kr.bb.store.domain.question.controller.dto.AnswerDto;
+import kr.bb.store.domain.question.dto.AnswerDto;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
