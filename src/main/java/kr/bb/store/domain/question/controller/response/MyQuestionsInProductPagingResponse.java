@@ -1,6 +1,6 @@
 package kr.bb.store.domain.question.controller.response;
 
-import kr.bb.store.domain.question.dto.MyQuestionInProductDto;
+import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyQuestionsInProductPagingResponse {
-    private List<MyQuestionInProductDto> data;
+    private List<MyQuestionInMypageDto> data;
     private Long totalCnt;
 }

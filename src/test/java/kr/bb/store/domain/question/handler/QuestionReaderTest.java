@@ -2,7 +2,6 @@ package kr.bb.store.domain.question.handler;
 
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
-import kr.bb.store.domain.question.dto.MyQuestionInProductDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
@@ -256,7 +255,7 @@ class QuestionReaderTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        Page<MyQuestionInProductDto> result = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageRequest);
+        Page<MyQuestionInMypageDto> result = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageRequest);
 
         // then
         assertThat(result.getTotalElements()).isEqualTo(2);

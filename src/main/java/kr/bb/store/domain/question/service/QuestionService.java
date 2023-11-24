@@ -3,7 +3,6 @@ package kr.bb.store.domain.question.service;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.controller.response.*;
 import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
-import kr.bb.store.domain.question.dto.MyQuestionInProductDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
@@ -61,7 +60,7 @@ public class QuestionService {
     }
 
     public MyQuestionsInProductPagingResponse getMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
-        Page<MyQuestionInProductDto> questionInProductDtos = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageable);
+        Page<MyQuestionInMypageDto> questionInProductDtos = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageable);
         return MyQuestionsInProductPagingResponse.builder()
                 .data(questionInProductDtos.getContent())
                 .totalCnt(questionInProductDtos.getTotalElements())

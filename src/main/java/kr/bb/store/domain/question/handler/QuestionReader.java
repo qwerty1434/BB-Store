@@ -46,7 +46,7 @@ public class QuestionReader {
         return questionRepository.getQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 
-    public Page<MyQuestionInProductDto> readMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<MyQuestionInMypageDto> readMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getMyQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 
