@@ -15,4 +15,5 @@ public class QuestionCreateRequest {
     private String title;
     private String content;
     private boolean isSecret;
+    private String nickname;
 }

@@ -22,6 +22,7 @@ public class QuestionCreator {
         Question question = Question.builder()
                 .store(store)
                 .userId(userId)
+                .nickname(questionCreateRequest.getNickname())
                 .productId(questionCreateRequest.getProductId())
                 .title(questionCreateRequest.getTitle())
                 .content(questionCreateRequest.getContent())
