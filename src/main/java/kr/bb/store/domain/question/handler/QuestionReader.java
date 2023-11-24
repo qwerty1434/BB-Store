@@ -2,13 +2,18 @@ package kr.bb.store.domain.question.handler;
 
 import kr.bb.store.domain.question.dto.AnswerDto;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
+import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.exception.QuestionNotFoundException;
 import kr.bb.store.domain.question.repository.AnswerRepository;
 import kr.bb.store.domain.question.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -33,5 +38,9 @@ public class QuestionReader {
                 .isReplied(answer != null)
                 .answer(answer == null ? null : AnswerDto.fromEntity(answer))
                 .build();
+    }
+
+    public Page<QuestionForOwnerDto> readQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {
+        return questionRepository.getQuestionsForStoreOwnerWithPaging(storeId, isReplied, pageable);
     }
 }

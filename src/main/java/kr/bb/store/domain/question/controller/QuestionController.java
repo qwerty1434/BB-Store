@@ -4,8 +4,10 @@ import kr.bb.store.domain.question.controller.request.AnswerCreateRequest;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.service.QuestionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -34,4 +36,10 @@ public class QuestionController {
         questionService.createAnswer(questionId, answerCreateRequest.getContent());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{storeId}/questions/is-replied/{isReplied}")
+    public ResponseEntity storeQuestions(@PathVariable Long storeId, @PathVariable Boolean isReplied, Pageable pageable) {
+        return ResponseEntity.ok().body(questionService.getQuestionsForStoreOwner(storeId,isReplied,pageable));
+    }
+
 }
