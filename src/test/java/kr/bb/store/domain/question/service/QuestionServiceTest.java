@@ -4,7 +4,6 @@ import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
-import kr.bb.store.domain.question.handler.QuestionReader;
 import kr.bb.store.domain.question.repository.AnswerRepository;
 import kr.bb.store.domain.question.repository.QuestionRepository;
 import kr.bb.store.domain.store.entity.Store;
@@ -68,13 +67,36 @@ class QuestionServiceTest {
         // when
         Question question = questionService.createQuestion(customerId, questionCreateRequest);
 
-
         // then
         assertThat(question.getId()).isNotNull();
         assertThat(question.getStore()).isNotNull();
         assertThat(question.getTitle()).isEqualTo("질문제목");
 
     }
+
+    @DisplayName("답변 정보를 전달받아 답변을 생성한다")
+    @Test
+    void createAnswer() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Question question = createQuestion(store);
+        questionRepository.save(question);
+
+        String content = "답변글";
+
+        // when
+        Answer answer = questionService.createAnswer(question.getId(),content);
+        answerRepository.save(answer);
+
+        // then
+        assertThat(answer.getQuestion()).isNotNull();
+        assertThat(answer.getContent()).isEqualTo(content);
+
+    }
+
+
 
     private QuestionCreateRequest createQuestionCreateRequest(Long storeId) {
         return QuestionCreateRequest.builder()

@@ -1,7 +1,8 @@
 package kr.bb.store.domain.question.handler;
 
-import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
+import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
+import kr.bb.store.domain.question.repository.AnswerRepository;
 import kr.bb.store.domain.question.repository.QuestionRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -11,71 +12,76 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class QuestionCreatorTest {
+class AnswerCreatorTest {
     @Autowired
-    private QuestionCreator questionCreator;
+    private AnswerCreator answerCreator;
     @Autowired
     private QuestionRepository questionRepository;
     @Autowired
-    private StoreRepository storeRepository;
+    private AnswerRepository answerRepository;
     @Autowired
-    private EntityManager em;
+    private StoreRepository storeRepository;
 
-    @DisplayName("질문 정보를 전달받아 질문을 생성한다")
+
+    @DisplayName("답변 정보를 전달받아 답변을 생성한다")
     @Test
-    void createQuestion() {
+    void createAnswer() {
         // given
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Long customerId = 2L;
+        Question question = createQuestion(store);
+        questionRepository.save(question);
 
-        QuestionCreateRequest questionCreateRequest = createQuestionCreateRequest(store.getId());
+        String content = "답변글";
 
         // when
-        Question question = questionCreator.create(customerId, questionCreateRequest);
+        Answer answer = answerCreator.create(question.getId(),content);
+        answerRepository.save(answer);
 
         // then
-        assertThat(question.getId()).isNotNull();
-        assertThat(question.getStore()).isNotNull();
-        assertThat(question.getTitle()).isEqualTo("질문제목");
+        assertThat(answer.getQuestion()).isNotNull();
+        assertThat(answer.getContent()).isEqualTo(content);
 
     }
 
-    @DisplayName("질문이 처음 생성됐을 때 확인 여부는 항상 '읽지 않음'이다")
+    @DisplayName("답변은 해당 질문과 동일한 Id값을 가져야 한다")
     @Test
-    void isReadAlwaysFalseWhenQuestionCreated() {
+    void AnswerMustHaveSameIdWithQuestion() {
         // given
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Long customerId = 2L;
+        Question q1 = createQuestion(store);
+        Question q2 = createQuestion(store);
+        Question q3 = createQuestion(store);
+        Question q4 = createQuestion(store);
+        Question q5 = createQuestion(store);
+        questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
 
-        QuestionCreateRequest questionCreateRequest = createQuestionCreateRequest(store.getId());
+        String content = "답변글";
 
         // when
-        Question question = questionCreator.create(customerId, questionCreateRequest);
-
-        em.flush();
-        em.clear();
-
-        Question savedQuestion = questionRepository.findById(question.getId()).get();
+        Answer answer = answerCreator.create(q5.getId(),content);
+        answerRepository.save(answer);
 
         // then
-        assertThat(savedQuestion.getIsRead()).isFalse();
+        assertThat(answer.getId()).isEqualTo(q5.getId());
+
     }
 
 
 
-    private QuestionCreateRequest createQuestionCreateRequest(Long storeId) {
-        return QuestionCreateRequest.builder()
-                .storeId(storeId)
+    private Question createQuestion(Store store) {
+        return Question.builder()
+                .store(store)
+                .userId(1L)
                 .productId(1L)
                 .title("질문제목")
                 .content("질문내용")
@@ -95,5 +101,4 @@ class QuestionCreatorTest {
                 .bank("가게 계좌 은행정보")
                 .build();
     }
-
 }
