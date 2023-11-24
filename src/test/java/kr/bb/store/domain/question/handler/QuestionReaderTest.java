@@ -1,6 +1,7 @@
 package kr.bb.store.domain.question.handler;
 
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
+import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
 import kr.bb.store.domain.question.dto.MyQuestionInProductDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.dto.QuestionInProductDto;
@@ -255,10 +256,36 @@ class QuestionReaderTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        Page<MyQuestionInProductDto> result = questionReader.readQuestionsForMypage(userId, productId, isReplied, pageRequest);
+        Page<MyQuestionInProductDto> result = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageRequest);
 
         // then
         assertThat(result.getTotalElements()).isEqualTo(2);
+
+    }
+
+    @DisplayName("내가 남긴 모든 문의를 확인한다")
+    @Test
+    void readMyQuestions() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
+
+        Long userId = 2L;
+        Boolean isReplied = false;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<MyQuestionInMypageDto> result = questionReader.readQuestionsForMypage(userId, isReplied, pageRequest);
+
+        // then
+        assertThat(result.getTotalElements()).isEqualTo(3);
 
     }
 
