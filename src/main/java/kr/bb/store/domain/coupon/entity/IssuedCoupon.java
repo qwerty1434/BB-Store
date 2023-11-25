@@ -2,16 +2,17 @@ package kr.bb.store.domain.coupon.entity;
 
 
 import kr.bb.store.domain.common.entity.BaseEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 @Entity
+@Getter
+@Builder
+@DynamicInsert
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class IssuedCoupon extends BaseEntity {
     @EmbeddedId
     private IssuedCouponId id;
@@ -21,6 +22,6 @@ public class IssuedCoupon extends BaseEntity {
     @JoinColumn(name="coupon_id")
     private Coupon coupon;
 
-    @NotNull
-    private boolean isUsed;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean isUsed;
 }

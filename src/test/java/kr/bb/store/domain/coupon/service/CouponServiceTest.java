@@ -5,6 +5,8 @@ import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
+import kr.bb.store.domain.store.entity.Store;
+import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +27,17 @@ class CouponServiceTest {
     @Autowired
     private CouponRepository couponRepository;
     @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
     private EntityManager em;
 
     @DisplayName("요청받은 내용으로 쿠폰 정보를 수정한다")
     @Test
     public void editCoupon() {
         // given
-        Long storeId = 1L;
-        Coupon coupon = couponCreator(storeId);
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         Coupon savedCoupon = couponRepository.save(coupon);
         CouponEditRequest couponRequest = CouponEditRequest.builder()
                 .couponName("변경된 쿠폰이름")
@@ -44,7 +49,7 @@ class CouponServiceTest {
                 .build();
 
         // when
-        couponService.editCoupon(storeId, coupon.getId(), couponRequest);
+        couponService.editCoupon(store.getId(), coupon.getId(), couponRequest);
 
         em.flush();
         em.clear();
@@ -60,8 +65,9 @@ class CouponServiceTest {
     @Test
     public void cannotEditCouponWhenStoreIdMismatches() {
         // given
-        Long storeId = 1L;
-        Coupon coupon = couponCreator(storeId);
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         couponRepository.save(coupon);
         CouponEditRequest couponRequest = CouponEditRequest.builder()
                 .couponName("변경된 쿠폰이름")
@@ -86,12 +92,13 @@ class CouponServiceTest {
     @Test
     public void softDeleteCoupon() {
         // given
-        Long storeId = 1L;
-        Coupon coupon = couponCreator(storeId);
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         couponRepository.save(coupon);
 
         // when
-        couponService.softDeleteCoupon(storeId,coupon.getId());
+        couponService.softDeleteCoupon(store.getId(),coupon.getId());
 
         // then
         assertThat(coupon.getIsDeleted()).isTrue();
@@ -102,8 +109,9 @@ class CouponServiceTest {
     @Test
     public void cannotDeleteCouponWhenStoreIdMismatches() {
         // given
-        Long storeId = 1L;
-        Coupon coupon = couponCreator(storeId);
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         couponRepository.save(coupon);
 
         Long wrongStoreId = 5L;
@@ -115,11 +123,23 @@ class CouponServiceTest {
 
     }
 
+    private Store createStore() {
+        return Store.builder()
+                .storeManagerId(1L)
+                .storeCode("가게코드")
+                .storeName("가게")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
 
-    private Coupon couponCreator(Long storeId) {
+    private Coupon couponCreator(Store store) {
         return Coupon.builder()
                 .couponCode("쿠폰코드")
-                .storeId(storeId)
+                .store(store)
                 .limitCount(100)
                 .couponName("쿠폰이름")
                 .discountPrice(10000L)

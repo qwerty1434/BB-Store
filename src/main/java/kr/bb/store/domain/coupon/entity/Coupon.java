@@ -1,14 +1,13 @@
 package kr.bb.store.domain.coupon.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
+import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
+import kr.bb.store.domain.store.entity.Store;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -23,8 +22,9 @@ public class Coupon extends BaseEntity {
     @NotNull
     private String couponCode;
 
-    @NotNull
-    private Long storeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="store_id")
+    private Store store;
 
     @NotNull
     private Integer limitCount;
@@ -45,11 +45,11 @@ public class Coupon extends BaseEntity {
     private LocalDate endDate;
 
     @Builder
-    public Coupon(String couponCode, Long storeId, Integer limitCount, String couponName, Long discountPrice, Long minPrice, LocalDate startDate, LocalDate endDate) {
+    public Coupon(String couponCode, Store store, Integer limitCount, String couponName, Long discountPrice, Long minPrice, LocalDate startDate, LocalDate endDate) {
         dateValidationCheck(startDate, endDate);
 
         this.couponCode = couponCode;
-        this.storeId = storeId;
+        this.store = store;
         this.limitCount = limitCount;
         this.couponName = couponName;
         this.discountPrice = discountPrice;
@@ -68,6 +68,10 @@ public class Coupon extends BaseEntity {
         this.minPrice = minPrice;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void checkExpire(LocalDate now) {
+        if(this.endDate.isBefore(now)) throw new ExpiredCouponException();
     }
 
 

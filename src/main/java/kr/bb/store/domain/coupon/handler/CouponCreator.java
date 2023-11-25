@@ -3,6 +3,7 @@ package kr.bb.store.domain.coupon.handler;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.handler.dto.CouponDto;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
+import kr.bb.store.domain.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +14,11 @@ import java.util.UUID;
 public class CouponCreator {
     private final CouponRepository couponRepository;
 
-    public Coupon create(Long storeId, CouponDto couponDto) {
+    public Coupon create(Store store, CouponDto couponDto) {
 
         Coupon coupon = Coupon.builder()
                 .couponCode(UUID.randomUUID().toString())
-                .storeId(storeId)
+                .store(store)
                 .limitCount(couponDto.getLimitCount())
                 .couponName(couponDto.getCouponName())
                 .discountPrice(couponDto.getDiscountPrice())

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
@@ -40,5 +42,14 @@ public class CouponController {
     @GetMapping("/{storeId}/coupons")
     public ResponseEntity coupons(@PathVariable Long storeId) {
         return ResponseEntity.ok().body(couponService.getAllStoreCoupons(storeId));
+    }
+
+    @PostMapping("/coupons/{couponId}")
+    public ResponseEntity downloadCoupon(@PathVariable Long couponId) {
+        // TODO : header로 받기
+        Long userId = 1L;
+        couponService.downloadCoupon(userId, couponId, LocalDate.now());
+
+        return ResponseEntity.ok().build();
     }
 }

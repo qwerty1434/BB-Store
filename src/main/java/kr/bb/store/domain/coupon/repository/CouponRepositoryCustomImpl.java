@@ -21,7 +21,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
 
     public List<CouponForOwnerDto> findAllDtoByStoreId(Long storeId) {
         return queryFactory.select(new QCouponForOwnerDto(
-                    coupon.storeId,
+                    coupon.store.id,
                     coupon.couponCode,
                     coupon.couponName,
                     coupon.minPrice,
@@ -33,7 +33,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .from(coupon)
                 .leftJoin(issuedCoupon)
                 .on(coupon.id.eq(issuedCoupon.id.couponId))
-                .where(coupon.storeId.eq(storeId))
+                .where(coupon.store.id.eq(storeId))
                 .groupBy(coupon.id)
                 .fetch();
     }
