@@ -4,6 +4,7 @@ package kr.bb.store.domain.coupon.handler;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
+import kr.bb.store.domain.coupon.handler.dto.CouponDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,17 @@ class CouponCreatorTest {
         Long minPrice = 100000L;
         LocalDate startDate = LocalDate.of(2023,12,13);
         LocalDate endDate = LocalDate.of(2023,12,15);
+        CouponDto couponDto = CouponDto.builder()
+                .limitCount(limitCount)
+                .couponName(couponName)
+                .discountPrice(discountPrice)
+                .minPrice(minPrice)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
 
         // when
-        Coupon coupon = couponCreator.create(storeId, limitCount, couponName, discountPrice, minPrice, startDate, endDate);
+        Coupon coupon = couponCreator.create(storeId, couponDto);
 
         // then
         assertThat(coupon.getId()).isNotNull();
@@ -46,16 +55,13 @@ class CouponCreatorTest {
     void endDateMustComesAfterStartDate() {
         // given
         Long storeId = 1L;
-        Integer limitCount = 100;
-        String couponName = "쿠폰명";
-        Long discountPrice = 10000L;
-        Long minPrice = 100000L;
         LocalDate startDate = LocalDate.of(2023,12,15);
         LocalDate endDate = LocalDate.of(2023,12,13);
+        CouponDto couponDto = createCouponDtoWithDate(startDate, endDate);
 
         // when // then
         assertThatThrownBy(() ->
-                couponCreator.create(storeId, limitCount, couponName, discountPrice, minPrice, startDate, endDate))
+                couponCreator.create(storeId, couponDto))
                 .isInstanceOf(InvalidCouponDurationException.class)
                 .hasMessage("시작일과 종료일이 올바르지 않습니다.");
     }
@@ -65,17 +71,14 @@ class CouponCreatorTest {
     void startDateMustComesAfterNow() {
         // given
         Long storeId = 1L;
-        Integer limitCount = 100;
-        String couponName = "쿠폰명";
-        Long discountPrice = 10000L;
-        Long minPrice = 100000L;
         LocalDate now = LocalDate.now();
         LocalDate startDate = now.minusDays(1);
         LocalDate endDate = now.plusDays(100);
+        CouponDto couponDto = createCouponDtoWithDate(startDate, endDate);
 
         // when // then
         assertThatThrownBy(() ->
-                couponCreator.create(storeId, limitCount, couponName, discountPrice, minPrice, startDate, endDate))
+                couponCreator.create(storeId, couponDto))
                 .isInstanceOf(InvalidCouponStartDateException.class)
                 .hasMessage("시작일이 올바르지 않습니다.");
 
@@ -86,21 +89,29 @@ class CouponCreatorTest {
     void startDateAndEndDateCanEqual() {
         // given
         Long storeId = 1L;
-        Integer limitCount = 100;
-        String couponName = "쿠폰명";
-        Long discountPrice = 10000L;
-        Long minPrice = 100000L;
         LocalDate now = LocalDate.now();
         LocalDate startDate = now;
         LocalDate endDate = now;
+        CouponDto couponDto = createCouponDtoWithDate(startDate, endDate);
 
         // when
-        Coupon coupon = couponCreator.create(storeId, limitCount, couponName, discountPrice, minPrice, startDate, endDate);
+        Coupon coupon = couponCreator.create(storeId, couponDto);
 
         // then
         assertThat(coupon.getId()).isNotNull();
         assertThat(coupon.getStartDate()).isEqualTo(coupon.getEndDate());
 
+    }
+
+    private CouponDto createCouponDtoWithDate(LocalDate startDate, LocalDate endDate) {
+        return CouponDto.builder()
+                .couponName("변경된 쿠폰이름")
+                .discountPrice(10_000L)
+                .minPrice(100_000L)
+                .limitCount(100)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
     }
 
 }
