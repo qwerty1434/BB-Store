@@ -1,6 +1,8 @@
 package kr.bb.store.domain.coupon.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
+import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
+import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -10,9 +12,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @Getter
 @Entity
 public class Coupon extends BaseEntity {
@@ -44,4 +44,34 @@ public class Coupon extends BaseEntity {
     @NotNull
     private LocalDate endDate;
 
+    @Builder
+    public Coupon(String couponCode, Long storeId, Integer limitCount, String couponName, Long discountPrice, Long minPrice, LocalDate startDate, LocalDate endDate) {
+        dateValidationCheck(startDate, endDate);
+
+        this.couponCode = couponCode;
+        this.storeId = storeId;
+        this.limitCount = limitCount;
+        this.couponName = couponName;
+        this.discountPrice = discountPrice;
+        this.minPrice = minPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void update(Integer limitCount, String couponName, Long discountPrice, Long minPrice,
+                       LocalDate startDate, LocalDate endDate) {
+        dateValidationCheck(startDate, endDate);
+
+        this.limitCount = limitCount;
+        this.couponName = couponName;
+        this.discountPrice = discountPrice;
+        this.minPrice = minPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    private void dateValidationCheck(LocalDate startDate, LocalDate endDate) {
+        if(startDate.isBefore(LocalDate.now())) throw new InvalidCouponStartDateException();
+        if(endDate.isBefore(startDate)) throw new InvalidCouponDurationException();
+    }
 }
