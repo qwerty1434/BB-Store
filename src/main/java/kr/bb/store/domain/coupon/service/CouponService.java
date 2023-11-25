@@ -2,6 +2,7 @@ package kr.bb.store.domain.coupon.service;
 
 import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
+import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.handler.CouponCreator;
@@ -36,5 +37,11 @@ public class CouponService {
 
     private void validateCouponAuthorization(Coupon coupon, Long storeId) {
         if(!coupon.getStoreId().equals(storeId)) throw new UnAuthorizedCouponException();
+    }
+
+    public CouponsForOwnerResponse getAllStoreCoupons(Long storeId) {
+        return CouponsForOwnerResponse.builder()
+                .data(couponReader.readCouponsForOwner(storeId))
+                .build();
     }
 }

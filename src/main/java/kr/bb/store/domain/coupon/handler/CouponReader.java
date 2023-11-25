@@ -1,10 +1,13 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.CouponNotFoundException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -13,5 +16,9 @@ public class CouponReader {
 
     public Coupon read(Long couponId) {
         return couponRepository.findById(couponId).orElseThrow(CouponNotFoundException::new);
+    }
+
+    public List<CouponForOwnerDto> readCouponsForOwner(Long storeId) {
+        return couponRepository.findAllDtoByStoreId(storeId);
     }
 }

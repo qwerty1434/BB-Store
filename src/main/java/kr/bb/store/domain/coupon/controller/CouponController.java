@@ -35,6 +35,10 @@ public class CouponController {
         couponService.softDeleteCoupon(storeId, couponId);
 
         return ResponseEntity.ok().build();
+    }
 
+    @GetMapping("/{storeId}/coupons")
+    public ResponseEntity coupons(@PathVariable Long storeId) {
+        return ResponseEntity.ok().body(couponService.getAllStoreCoupons(storeId));
     }
 }
