@@ -54,6 +54,7 @@ class CouponManagerTest {
         assertThat(result.getEndDate()).isEqualTo(LocalDate.of(2023,11,25));
 
     }
+
     @DisplayName("쿠폰 종료일은 시작일보다 빠른 날짜로 수정할 수 없다")
     @Test
     public void endDateMustComesAfterStartDate() {
@@ -104,6 +105,22 @@ class CouponManagerTest {
                 .isInstanceOf(InvalidCouponStartDateException.class)
                 .hasMessage("시작일이 올바르지 않습니다.");
     }
+
+    @DisplayName("쿠폰을 삭제한다")
+    @Test
+    void deleteCoupon() {
+        // given
+        Coupon coupon = couponCreator();
+        Coupon savedCoupon = couponRepository.save(coupon);
+
+        // when
+        couponManager.softDelete(savedCoupon);
+
+        // then
+        assertThat(savedCoupon.getIsDeleted()).isTrue();
+    }
+
+
 
     private Coupon couponCreator() {
         return Coupon.builder()
