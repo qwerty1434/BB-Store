@@ -5,6 +5,8 @@ import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
 import kr.bb.store.domain.coupon.handler.dto.CouponDto;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
+import kr.bb.store.domain.store.entity.Store;
+import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +27,17 @@ class CouponManagerTest {
     @Autowired
     private CouponRepository couponRepository;
     @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
     private EntityManager em;
 
     @DisplayName("요청받은 내용으로 쿠폰 정보를 수정한다")
     @Test
     public void editCoupon() {
         // given
-        Coupon coupon = couponCreator();
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         Coupon savedCoupon = couponRepository.save(coupon);
         CouponDto couponDto = CouponDto.builder()
                 .couponName("변경된 쿠폰이름")
@@ -59,7 +65,9 @@ class CouponManagerTest {
     @Test
     public void endDateMustComesAfterStartDate() {
         // given
-        Coupon coupon = couponCreator();
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         Coupon savedCoupon = couponRepository.save(coupon);
 
         LocalDate startDate = LocalDate.of(2023,12,15);
@@ -84,7 +92,9 @@ class CouponManagerTest {
     @Test
     void startDateMustComesAfterNow() {
         // given
-        Coupon coupon = couponCreator();
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         Coupon savedCoupon = couponRepository.save(coupon);
 
         LocalDate now = LocalDate.now();
@@ -110,7 +120,9 @@ class CouponManagerTest {
     @Test
     void deleteCoupon() {
         // given
-        Coupon coupon = couponCreator();
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon coupon = couponCreator(store);
         Coupon savedCoupon = couponRepository.save(coupon);
 
         // when
@@ -122,10 +134,23 @@ class CouponManagerTest {
 
 
 
-    private Coupon couponCreator() {
+    private Store createStore() {
+        return Store.builder()
+                .storeManagerId(1L)
+                .storeCode("가게코드")
+                .storeName("가게")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
+
+    private Coupon couponCreator(Store store) {
         return Coupon.builder()
                 .couponCode("쿠폰코드")
-                .storeId(1L)
+                .store(store)
                 .limitCount(100)
                 .couponName("쿠폰이름")
                 .discountPrice(10000L)
