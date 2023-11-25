@@ -27,17 +27,21 @@ public class CouponService {
     private final CouponReader couponReader;
     private final CouponIssuer couponIssuer;
     private final StoreReader storeReader;
+
+    @Transactional
     public Coupon createCoupon(Long storeId, CouponCreateRequest couponCreateRequest) {
         Store store = storeReader.findStoreById(storeId);
         return couponCreator.create(store, couponCreateRequest.toDto());
     }
 
+    @Transactional
     public void editCoupon(Long storeId, Long couponId, CouponEditRequest couponEditRequest) {
         Coupon coupon = couponReader.read(couponId);
         validateCouponAuthorization(coupon,storeId);
         couponManager.edit(coupon,couponEditRequest.toDto());
     }
 
+    @Transactional
     public void softDeleteCoupon(Long storeId, Long couponId) {
         Coupon coupon = couponReader.read(couponId);
         validateCouponAuthorization(coupon,storeId);
@@ -50,6 +54,7 @@ public class CouponService {
                 .build();
     }
 
+    @Transactional
     public void downloadCoupon(Long userId, Long couponId, LocalDate issueDate) {
         Coupon coupon = couponReader.read(couponId);
         couponIssuer.issueCoupon(coupon, userId, issueDate);
