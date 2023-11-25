@@ -1,10 +1,10 @@
 package kr.bb.store.domain.coupon.repository;
 
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
 import kr.bb.store.domain.coupon.dto.QCouponForOwnerDto;
-import kr.bb.store.domain.coupon.entity.QIssuedCoupon;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -20,21 +20,37 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
     }
 
     public List<CouponForOwnerDto> findAllDtoByStoreId(Long storeId) {
-        return queryFactory.select(new QCouponForOwnerDto(
-                    coupon.store.id,
-                    coupon.couponCode,
-                    coupon.couponName,
-                    coupon.minPrice,
-                    coupon.discountPrice,
-                    coupon.limitCount.subtract(issuedCoupon.id.count()),
-                    coupon.startDate,
-                    coupon.endDate
+        return queryFactory
+                .select(new QCouponForOwnerDto(
+                        coupon.store.id,
+                        coupon.couponCode,
+                        coupon.couponName,
+                        coupon.minPrice,
+                        coupon.discountPrice,
+                        coupon.limitCount.subtract(
+                                JPAExpressions
+                                        .select(issuedCoupon.count())
+                                        .from(issuedCoupon)
+                                        .where(issuedCoupon.id.couponId.eq(coupon.id))
+                        ),
+                        coupon.startDate,
+                        coupon.endDate
                 ))
                 .from(coupon)
                 .leftJoin(issuedCoupon)
                 .on(coupon.id.eq(issuedCoupon.id.couponId))
                 .where(coupon.store.id.eq(storeId))
-                .groupBy(coupon.id)
+                .groupBy(
+                        coupon.store.id,
+                        coupon.couponCode,
+                        coupon.couponName,
+                        coupon.minPrice,
+                        coupon.discountPrice,
+                        coupon.limitCount,
+                        coupon.startDate,
+                        coupon.endDate,
+                        coupon.id
+                )
                 .fetch();
     }
 }

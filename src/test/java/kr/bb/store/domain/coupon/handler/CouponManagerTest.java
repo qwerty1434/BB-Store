@@ -37,7 +37,7 @@ class CouponManagerTest {
         // given
         Store store = createStore();
         storeRepository.save(store);
-        Coupon coupon = couponCreator(store);
+        Coupon coupon = createCoupon(store);
         Coupon savedCoupon = couponRepository.save(coupon);
         CouponDto couponDto = CouponDto.builder()
                 .couponName("변경된 쿠폰이름")
@@ -67,7 +67,7 @@ class CouponManagerTest {
         // given
         Store store = createStore();
         storeRepository.save(store);
-        Coupon coupon = couponCreator(store);
+        Coupon coupon = createCoupon(store);
         Coupon savedCoupon = couponRepository.save(coupon);
 
         LocalDate startDate = LocalDate.of(2023,12,15);
@@ -94,7 +94,7 @@ class CouponManagerTest {
         // given
         Store store = createStore();
         storeRepository.save(store);
-        Coupon coupon = couponCreator(store);
+        Coupon coupon = createCoupon(store);
         Coupon savedCoupon = couponRepository.save(coupon);
 
         LocalDate now = LocalDate.now();
@@ -122,7 +122,7 @@ class CouponManagerTest {
         // given
         Store store = createStore();
         storeRepository.save(store);
-        Coupon coupon = couponCreator(store);
+        Coupon coupon = createCoupon(store);
         Coupon savedCoupon = couponRepository.save(coupon);
 
         // when
@@ -147,7 +147,7 @@ class CouponManagerTest {
                 .build();
     }
 
-    private Coupon couponCreator(Store store) {
+    private Coupon createCoupon(Store store) {
         return Coupon.builder()
                 .couponCode("쿠폰코드")
                 .store(store)
