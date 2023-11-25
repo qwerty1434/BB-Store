@@ -3,6 +3,7 @@ package kr.bb.store.domain.coupon.service;
 import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
+import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.handler.CouponCreator;
 import kr.bb.store.domain.coupon.handler.CouponManager;
 import kr.bb.store.domain.coupon.handler.CouponReader;
@@ -23,6 +24,17 @@ public class CouponService {
 
     public void editCoupon(Long storeId, Long couponId, CouponEditRequest couponEditRequest) {
         Coupon coupon = couponReader.read(couponId);
+        validateCouponAuthorization(coupon,storeId);
         couponManager.edit(coupon,couponEditRequest.toDto());
+    }
+
+    public void softDeleteCoupon(Long storeId, Long couponId) {
+        Coupon coupon = couponReader.read(couponId);
+        validateCouponAuthorization(coupon,storeId);
+        couponManager.softDelete(coupon);
+    }
+
+    private void validateCouponAuthorization(Coupon coupon, Long storeId) {
+        if(!coupon.getStoreId().equals(storeId)) throw new UnAuthorizedCouponException();
     }
 }

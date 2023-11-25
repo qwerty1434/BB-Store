@@ -18,4 +18,8 @@ public class CouponManager {
                 couponEditDto.getEndDate()
         );
     }
+
+    public void softDelete(Coupon coupon) {
+        coupon.softDelete();
+    }
 }

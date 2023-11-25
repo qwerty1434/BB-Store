@@ -70,6 +70,7 @@ public class Coupon extends BaseEntity {
         this.endDate = endDate;
     }
 
+
     private void dateValidationCheck(LocalDate startDate, LocalDate endDate) {
         if(startDate.isBefore(LocalDate.now())) throw new InvalidCouponStartDateException();
         if(endDate.isBefore(startDate)) throw new InvalidCouponDurationException();
