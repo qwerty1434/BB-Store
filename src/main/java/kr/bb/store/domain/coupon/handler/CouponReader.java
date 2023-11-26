@@ -9,6 +9,7 @@ import kr.bb.store.domain.coupon.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -32,7 +33,11 @@ public class CouponReader {
         return couponRepository.findStoreCouponsForUser(userId, storeId);
     }
 
-    public List<CouponDto> readAvailableCoupons(Long userId, Long storeId) {
-        return couponRepository.findAvailableCoupons(userId, storeId);
+    public List<CouponDto> readAvailableCouponsInStore(Long userId, Long storeId, LocalDate readDate) {
+        return couponRepository.findAvailableCoupons(userId, storeId, readDate);
+    }
+
+    public List<CouponDto> readMyValidCoupons(Long userId, LocalDate readDate) {
+        return couponRepository.findMyValidCoupons(userId, readDate);
     }
 }

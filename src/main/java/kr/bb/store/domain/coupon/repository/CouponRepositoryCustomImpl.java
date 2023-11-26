@@ -1,11 +1,13 @@
 package kr.bb.store.domain.coupon.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.coupon.dto.*;
 import kr.bb.store.domain.coupon.entity.Coupon;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 
 import static kr.bb.store.domain.coupon.entity.QCoupon.coupon;
@@ -87,7 +89,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
     }
 
     @Override
-    public List<CouponDto> findAvailableCoupons(Long userId, Long storeId) {
+    public List<CouponDto> findAvailableCoupons(Long userId, Long storeId, LocalDate now) {
         return queryFactory
                 .select(new QCouponDto(
                         coupon.id,
@@ -103,8 +105,36 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .where(
                         coupon.store.id.eq(storeId),
                         issuedCoupon.id.userId.eq(userId),
-                        issuedCoupon.isUsed.eq(false)
+                        issuedCoupon.isUsed.eq(false),
+                        isCouponUnexpired(now)
                 )
                 .fetch();
     }
+
+    @Override
+    public List<CouponDto> findMyValidCoupons(Long userId, LocalDate now) {
+        return queryFactory
+                .select(new QCouponDto(
+                        coupon.id,
+                        coupon.couponName,
+                        coupon.store.storeName,
+                        coupon.discountPrice,
+                        coupon.endDate,
+                        coupon.minPrice
+                ))
+                .from(coupon)
+                .leftJoin(issuedCoupon)
+                .on(coupon.id.eq(issuedCoupon.id.couponId))
+                .where(
+                        issuedCoupon.id.userId.eq(userId),
+                        issuedCoupon.isUsed.eq(false),
+                        isCouponUnexpired(now)
+                )
+                .fetch();
+    }
+
+    private BooleanExpression isCouponUnexpired(LocalDate now) {
+        return coupon.endDate.after(now).or(coupon.endDate.eq(now));
+    }
+
 }

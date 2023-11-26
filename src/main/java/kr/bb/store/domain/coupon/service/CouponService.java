@@ -62,8 +62,16 @@ public class CouponService {
     }
 
     public CouponsForUserResponse getAvailableCouponsInPayment(Long userId, Long storeId) {
+        LocalDate now = LocalDate.now();
         return CouponsForUserResponse.builder()
-                .data(couponReader.readAvailableCoupons(userId, storeId))
+                .data(couponReader.readAvailableCouponsInStore(userId, storeId, now))
+                .build();
+    }
+
+    public CouponsForUserResponse getMyValidCoupons(Long userId) {
+        LocalDate now = LocalDate.now();
+        return CouponsForUserResponse.builder()
+                .data(couponReader.readMyValidCoupons(userId, now))
                 .build();
     }
 
