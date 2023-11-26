@@ -21,4 +21,8 @@ public class CouponReader {
     public List<CouponForOwnerDto> readCouponsForOwner(Long storeId) {
         return couponRepository.findAllDtoByStoreId(storeId);
     }
+
+    public List<Coupon> readStoresAllValidateCoupon(Long storeId) {
+        return couponRepository.findAllValidateCouponsByStoreId(storeId);
+    }
 }

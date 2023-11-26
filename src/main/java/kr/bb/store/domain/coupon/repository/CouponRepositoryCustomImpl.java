@@ -1,10 +1,10 @@
 package kr.bb.store.domain.coupon.repository;
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
 import kr.bb.store.domain.coupon.dto.QCouponForOwnerDto;
+import kr.bb.store.domain.coupon.entity.Coupon;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -19,6 +19,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    @Override
     public List<CouponForOwnerDto> findAllDtoByStoreId(Long storeId) {
         return queryFactory
                 .select(new QCouponForOwnerDto(
@@ -51,6 +52,14 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                         coupon.endDate,
                         coupon.id
                 )
+                .fetch();
+    }
+
+    @Override
+    public List<Coupon> findAllValidateCouponsByStoreId(Long storeId) {
+        return queryFactory
+                .selectFrom(coupon)
+                .where(coupon.isDeleted.isFalse())
                 .fetch();
     }
 }

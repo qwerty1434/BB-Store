@@ -10,13 +10,13 @@ import kr.bb.store.domain.coupon.handler.CouponIssuer;
 import kr.bb.store.domain.coupon.handler.CouponManager;
 import kr.bb.store.domain.coupon.handler.CouponReader;
 import kr.bb.store.domain.store.entity.Store;
-import kr.bb.store.domain.store.handler.StoreCreator;
 import kr.bb.store.domain.store.handler.StoreReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -60,6 +60,11 @@ public class CouponService {
         couponIssuer.issueCoupon(coupon, userId, issueDate);
     }
 
+    @Transactional
+    public void downloadAllCoupons(Long userId, Long storeId, LocalDate issueDate) {
+        List<Coupon> coupons = couponReader.readStoresAllValidateCoupon(storeId);
+        couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
+    }
 
 
 

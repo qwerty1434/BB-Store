@@ -52,4 +52,14 @@ public class CouponController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("{storeId}/coupons/all")
+    public ResponseEntity downloadAllCoupons(@PathVariable Long storeId) {
+        // TODO : header로 받기
+        Long userId = 1L;
+        couponService.downloadAllCoupons(userId, storeId, LocalDate.now());
+
+        return ResponseEntity.ok().build();
+    }
+
 }

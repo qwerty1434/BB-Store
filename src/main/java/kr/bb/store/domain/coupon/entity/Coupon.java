@@ -70,8 +70,9 @@ public class Coupon extends BaseEntity {
         this.endDate = endDate;
     }
 
-    public void checkExpire(LocalDate now) {
-        if(this.endDate.isBefore(now)) throw new ExpiredCouponException();
+    public boolean isExpired(LocalDate now) {
+        if(this.endDate.isBefore(now)) return true;
+        return false;
     }
 
 
