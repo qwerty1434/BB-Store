@@ -85,4 +85,26 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .where(coupon.store.id.eq(storeId))
                 .fetch();
     }
+
+    @Override
+    public List<CouponDto> findAvailableCoupons(Long userId, Long storeId) {
+        return queryFactory
+                .select(new QCouponDto(
+                        coupon.id,
+                        coupon.couponName,
+                        coupon.store.storeName,
+                        coupon.discountPrice,
+                        coupon.endDate,
+                        coupon.minPrice
+                ))
+                .from(coupon)
+                .leftJoin(issuedCoupon)
+                .on(coupon.id.eq(issuedCoupon.id.couponId))
+                .where(
+                        coupon.store.id.eq(storeId),
+                        issuedCoupon.id.userId.eq(userId),
+                        issuedCoupon.isUsed.eq(false)
+                )
+                .fetch();
+    }
 }

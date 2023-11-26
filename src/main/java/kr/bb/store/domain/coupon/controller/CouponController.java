@@ -70,4 +70,11 @@ public class CouponController {
         return ResponseEntity.ok().body(couponService.getAllStoreCouponsForUser(userId, storeId));
     }
 
+    @GetMapping("/{storeId}/coupons/my")
+    public ResponseEntity couponsInPaymentStep(@PathVariable Long storeId) {
+        // TODO : header로 받기
+        Long userId = 1L;
+
+        return ResponseEntity.ok().body(couponService.getAvailableCouponsInPayment(userId, storeId));
+    }
 }

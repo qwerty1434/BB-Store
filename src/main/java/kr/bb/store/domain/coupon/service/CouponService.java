@@ -61,6 +61,12 @@ public class CouponService {
                 .build();
     }
 
+    public CouponsForUserResponse getAvailableCouponsInPayment(Long userId, Long storeId) {
+        return CouponsForUserResponse.builder()
+                .data(couponReader.readAvailableCoupons(userId, storeId))
+                .build();
+    }
+
     @Transactional
     public void downloadCoupon(Long userId, Long couponId, LocalDate issueDate) {
         Coupon coupon = couponReader.read(couponId);

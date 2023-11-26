@@ -31,4 +31,8 @@ public class CouponReader {
     public List<CouponWithIssueStatusDto> readStoreCouponsForUser(Long userId, Long storeId) {
         return couponRepository.findStoreCouponsForUser(userId, storeId);
     }
+
+    public List<CouponDto> readAvailableCoupons(Long userId, Long storeId) {
+        return couponRepository.findAvailableCoupons(userId, storeId);
+    }
 }
