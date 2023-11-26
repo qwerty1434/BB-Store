@@ -2,10 +2,13 @@ package kr.bb.store.domain.coupon.entity;
 
 
 import kr.bb.store.domain.common.entity.BaseEntity;
+import kr.bb.store.domain.coupon.exception.AlreadyUsedCouponException;
+import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -24,4 +27,10 @@ public class IssuedCoupon extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean isUsed;
+
+    public void use(LocalDate now) {
+        if(isUsed) throw new AlreadyUsedCouponException();
+        if(coupon.isExpired(now)) throw new ExpiredCouponException();
+        isUsed = true;
+    }
 }
