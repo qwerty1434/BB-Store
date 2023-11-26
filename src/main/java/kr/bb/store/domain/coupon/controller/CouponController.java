@@ -53,13 +53,21 @@ public class CouponController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("{storeId}/coupons/all")
+    @PostMapping("/{storeId}/coupons/all")
     public ResponseEntity downloadAllCoupons(@PathVariable Long storeId) {
         // TODO : header로 받기
         Long userId = 1L;
         couponService.downloadAllCoupons(userId, storeId, LocalDate.now());
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{storeId}/coupons/product")
+    public ResponseEntity storeCouponsForUser(@PathVariable Long storeId) {
+        // TODO : header로 받기
+        Long userId = 1L;
+
+        return ResponseEntity.ok().body(couponService.getAllStoreCouponsForUser(userId, storeId));
     }
 
 }

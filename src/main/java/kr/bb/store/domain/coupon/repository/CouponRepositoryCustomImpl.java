@@ -2,8 +2,7 @@ package kr.bb.store.domain.coupon.repository;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
-import kr.bb.store.domain.coupon.dto.QCouponForOwnerDto;
+import kr.bb.store.domain.coupon.dto.*;
 import kr.bb.store.domain.coupon.entity.Coupon;
 
 import javax.persistence.EntityManager;
@@ -60,6 +59,30 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
         return queryFactory
                 .selectFrom(coupon)
                 .where(coupon.isDeleted.isFalse())
+                .fetch();
+    }
+
+    @Override
+    public List<CouponWithIssueStatusDto> findStoreCouponsForUser(Long userId, Long storeId) {
+        return queryFactory
+                .select(new QCouponWithIssueStatusDto(
+                    coupon.id,
+                    coupon.couponName,
+                    coupon.store.storeName,
+                    coupon.discountPrice,
+                    coupon.endDate,
+                    coupon.minPrice,
+                    JPAExpressions
+                            .select(issuedCoupon.count().gt(0))
+                            .from(issuedCoupon)
+                            .where(issuedCoupon.id.couponId.eq(coupon.id),
+                                    issuedCoupon.id.userId.eq(userId),
+                                    issuedCoupon.isUsed.eq(false))
+                ))
+                .from(coupon)
+                .leftJoin(issuedCoupon)
+                .on(coupon.id.eq(issuedCoupon.id.couponId))
+                .where(coupon.store.id.eq(storeId))
                 .fetch();
     }
 }

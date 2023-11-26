@@ -1,6 +1,8 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
+import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.CouponNotFoundException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
@@ -24,5 +26,9 @@ public class CouponReader {
 
     public List<Coupon> readStoresAllValidateCoupon(Long storeId) {
         return couponRepository.findAllValidateCouponsByStoreId(storeId);
+    }
+
+    public List<CouponWithIssueStatusDto> readStoreCouponsForUser(Long userId, Long storeId) {
+        return couponRepository.findStoreCouponsForUser(userId, storeId);
     }
 }
