@@ -1,5 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
 import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
@@ -39,7 +40,7 @@ class CouponReaderTest {
     @Test
     void readCouponsForOwner() {
         // given
-        Store store = createStore();
+        Store store = createStore(1L);
         storeRepository.save(store);
         Coupon c1 = createCoupon(store);
         Coupon c2 = createCoupon(store);
@@ -57,7 +58,7 @@ class CouponReaderTest {
     @Test
     void unUsedCountWillDecreaseWhenUserIssueCoupon() {
         // given
-        Store store = createStore();
+        Store store = createStore(1L);
         storeRepository.save(store);
         Coupon c1 = createCoupon(store);
         couponRepository.save(c1);
@@ -77,7 +78,7 @@ class CouponReaderTest {
     @Test
     void readStoreCouponsForUser() {
         // given
-        Store store = createStore();
+        Store store = createStore(1L);
         storeRepository.save(store);
         Coupon c1 = createCoupon(store);
         Coupon c2 = createCoupon(store);
@@ -98,6 +99,40 @@ class CouponReaderTest {
                 .containsExactlyInAnyOrder(true,false);
     }
 
+    @DisplayName("사용 가능한 쿠폰을 조회한다")
+    @Test
+    void readAvailableCoupons() {
+        // given
+        Store s1 = createStore(1L);
+        Store s2 = createStore(1L);
+        storeRepository.saveAll(List.of(s1,s2));
+        Coupon c1 = createCoupon(s1);
+        Coupon c2 = createCoupon(s1);
+        Coupon c3 = createCoupon(s2);
+        couponRepository.saveAll(List.of(c1,c2,c3));
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(c1, userId));
+
+        // 이미 사용한 쿠폰
+        IssuedCoupon issuedCoupon = issuedCouponRepository.save(createIssuedCoupon(c2, userId));
+        em.flush();
+        em.clear();
+        IssuedCoupon couponsToUse = issuedCouponRepository.findById(issuedCoupon.getId()).get();
+        couponsToUse.use(LocalDate.now());
+
+        // 해당 상품과 관련없는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(c3, userId));
+
+        // when
+        List<CouponDto> result = couponReader.readAvailableCoupons(userId, s1.getId());
+
+        // then
+        assertThat(result).hasSize(1);
+
+    }
+
 
     private IssuedCoupon createIssuedCoupon(Coupon coupon, Long userId) {
         return IssuedCoupon.builder()
@@ -113,9 +148,9 @@ class CouponReaderTest {
                 .build();
     }
 
-    private Store createStore() {
+    private Store createStore(Long storeOwnerId) {
         return Store.builder()
-                .storeManagerId(1L)
+                .storeManagerId(storeOwnerId)
                 .storeCode("가게코드")
                 .storeName("가게")
                 .detailInfo("가게 상세정보")
