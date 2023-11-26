@@ -1,6 +1,7 @@
 package kr.bb.store.domain.coupon.handler;
 
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
+import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.entity.IssuedCouponId;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -30,12 +32,12 @@ class CouponReaderTest {
     private CouponRepository couponRepository;
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
-
-
+    @Autowired
+    private EntityManager em;
 
     @DisplayName("가게 사장에게 보여줄 쿠폰 정보를 조회한다")
     @Test
-    public void readCouponsForOwner() {
+    void readCouponsForOwner() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -53,7 +55,7 @@ class CouponReaderTest {
 
     @DisplayName("쿠폰이 발급되면 가게사장이 보는 쿠폰 정보에도 차감된 개수가 전달된다")
     @Test
-    public void unUsedCountWillDecreaseWhenUserIssueCoupon() {
+    void unUsedCountWillDecreaseWhenUserIssueCoupon() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -69,6 +71,31 @@ class CouponReaderTest {
         // then
         assertThat(result.get(0).getUnusedCount()).isEqualTo(99);
 
+    }
+
+    @DisplayName("해당 가게의 쿠폰을 모두 보여준다")
+    @Test
+    void readStoreCouponsForUser() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+        Coupon c1 = createCoupon(store);
+        Coupon c2 = createCoupon(store);
+        couponRepository.saveAll(List.of(c1,c2));
+
+        Long userId = 1L;
+        issuedCouponRepository.save(createIssuedCoupon(c1, userId));
+
+        em.flush();
+        em.clear();
+
+        // when
+        List<CouponWithIssueStatusDto> result = couponReader.readStoreCouponsForUser(userId, store.getId());
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting("isIssued")
+                .containsExactlyInAnyOrder(true,false);
     }
 
 
