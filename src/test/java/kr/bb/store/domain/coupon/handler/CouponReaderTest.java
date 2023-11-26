@@ -101,7 +101,7 @@ class CouponReaderTest {
 
     @DisplayName("사용 가능한 쿠폰을 조회한다")
     @Test
-    void readAvailableCoupons() {
+    void readAvailableCouponsInStore() {
         // given
         Store s1 = createStore(1L);
         Store s2 = createStore(1L);
@@ -126,11 +126,46 @@ class CouponReaderTest {
         issuedCouponRepository.save(createIssuedCoupon(c3, userId));
 
         // when
-        List<CouponDto> result = couponReader.readAvailableCoupons(userId, s1.getId());
+        List<CouponDto> result = couponReader.readAvailableCouponsInStore(userId, s1.getId(), LocalDate.now());
 
         // then
         assertThat(result).hasSize(1);
 
+    }
+
+    @DisplayName("내가 사용할 수 있는 모든 쿠폰을 조회한다")
+    @Test
+    void readMyValidCoupons() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store s1 = createStore(1L);
+        Store s2 = createStore(1L);
+        storeRepository.saveAll(List.of(s1,s2));
+        Coupon c1 = createCouponWithDate(s1,now,now.plusDays(5));
+        Coupon c2 = createCoupon(s1);
+        Coupon c3 = createCouponWithDate(s2,now,now);
+        couponRepository.saveAll(List.of(c1,c2,c3));
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(c1, userId));
+
+
+        // 이미 사용한 쿠폰
+        IssuedCoupon issuedCoupon = issuedCouponRepository.save(createIssuedCoupon(c2, userId));
+        em.flush();
+        em.clear();
+        IssuedCoupon couponsToUse = issuedCouponRepository.findById(issuedCoupon.getId()).get();
+        couponsToUse.use(LocalDate.now());
+
+        // 사용 기간이 지난 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(c3, userId));
+
+        // when
+        List<CouponDto> result = couponReader.readMyValidCoupons(userId,now.plusDays(1));
+
+        // then
+        assertThat(result).hasSize(1);
     }
 
 
@@ -171,6 +206,19 @@ class CouponReaderTest {
                 .minPrice(100000L)
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now())
+                .build();
+    }
+
+    private Coupon createCouponWithDate(Store store, LocalDate startDate, LocalDate endDate) {
+        return Coupon.builder()
+                .couponCode("쿠폰코드")
+                .store(store)
+                .limitCount(100)
+                .couponName("쿠폰이름")
+                .discountPrice(10000L)
+                .minPrice(100000L)
+                .startDate(startDate)
+                .endDate(endDate)
                 .build();
     }
 
