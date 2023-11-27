@@ -33,7 +33,9 @@ public class PickupController {
     }
 
     @GetMapping("/{storeId}/reservations")
-    public ResponseEntity pickupsForDate(@PathVariable Long storeId, @RequestParam LocalDate date) {
+    public ResponseEntity pickupsForDate(@PathVariable Long storeId,
+                                         @RequestParam String year, @RequestParam String month, @RequestParam String day) {
+        LocalDate date = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
         return ResponseEntity.ok().body(pickupService.getPickupsForDate(storeId, date));
     }
 }

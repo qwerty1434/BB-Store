@@ -11,8 +11,6 @@ import kr.bb.store.domain.pickup.handler.PickupCreator;
 import kr.bb.store.domain.pickup.handler.PickupReader;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
-import kr.bb.store.domain.subscription.entity.Subscription;
-import kr.bb.store.domain.subscription.handler.SubscriptionReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
