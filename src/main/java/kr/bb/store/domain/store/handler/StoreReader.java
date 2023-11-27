@@ -29,6 +29,10 @@ public class StoreReader {
 
     private final Double RADIUS_FOR_MAP = 5D;
 
+    public Store findStoreById(Long storeId) {
+        return storeRepository.findById(storeId).orElseThrow(StoreAddressNotFoundException::new);
+    }
+
     public StoreDetailInfoResponse readDetailInfo(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         DeliveryPolicy deliveryPolicy = deliveryPolicyRepository.findByStoreId(storeId)

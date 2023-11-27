@@ -1,14 +1,13 @@
 package kr.bb.store.domain.coupon.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
+import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
+import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
+import kr.bb.store.domain.store.entity.Store;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -21,7 +20,11 @@ public class Coupon extends BaseEntity {
     private Long id;
 
     @NotNull
-    private Long storeId;
+    private String couponCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="store_id")
+    private Store store;
 
     @NotNull
     private Integer limitCount;
@@ -41,4 +44,40 @@ public class Coupon extends BaseEntity {
     @NotNull
     private LocalDate endDate;
 
+    @Builder
+    public Coupon(String couponCode, Store store, Integer limitCount, String couponName, Long discountPrice, Long minPrice, LocalDate startDate, LocalDate endDate) {
+        dateValidationCheck(startDate, endDate);
+
+        this.couponCode = couponCode;
+        this.store = store;
+        this.limitCount = limitCount;
+        this.couponName = couponName;
+        this.discountPrice = discountPrice;
+        this.minPrice = minPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void update(Integer limitCount, String couponName, Long discountPrice, Long minPrice,
+                       LocalDate startDate, LocalDate endDate) {
+        dateValidationCheck(startDate, endDate);
+
+        this.limitCount = limitCount;
+        this.couponName = couponName;
+        this.discountPrice = discountPrice;
+        this.minPrice = minPrice;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public boolean isExpired(LocalDate now) {
+        if(this.endDate.isBefore(now)) return true;
+        return false;
+    }
+
+
+    private void dateValidationCheck(LocalDate startDate, LocalDate endDate) {
+        if(startDate.isBefore(LocalDate.now())) throw new InvalidCouponStartDateException();
+        if(endDate.isBefore(startDate)) throw new InvalidCouponDurationException();
+    }
 }
