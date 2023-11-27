@@ -44,8 +44,8 @@ class CouponManagerTest {
                 .discountPrice(99_999L)
                 .minPrice(999_999L)
                 .limitCount(999)
-                .startDate(LocalDate.of(2023,11,25))
-                .endDate(LocalDate.of(2023,11,25))
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
                 .build();
 
         // when
@@ -57,7 +57,7 @@ class CouponManagerTest {
         Coupon result = couponRepository.findById(savedCoupon.getId()).get();
         assertThat(result.getCouponName()).isEqualTo("변경된 쿠폰이름");
         assertThat(result.getDiscountPrice()).isEqualTo(99_999L);
-        assertThat(result.getEndDate()).isEqualTo(LocalDate.of(2023,11,25));
+        assertThat(result.getEndDate()).isEqualTo(LocalDate.now());
 
     }
 
