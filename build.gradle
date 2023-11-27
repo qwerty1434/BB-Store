@@ -125,6 +125,8 @@ jacocoTestCoverageVerification {
                                     "**/*Exception.class",
                                     "**/*Controller.class",
                                     "**/*Dto.class",
+                                    "**/*Request.class",
+                                    "**/*Response.class",
                                     "**/*Id.class",
                                     "**/*Application*"
                             ]+Qdomains)
@@ -158,6 +160,8 @@ jacocoTestReport {
                             "**/*Exception.class",
                             "**/*Controller.class",
                             "**/*Dto.class",
+                            "**/*Request.class",
+                            "**/*Response.class",
                             "**/*Id.class",
                             "**/*Application*"
                     ]+Qdomains)
