@@ -4,10 +4,9 @@ import kr.bb.store.domain.pickup.service.PickupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -22,5 +21,13 @@ public class PickupController {
         Long userId = 1L;
 
         return ResponseEntity.ok().body(pickupService.getPickupsForUser(userId, pageable));
+    }
+
+    @GetMapping("/{storeId}/reservations/subscriptions")
+    public ResponseEntity pickAndSubForCalendar(@PathVariable Long storeId) {
+        // TODO : payment와 feign통신
+        List<String> subscriptionDates = List.of("2023-11-27","2023-11-28");
+
+        return ResponseEntity.ok().body(pickupService.getDataForCalendar(storeId, subscriptionDates));
     }
 }

@@ -56,4 +56,8 @@ public class PickupReservation extends BaseEntity {
         this.pickupDate = pickupDate;
         this.pickupTime = pickupTime;
     }
+
+    public String toCalendarFormat() {
+        return this.pickupDate + " PICKUP";
+    }
 }

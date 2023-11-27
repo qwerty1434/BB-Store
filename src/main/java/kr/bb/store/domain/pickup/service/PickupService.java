@@ -1,6 +1,7 @@
 package kr.bb.store.domain.pickup.service;
 
 import kr.bb.store.domain.pickup.controller.request.PickupCreateRequest;
+import kr.bb.store.domain.pickup.controller.response.PickAndSubResponse;
 import kr.bb.store.domain.pickup.controller.response.PickupsInMypageWithPageingResponse;
 import kr.bb.store.domain.pickup.dto.PickupsInMypageDto;
 import kr.bb.store.domain.pickup.entity.PickupReservation;
@@ -8,11 +9,15 @@ import kr.bb.store.domain.pickup.handler.PickupCreator;
 import kr.bb.store.domain.pickup.handler.PickupReader;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
+import kr.bb.store.domain.subscription.entity.Subscription;
+import kr.bb.store.domain.subscription.handler.SubscriptionReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -29,10 +34,18 @@ public class PickupService {
     }
 
     public PickupsInMypageWithPageingResponse getPickupsForUser(Long userId, Pageable pageable) {
+        // TODO : product와 feign통신
+        // TODO : payment와 feign통신
         Page<PickupsInMypageDto> pickupsInMypageDtos = pickupReader.readPickupsForMypage(userId, pageable);
         return PickupsInMypageWithPageingResponse.builder()
                 .data(pickupsInMypageDtos.getContent())
                 .totalCnt(pickupsInMypageDtos.getTotalElements())
                 .build();
+    }
+
+    public PickAndSubResponse getDataForCalendar(Long storeId, List<String> subscriptionDates) {
+        List<PickupReservation> pickupReservations = pickupReader.readByStoreId(storeId);
+
+        return PickAndSubResponse.of(pickupReservations, subscriptionDates);
     }
 }
