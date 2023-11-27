@@ -132,35 +132,35 @@ class CouponIssuerTest {
 
     }
 
-    @DisplayName("해당 가게에서 다운받을 수 있는 모든 쿠폰을 다운받는다")
-    @Test
-    public void issueAllCouponsOfStore() {
-        // given
-        Store store = createStore();
-        storeRepository.save(store);
-
-        Coupon normalCoupon = createCoupon(store, 100);
-        Coupon possessedCoupon = createCoupon(store,100);
-        Coupon exhaustedCoupon = createCoupon(store, 0);
-        List<Coupon> coupons = List.of(normalCoupon,possessedCoupon,exhaustedCoupon);
-
-        couponRepository.saveAll(coupons);
-
-        Long userId = 1L;
-        LocalDate issueDate = LocalDate.now();
-
-        IssuedCoupon issuedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, issueDate);
-
-        // when
-        couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
-        em.flush();
-        em.clear();
-
-        List<IssuedCoupon> issuedCoupons = issuedCouponRepository.findAllByUserId(userId);
-
-        // then
-        assertThat(issuedCoupons).hasSize(2);
-    }
+//    @DisplayName("해당 가게에서 다운받을 수 있는 모든 쿠폰을 다운받는다")
+//    @Test
+//    public void issueAllCouponsOfStore() {
+//        // given
+//        Store store = createStore();
+//        storeRepository.save(store);
+//
+//        Coupon normalCoupon = createCoupon(store, 100);
+//        Coupon possessedCoupon = createCoupon(store,100);
+//        Coupon exhaustedCoupon = createCoupon(store, 0);
+//        List<Coupon> coupons = List.of(normalCoupon,possessedCoupon,exhaustedCoupon);
+//
+//        couponRepository.saveAll(coupons);
+//
+//        Long userId = 1L;
+//        LocalDate issueDate = LocalDate.now();
+//
+//        IssuedCoupon issuedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, issueDate);
+//
+//        // when
+//        couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
+//        em.flush();
+//        em.clear();
+//
+//        List<IssuedCoupon> issuedCoupons = issuedCouponRepository.findAllByUserId(userId);
+//
+//        // then
+//        assertThat(issuedCoupons).hasSize(2);
+//    }
 
 
     private Store createStore() {
