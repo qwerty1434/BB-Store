@@ -1,5 +1,6 @@
 package kr.bb.store.domain.pickup.handler;
 
+import kr.bb.store.domain.pickup.dto.PickupsForDateDto;
 import kr.bb.store.domain.pickup.dto.PickupsInMypageDto;
 import kr.bb.store.domain.pickup.entity.PickupReservation;
 import kr.bb.store.domain.pickup.repository.PickupReservationRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -22,5 +24,9 @@ public class PickupReader {
 
     public Page<PickupsInMypageDto> readPickupsForMypage(Long userId, Pageable pageable) {
         return pickupReservationRepository.getPickupsWithPaging(userId, pageable);
+    }
+
+    public List<PickupsForDateDto> readPickupsForDate(Long storeId, LocalDate date) {
+        return pickupReservationRepository.getPickupsForDate(storeId, date);
     }
 }

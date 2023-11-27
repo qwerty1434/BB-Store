@@ -55,7 +55,7 @@ class PickupServiceTest {
 
     }
 
-    public PickupReservation createPickup(Store store, LocalDate pickupDate) {
+    private PickupReservation createPickup(Store store, LocalDate pickupDate) {
         return PickupReservation.builder()
                 .store(store)
                 .userId(1L)

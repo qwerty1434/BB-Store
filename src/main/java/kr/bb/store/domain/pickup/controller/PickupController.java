@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -29,5 +30,10 @@ public class PickupController {
         List<String> subscriptionDates = List.of("2023-11-27","2023-11-28");
 
         return ResponseEntity.ok().body(pickupService.getDataForCalendar(storeId, subscriptionDates));
+    }
+
+    @GetMapping("/{storeId}/reservations")
+    public ResponseEntity pickupsForDate(@PathVariable Long storeId, @RequestParam LocalDate date) {
+        return ResponseEntity.ok().body(pickupService.getPickupsForDate(storeId, date));
     }
 }

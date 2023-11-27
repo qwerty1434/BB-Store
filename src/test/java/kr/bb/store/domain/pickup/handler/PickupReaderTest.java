@@ -1,5 +1,6 @@
 package kr.bb.store.domain.pickup.handler;
 
+import kr.bb.store.domain.pickup.dto.PickupsForDateDto;
 import kr.bb.store.domain.pickup.dto.PickupsInMypageDto;
 import kr.bb.store.domain.pickup.entity.PickupReservation;
 import kr.bb.store.domain.pickup.repository.PickupReservationRepository;
@@ -31,7 +32,7 @@ class PickupReaderTest {
     @Autowired
     private PickupReservationRepository pickupReservationRepository;
 
-    @DisplayName("")
+    @DisplayName("마이페이지에 보일 예약정보를 불러온다")
     @Test
     void readPickupsForMypage() {
         // given
@@ -54,7 +55,46 @@ class PickupReaderTest {
 
     }
 
-    public PickupReservation createPickup(Store store, Long userId) {
+    @DisplayName("가게사장은 특정 날짜의 픽업예약 목록을 확인할 수 있다")
+    @Test
+    void readPickupsForDate() {
+        // given
+        Store targetStore = createStore(1L);
+        Store s2 = createStore(1L);
+        storeRepository.saveAll(List.of(targetStore, s2));
+
+        LocalDate targetDate = LocalDate.of(2023,11,25);
+
+        PickupReservation p1 = createPickup(targetStore, targetDate);
+        PickupReservation p2 = createPickup(targetStore, targetDate);
+        PickupReservation p3 = createPickup(targetStore, LocalDate.of(2023,11,26));
+        PickupReservation p4 = createPickup(s2, targetDate);
+        pickupReservationRepository.saveAll(List.of(p1,p2,p3,p4));
+
+        // when
+        List<PickupsForDateDto> result = pickupReader.readPickupsForDate(targetStore.getId(), targetDate);
+
+        // then
+        assertThat(result).hasSize(2);
+
+    }
+
+
+
+
+    private PickupReservation createPickup(Store store, LocalDate pickupDate) {
+        return PickupReservation.builder()
+                .store(store)
+                .userId(1L)
+                .orderPickupId(1L)
+                .productId(1L)
+                .reservationCode(UUID.randomUUID().toString())
+                .pickupDate(pickupDate)
+                .pickupTime("13:00")
+                .build();
+    }
+
+    private PickupReservation createPickup(Store store, Long userId) {
         return PickupReservation.builder()
                 .store(store)
                 .userId(userId)
