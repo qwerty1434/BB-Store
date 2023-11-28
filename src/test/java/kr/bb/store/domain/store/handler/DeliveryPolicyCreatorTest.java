@@ -2,7 +2,7 @@ package kr.bb.store.domain.store.handler;
 
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
-import kr.bb.store.domain.store.handler.request.DeliveryPolicyRequest;
+import kr.bb.store.domain.store.dto.DeliveryPolicyRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

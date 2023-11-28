@@ -9,7 +9,7 @@ import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
 import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
-import kr.bb.store.domain.store.handler.request.StoreAddressRequest;
+import kr.bb.store.domain.store.dto.StoreAddressRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

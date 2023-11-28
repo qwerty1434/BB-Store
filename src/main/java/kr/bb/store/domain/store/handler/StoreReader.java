@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
@@ -8,7 +9,6 @@ import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.exception.DeliveryPolicyNotFoundException;
 import kr.bb.store.domain.store.exception.StoreAddressNotFoundException;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
-import kr.bb.store.domain.store.handler.response.*;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RequiredArgsConstructor

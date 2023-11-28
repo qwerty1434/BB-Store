@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.handler.response;
+package kr.bb.store.domain.store.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

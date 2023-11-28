@@ -3,7 +3,7 @@ package kr.bb.store.domain.store.handler;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.exception.CannotOwnMultipleStoreException;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import kr.bb.store.domain.store.handler.request.StoreRequest;
+import kr.bb.store.domain.store.dto.StoreRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

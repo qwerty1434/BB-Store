@@ -3,7 +3,7 @@ package kr.bb.store.domain.store.handler;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
-import kr.bb.store.domain.store.handler.request.DeliveryPolicyRequest;
+import kr.bb.store.domain.store.dto.DeliveryPolicyRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

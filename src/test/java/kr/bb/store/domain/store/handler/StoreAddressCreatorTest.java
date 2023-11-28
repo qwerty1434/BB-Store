@@ -8,7 +8,7 @@ import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
 import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
-import kr.bb.store.domain.store.handler.request.StoreAddressRequest;
+import kr.bb.store.domain.store.dto.StoreAddressRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

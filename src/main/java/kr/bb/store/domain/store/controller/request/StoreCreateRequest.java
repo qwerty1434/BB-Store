@@ -1,8 +1,8 @@
 package kr.bb.store.domain.store.controller.request;
 
-import kr.bb.store.domain.store.handler.request.DeliveryPolicyRequest;
-import kr.bb.store.domain.store.handler.request.StoreAddressRequest;
-import kr.bb.store.domain.store.handler.request.StoreRequest;
+import kr.bb.store.domain.store.dto.DeliveryPolicyRequest;
+import kr.bb.store.domain.store.dto.StoreAddressRequest;
+import kr.bb.store.domain.store.dto.StoreRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

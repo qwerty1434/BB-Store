@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.handler.request;
+package kr.bb.store.domain.store.dto;
 
 
 import lombok.AllArgsConstructor;

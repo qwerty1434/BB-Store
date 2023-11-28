@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.handler.response;
+package kr.bb.store.domain.store.controller.response;
 
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;

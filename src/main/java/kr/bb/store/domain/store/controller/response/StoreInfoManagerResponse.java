@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.handler.response;
+package kr.bb.store.domain.store.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreInfoUserResponse {
+public class StoreInfoManagerResponse {
     private String storeName;
     private String storeThumbnailImage;
-    private String address;
-    private Double averageRating;
-    private String detailInfo;
     private String phoneNumber;
-    private Boolean isLiked;
-    private Boolean isSubscribed;
+    private String accountNumber;
+    private String bank;
+    private String detailInfo;
+    private String address;
+    private String addressDetail;
 }
