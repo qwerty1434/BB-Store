@@ -1,5 +1,7 @@
 package kr.bb.store.domain.store.service;
 
+import kr.bb.store.domain.cargo.dto.FlowerDto;
+import kr.bb.store.domain.cargo.service.CargoService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.Store;
@@ -27,13 +29,15 @@ public class StoreService {
     private final StoreReader storeReader;
     private final SidoReader sidoReader;
     private final GugunReader gugunReader;
+    private final CargoService cargoService;
 
 
     @Transactional
-    public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
+    public Long createStore(Long userId, StoreCreateRequest storeCreateRequest, List<FlowerDto> flowers) {
         Store store = storeCreator.create(userId, storeCreateRequest.toStoreRequest());
         storeAddressCreator.create(store, storeCreateRequest.toStoreAddressRequest());
         deliveryPolicyCreator.create(store, storeCreateRequest.toDeliveryPolicyRequest());
+        cargoService.createBasicCargo(store, flowers);
         return store.getId();
     }
 

@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.controller;
 
 
+import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.service.StoreService;
@@ -10,7 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.ws.rs.QueryParam;
+import java.util.ArrayList;
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -23,7 +25,9 @@ public class StoreController {
     public ResponseEntity createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest) {
         // TODO : header값으로 바꾸기
         Long userId = 1L;
-        return ResponseEntity.ok().body(storeService.createStore(userId, storeCreateRequest));
+        // TODO : feign통신
+        List<FlowerDto> flowers = new ArrayList<>();
+        return ResponseEntity.ok().body(storeService.createStore(userId, storeCreateRequest, flowers));
     }
 
     @PutMapping("/{storeId}")

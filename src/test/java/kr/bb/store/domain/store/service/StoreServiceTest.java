@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.service;
 
+import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,9 +60,10 @@ class StoreServiceTest {
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
+        List<FlowerDto> flowers = Collections.emptyList();
 
         // when
-        storeService.createStore(userId, storeCreateRequest);
+        storeService.createStore(userId, storeCreateRequest, flowers);
         em.flush();
         em.clear();
 
@@ -78,10 +81,12 @@ class StoreServiceTest {
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
+        List<FlowerDto> flowers = Collections.emptyList();
+
 
         Long userId = 1L;
         StoreCreateRequest request = createStoreCreateRequest();
-        Long storeId = storeService.createStore(userId, request);
+        Long storeId = storeService.createStore(userId, request, flowers);
         StoreInfoEditRequest storeEditRequest = StoreInfoEditRequest.builder()
                 .storeName("가게2") // 수정됨
                 .detailInfo("가게 상세정보")
@@ -120,10 +125,11 @@ class StoreServiceTest {
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
+        List<FlowerDto> flowers = Collections.emptyList();
 
         Long userId = 1L;
         StoreCreateRequest request = createStoreCreateRequest();
-        Long storeId = storeService.createStore(userId, request);
+        Long storeId = storeService.createStore(userId, request, flowers);
         em.flush();
         em.clear();
 
