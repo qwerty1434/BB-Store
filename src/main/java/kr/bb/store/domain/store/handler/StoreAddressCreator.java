@@ -17,14 +17,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class StoreAddressCreator {
     private final StoreAddressRepository storeAddressRepository;
-    private final SidoRepository sidoRepository;
-    private final GugunRepository gugunRepository;
 
-    public StoreAddress create(Store store, StoreAddressRequest storeAddressRequest) {
-        Sido sido = sidoRepository.findByName(storeAddressRequest.getSido())
-                .orElseThrow(SidoNotFoundException::new);
-        Gugun gugun = gugunRepository.findByName(storeAddressRequest.getGugun())
-                .orElseThrow(GugunNotFoundException::new);
+
+    public StoreAddress create(Sido sido, Gugun gugun, Store store, StoreAddressRequest storeAddressRequest) {
         StoreAddress storeAddress = StoreAddress.builder()
                 .store(store)
                 .sido(sido)

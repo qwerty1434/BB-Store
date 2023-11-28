@@ -4,6 +4,7 @@ import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.dto.StoreAddressRequest;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
@@ -11,6 +12,7 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
 import kr.bb.store.domain.store.exception.address.InvalidParentException;
 import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
@@ -71,6 +73,38 @@ class StoreServiceTest {
         // then
         assertThat(store.getId()).isNotNull();
         assertThat(store.getStoreManagerId()).isEqualTo(userId);
+    }
+
+
+    @DisplayName("존재하지 않는 시/도 정보로 가게주소를 생성할 수 없다")
+    @Test
+    void cannotCreateStoreAddressWithoutSido() {
+        // given
+        StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
+        Store store = createStoreEntity(1L,"가게1");
+        List<FlowerDto> flowers = Collections.emptyList();
+
+        // when // then
+        assertThatThrownBy(() -> storeService.createStore(1L, storeCreateRequest, flowers))
+                .isInstanceOf(SidoNotFoundException.class)
+                .hasMessage("해당 시/도가 존재하지 않습니다.");
+    }
+
+    @DisplayName("존재하지 않는 구/군 정보로 가게주소를 생성할 수 없다")
+    @Test
+    void cannotCreateStoreAddressWithoutGugun() {
+        // given
+        Sido sido = new Sido("011", "서울");
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        sidoRepository.save(sido);
+        StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
+        Store store = createStoreEntity(1L,"가게1");
+        List<FlowerDto> flowers = Collections.emptyList();
+
+        // when // then
+        assertThatThrownBy(() -> storeService.createStore(1L, storeCreateRequest, flowers))
+                .isInstanceOf(GugunNotFoundException.class)
+                .hasMessage("해당 구/군이 존재하지 않습니다.");
     }
 
 

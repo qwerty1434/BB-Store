@@ -37,7 +37,9 @@ public class StoreService {
     @Transactional
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest, List<FlowerDto> flowers) {
         Store store = storeCreator.create(userId, storeCreateRequest.toStoreRequest());
-        storeAddressCreator.create(store, storeCreateRequest.toStoreAddressRequest());
+        Sido sido = sidoReader.readSido(storeCreateRequest.getSido());
+        Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeCreateRequest.getGugun());
+        storeAddressCreator.create(sido, gugun, store, storeCreateRequest.toStoreAddressRequest());
         deliveryPolicyCreator.create(store, storeCreateRequest.toDeliveryPolicyRequest());
         cargoService.createBasicCargo(store, flowers);
         return store.getId();

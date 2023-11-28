@@ -41,40 +41,13 @@ class StoreAddressCreatorTest {
         Store store = createStore();
 
         // when
-        StoreAddress storeAddress = storeAddressCreator.create(store, storeAddressRequest);
+        StoreAddress storeAddress = storeAddressCreator.create(sido, gugun, store, storeAddressRequest);
 
         // then
         assertThat(storeAddress.getId()).isNotNull();
     }
 
-    @DisplayName("존재하지 않는 시/도 정보로 가게주소를 생성할 수 없다")
-    @Test
-    void cannotCreateStoreAddressWithoutSido() {
-        // given
-        StoreAddressRequest storeAddressRequest = createStoreAddressRequest();
-        Store store = createStore();
 
-        // when // then
-        assertThatThrownBy(() -> storeAddressCreator.create(store, storeAddressRequest))
-                .isInstanceOf(SidoNotFoundException.class)
-                .hasMessage("해당 시/도가 존재하지 않습니다.");
-    }
-
-    @DisplayName("존재하지 않는 구/군 정보로 가게주소를 생성할 수 없다")
-    @Test
-    void cannotCreateStoreAddressWithoutGugun() {
-        // given
-        Sido sido = new Sido("011", "서울");
-        sidoRepository.save(sido);
-        // given
-        StoreAddressRequest storeAddressRequest = createStoreAddressRequest();
-        Store store = createStore();
-
-        // when // then
-        assertThatThrownBy(() -> storeAddressCreator.create(store, storeAddressRequest))
-                .isInstanceOf(GugunNotFoundException.class)
-                .hasMessage("해당 구/군이 존재하지 않습니다.");
-    }
 
 
 
