@@ -3,10 +3,9 @@ package kr.bb.store.domain.subscription.controller;
 import kr.bb.store.domain.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -21,6 +20,14 @@ public class SubscriptionController {
         Long userId = 1L;
 
         return ResponseEntity.ok().body(subscriptionService.getSubscriptionsOfUser(userId));
+    }
+
+    @GetMapping("/{storeId}/store-subscriptions")
+    public ResponseEntity subscriptionsForDate(@PathVariable Long storeId,
+                                               @RequestParam String year, @RequestParam String month, @RequestParam String day) {
+        LocalDate date = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
+        return ResponseEntity.ok().body(subscriptionService.getSubscriptionsForDate(storeId, date));
+
     }
 
 }

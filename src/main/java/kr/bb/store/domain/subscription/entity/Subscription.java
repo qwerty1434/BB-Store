@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,5 +33,8 @@ public class Subscription extends BaseEntity {
 
     @NotNull
     private String subscriptionCode;
+
+    @NotNull
+    private LocalDate deliveryDate;
 
 }
