@@ -1,8 +1,8 @@
 package kr.bb.store.domain.store.controller.request;
 
-import kr.bb.store.domain.store.handler.request.DeliveryPolicyRequest;
-import kr.bb.store.domain.store.handler.request.StoreAddressRequest;
-import kr.bb.store.domain.store.handler.request.StoreRequest;
+import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
+import kr.bb.store.domain.store.dto.StoreAddressDto;
+import kr.bb.store.domain.store.dto.StoreDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,8 +51,8 @@ public class StoreCreateRequest {
     @NotNull(message = "lon cannot be null")
     private Double lon;
 
-    public StoreRequest toStoreRequest() {
-        return StoreRequest.builder()
+    public StoreDto toStoreRequest() {
+        return StoreDto.builder()
                 .storeName(storeName)
                 .detailInfo(detailInfo)
                 .storeThumbnailImage(storeThumbnailImage)
@@ -61,16 +61,16 @@ public class StoreCreateRequest {
                 .bank(bank)
                 .build();
     }
-    public DeliveryPolicyRequest toDeliveryPolicyRequest() {
-        return DeliveryPolicyRequest.builder()
+    public DeliveryPolicyDto toDeliveryPolicyRequest() {
+        return DeliveryPolicyDto.builder()
                 .minOrderPrice(minOrderPrice)
                 .deliveryPrice(deliveryPrice)
                 .freeDeliveryMinPrice(freeDeliveryMinPrice)
                 .build();
 
     }
-    public StoreAddressRequest toStoreAddressRequest() {
-        return StoreAddressRequest.builder()
+    public StoreAddressDto toStoreAddressRequest() {
+        return StoreAddressDto.builder()
                 .sido(sido)
                 .gugun(gugun)
                 .address(address)

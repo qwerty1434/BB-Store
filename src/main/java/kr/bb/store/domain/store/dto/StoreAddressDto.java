@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.handler.request;
+package kr.bb.store.domain.store.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreAddressRequest {
+public class StoreAddressDto {
     private String sido;
     private String gugun;
     private String address;

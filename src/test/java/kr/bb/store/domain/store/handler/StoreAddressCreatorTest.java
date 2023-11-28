@@ -6,9 +6,7 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
-import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
-import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
-import kr.bb.store.domain.store.handler.request.StoreAddressRequest;
+import kr.bb.store.domain.store.dto.StoreAddressDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,49 +35,22 @@ class StoreAddressCreatorTest {
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
 
-        StoreAddressRequest storeAddressRequest = createStoreAddressRequest();
+        StoreAddressDto storeAddressDto = createStoreAddressRequest();
         Store store = createStore();
 
         // when
-        StoreAddress storeAddress = storeAddressCreator.create(store, storeAddressRequest);
+        StoreAddress storeAddress = storeAddressCreator.create(sido, gugun, store, storeAddressDto);
 
         // then
         assertThat(storeAddress.getId()).isNotNull();
     }
 
-    @DisplayName("존재하지 않는 시/도 정보로 가게주소를 생성할 수 없다")
-    @Test
-    void cannotCreateStoreAddressWithoutSido() {
-        // given
-        StoreAddressRequest storeAddressRequest = createStoreAddressRequest();
-        Store store = createStore();
-
-        // when // then
-        assertThatThrownBy(() -> storeAddressCreator.create(store, storeAddressRequest))
-                .isInstanceOf(SidoNotFoundException.class)
-                .hasMessage("해당 시/도가 존재하지 않습니다.");
-    }
-
-    @DisplayName("존재하지 않는 구/군 정보로 가게주소를 생성할 수 없다")
-    @Test
-    void cannotCreateStoreAddressWithoutGugun() {
-        // given
-        Sido sido = new Sido("011", "서울");
-        sidoRepository.save(sido);
-        // given
-        StoreAddressRequest storeAddressRequest = createStoreAddressRequest();
-        Store store = createStore();
-
-        // when // then
-        assertThatThrownBy(() -> storeAddressCreator.create(store, storeAddressRequest))
-                .isInstanceOf(GugunNotFoundException.class)
-                .hasMessage("해당 구/군이 존재하지 않습니다.");
-    }
 
 
 
-    private StoreAddressRequest createStoreAddressRequest() {
-        return StoreAddressRequest.builder()
+
+    private StoreAddressDto createStoreAddressRequest() {
+        return StoreAddressDto.builder()
                 .sido("서울")
                 .gugun("강남구")
                 .address("서울 강남구 남부순환로")

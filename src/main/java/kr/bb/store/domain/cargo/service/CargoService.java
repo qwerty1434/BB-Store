@@ -2,16 +2,19 @@ package kr.bb.store.domain.cargo.service;
 
 
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
+import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.cargo.dto.StockInfoDto;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.exception.FlowerCargoNotFoundException;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
+import kr.bb.store.domain.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +60,20 @@ public class CargoService {
         return RemainingStocksResponse.builder()
                 .stockInfoDtos(stockInfoDtos)
                 .build();
+    }
+
+    @Transactional
+    public void createBasicCargo(Store store, List<FlowerDto> flowers) {
+        List<FlowerCargo> flowerCargos = flowers.stream()
+                .map(v -> FlowerCargo.builder()
+                        .id(makeKeys(store.getId(), v.getFlowerId()))
+                        .store(store)
+                        .flowerName(v.getFlowerName())
+                        .build()
+                )
+                .collect(Collectors.toList());
+        flowerCargoRepository.saveAll(flowerCargos);
+
     }
 
     private FlowerCargoId makeKeys(Long storeId, Long flowerId) {

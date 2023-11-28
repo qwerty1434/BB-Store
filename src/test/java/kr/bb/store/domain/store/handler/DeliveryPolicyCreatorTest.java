@@ -2,7 +2,7 @@ package kr.bb.store.domain.store.handler;
 
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
-import kr.bb.store.domain.store.handler.request.DeliveryPolicyRequest;
+import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +21,11 @@ class DeliveryPolicyCreatorTest {
     @Test
     void createDeliveryPolicy() {
         // given
-        DeliveryPolicyRequest deliveryPolicyRequest = createDeliveryPolicyRequest();
+        DeliveryPolicyDto deliveryPolicyDto = createDeliveryPolicyRequest();
         Store store = createStore();
 
         // when
-        DeliveryPolicy deliveryPolicy = deliveryPolicyCreator.create(store, deliveryPolicyRequest);
+        DeliveryPolicy deliveryPolicy = deliveryPolicyCreator.create(store, deliveryPolicyDto);
 
         // then
         assertThat(deliveryPolicy.getId()).isNotNull();
@@ -33,8 +33,8 @@ class DeliveryPolicyCreatorTest {
 
 
 
-    private DeliveryPolicyRequest createDeliveryPolicyRequest() {
-        return DeliveryPolicyRequest.builder()
+    private DeliveryPolicyDto createDeliveryPolicyRequest() {
+        return DeliveryPolicyDto.builder()
                 .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)

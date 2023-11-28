@@ -22,15 +22,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class StoreManager {
-    private final StoreRepository storeRepository;
-    private final StoreAddressRepository storeAddressRepository;
-    private final DeliveryPolicyRepository deliveryPolicyRepository;
-    private final SidoRepository sidoRepository;
-    private final GugunRepository gugunRepository;
 
-    public void edit(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(StoreNotFoundException::new);
+    public void edit(Store store, StoreAddress storeAddress, DeliveryPolicy deliveryPolicy,
+                     Sido sido, Gugun gugun, StoreInfoEditRequest storeInfoEditRequest) {
+
         store.update(
                 storeInfoEditRequest.getStoreName(),
                 storeInfoEditRequest.getDetailInfo(),
@@ -39,14 +34,6 @@ public class StoreManager {
                 storeInfoEditRequest.getAccountNumber(),
                 storeInfoEditRequest.getBank()
         );
-
-        StoreAddress storeAddress = storeAddressRepository.findByStoreId(storeId)
-                .orElseThrow(StoreAddressNotFoundException::new);
-
-        Sido sido = sidoRepository.findByName(storeInfoEditRequest.getSido())
-                .orElseThrow(SidoNotFoundException::new);
-        Gugun gugun = gugunRepository.findByName(storeInfoEditRequest.getGugun())
-                .orElseThrow(GugunNotFoundException::new);
 
         storeAddress.update(
                 sido,
@@ -58,8 +45,7 @@ public class StoreManager {
                 storeInfoEditRequest.getLon()
         );
 
-        DeliveryPolicy deliveryPolicy = deliveryPolicyRepository.findByStoreId(storeId)
-                .orElseThrow(DeliveryPolicyNotFoundException::new);
+
         deliveryPolicy.update(
                 storeInfoEditRequest.getMinOrderPrice(),
                 storeInfoEditRequest.getDeliveryPrice(),

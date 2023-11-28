@@ -1,12 +1,16 @@
 package kr.bb.store.domain.store.service;
 
+import kr.bb.store.domain.cargo.dto.FlowerDto;
+import kr.bb.store.domain.cargo.service.CargoService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
+import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
+import kr.bb.store.domain.store.entity.StoreAddress;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.handler.*;
-import kr.bb.store.domain.store.handler.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,19 +31,28 @@ public class StoreService {
     private final StoreReader storeReader;
     private final SidoReader sidoReader;
     private final GugunReader gugunReader;
+    private final CargoService cargoService;
 
 
     @Transactional
-    public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
+    public Long createStore(Long userId, StoreCreateRequest storeCreateRequest, List<FlowerDto> flowers) {
         Store store = storeCreator.create(userId, storeCreateRequest.toStoreRequest());
-        storeAddressCreator.create(store, storeCreateRequest.toStoreAddressRequest());
+        Sido sido = sidoReader.readSido(storeCreateRequest.getSido());
+        Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeCreateRequest.getGugun());
+        storeAddressCreator.create(sido, gugun, store, storeCreateRequest.toStoreAddressRequest());
         deliveryPolicyCreator.create(store, storeCreateRequest.toDeliveryPolicyRequest());
+        cargoService.createBasicCargo(store, flowers);
         return store.getId();
     }
 
     @Transactional
     public void editStoreInfo(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
-        storeManager.edit(storeId, storeInfoEditRequest);
+        Store store = storeReader.findStoreById(storeId);
+        StoreAddress storeAddress = storeReader.findStoreAddressByStoreId(storeId);
+        DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(storeId);
+        Sido sido = sidoReader.readSido(storeInfoEditRequest.getSido());
+        Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeInfoEditRequest.getGugun());
+        storeManager.edit(store, storeAddress, deliveryPolicy, sido, gugun, storeInfoEditRequest);
     }
 
     public StoreDetailInfoResponse getStoreInfo(Long storeId) {
@@ -81,5 +94,9 @@ public class StoreService {
         Gugun gugun = "".equals(gugunName) ? null : gugunReader.readGugunCorrespondingSido(sido, gugunName);
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido, gugun);
         return storesWithRegion;
+    }
+
+    public Long getStoreId(Long userId) {
+        return storeReader.getStoreByUserId(userId).getId();
     }
 }

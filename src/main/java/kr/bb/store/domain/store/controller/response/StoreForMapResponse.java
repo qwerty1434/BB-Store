@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.handler.response;
+package kr.bb.store.domain.store.controller.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;

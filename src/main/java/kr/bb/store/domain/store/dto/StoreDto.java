@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.handler.request;
+package kr.bb.store.domain.store.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreRequest {
+public class StoreDto {
     private String storeName;
     private String detailInfo;
     private String storeThumbnailImage;

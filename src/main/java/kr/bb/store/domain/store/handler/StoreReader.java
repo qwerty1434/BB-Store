@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
@@ -8,7 +9,6 @@ import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.exception.DeliveryPolicyNotFoundException;
 import kr.bb.store.domain.store.exception.StoreAddressNotFoundException;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
-import kr.bb.store.domain.store.handler.response.*;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -32,6 +32,18 @@ public class StoreReader {
     public Store findStoreById(Long storeId) {
         return storeRepository.findById(storeId).orElseThrow(StoreAddressNotFoundException::new);
     }
+
+    public StoreAddress findStoreAddressByStoreId(Long storeId) {
+        return storeAddressRepository.findByStoreId(storeId)
+                .orElseThrow(StoreAddressNotFoundException::new);
+    }
+
+    public DeliveryPolicy findDeliveryPolicyByStoreId(Long storeId) {
+        return deliveryPolicyRepository.findByStoreId(storeId)
+                .orElseThrow(DeliveryPolicyNotFoundException::new);
+    }
+
+
 
     public StoreDetailInfoResponse readDetailInfo(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
@@ -91,5 +103,10 @@ public class StoreReader {
         return StoreListForMapResponse.builder()
                 .stores(storesWithRegion)
                 .build();
+    }
+
+    public Store getStoreByUserId(Long userId) {
+        return storeRepository.findByStoreManagerId(userId)
+                .orElseThrow(StoreNotFoundException::new);
     }
 }

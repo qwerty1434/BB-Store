@@ -1,6 +1,7 @@
 package kr.bb.store.domain.cargo.service;
 
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
+import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
@@ -197,6 +198,35 @@ class CargoServiceTest {
 
     }
 
+    @DisplayName("꽃 종류를 입력받아 수량이 0인 기본 정보를 생성한다")
+    @Test
+    void createBasicCargo() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+
+        FlowerDto dto1 = createFlowerDto(1L, "장미");
+        FlowerDto dto2 = createFlowerDto(2L, "국화");
+        List<FlowerDto> flowers = List.of(dto1,dto2);
+
+        cargoService.createBasicCargo(store,flowers);
+        em.flush();
+        em.clear();
+
+        // when
+        List<FlowerCargo> result = flowerCargoRepository.findAllByStoreId(store.getId());
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getStock()).isEqualTo(0);
+    }
+
+    private FlowerDto createFlowerDto(Long flowerId, String flowerName) {
+        return FlowerDto.builder()
+                .flowerId(flowerId)
+                .flowerName(flowerName)
+                .build();
+    }
     private FlowerCargo createFlowerCargo(FlowerCargoId flowerCargoId, Long stock, String name, Store store) {
         return FlowerCargo.builder()
                 .id(flowerCargoId)

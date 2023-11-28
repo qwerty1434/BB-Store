@@ -60,9 +60,6 @@ class StoreManagerTest {
         DeliveryPolicy deliveryPolicy = createDeliveryPolicy(store);
         deliveryPolicyRepository.save(deliveryPolicy);
 
-        em.flush();
-        em.clear();
-
         StoreInfoEditRequest storeEditRequest = StoreInfoEditRequest.builder()
                 .storeName("가게2") // 수정됨
                 .detailInfo("가게 상세정보")
@@ -84,7 +81,11 @@ class StoreManagerTest {
         em.flush();
         em.clear();
 
-        storeManager.edit(store.getId(), storeEditRequest);
+        Store savedStore = storeRepository.findById(store.getId()).get();
+        StoreAddress savedStoreAddress = storeAddressRepository.findByStoreId(store.getId()).get();
+        DeliveryPolicy savedDeliveryPolicy = deliveryPolicyRepository.findByStoreId(store.getId()).get();
+
+        storeManager.edit(savedStore, savedStoreAddress, savedDeliveryPolicy, sido, gugun, storeEditRequest);
         em.flush();
         em.clear();
 

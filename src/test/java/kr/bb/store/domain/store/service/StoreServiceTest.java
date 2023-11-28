@@ -1,7 +1,9 @@
 package kr.bb.store.domain.store.service;
 
+import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
+import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
@@ -9,9 +11,9 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
 import kr.bb.store.domain.store.exception.address.InvalidParentException;
 import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
-import kr.bb.store.domain.store.handler.response.*;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,9 +61,10 @@ class StoreServiceTest {
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
+        List<FlowerDto> flowers = Collections.emptyList();
 
         // when
-        storeService.createStore(userId, storeCreateRequest);
+        storeService.createStore(userId, storeCreateRequest, flowers);
         em.flush();
         em.clear();
 
@@ -71,6 +75,38 @@ class StoreServiceTest {
     }
 
 
+    @DisplayName("존재하지 않는 시/도 정보로 가게주소를 생성할 수 없다")
+    @Test
+    void cannotCreateStoreAddressWithoutSido() {
+        // given
+        StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
+        Store store = createStoreEntity(1L,"가게1");
+        List<FlowerDto> flowers = Collections.emptyList();
+
+        // when // then
+        assertThatThrownBy(() -> storeService.createStore(1L, storeCreateRequest, flowers))
+                .isInstanceOf(SidoNotFoundException.class)
+                .hasMessage("해당 시/도가 존재하지 않습니다.");
+    }
+
+    @DisplayName("존재하지 않는 구/군 정보로 가게주소를 생성할 수 없다")
+    @Test
+    void cannotCreateStoreAddressWithoutGugun() {
+        // given
+        Sido sido = new Sido("011", "서울");
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        sidoRepository.save(sido);
+        StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
+        Store store = createStoreEntity(1L,"가게1");
+        List<FlowerDto> flowers = Collections.emptyList();
+
+        // when // then
+        assertThatThrownBy(() -> storeService.createStore(1L, storeCreateRequest, flowers))
+                .isInstanceOf(GugunNotFoundException.class)
+                .hasMessage("해당 구/군이 존재하지 않습니다.");
+    }
+
+
     @DisplayName("요청받은 내용으로 가게 정보를 수정한다 - 가게명 수정 예시")
     @Test
     public void editStore() {
@@ -78,10 +114,12 @@ class StoreServiceTest {
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
+        List<FlowerDto> flowers = Collections.emptyList();
+
 
         Long userId = 1L;
         StoreCreateRequest request = createStoreCreateRequest();
-        Long storeId = storeService.createStore(userId, request);
+        Long storeId = storeService.createStore(userId, request, flowers);
         StoreInfoEditRequest storeEditRequest = StoreInfoEditRequest.builder()
                 .storeName("가게2") // 수정됨
                 .detailInfo("가게 상세정보")
@@ -120,10 +158,11 @@ class StoreServiceTest {
         sidoRepository.save(sido);
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
+        List<FlowerDto> flowers = Collections.emptyList();
 
         Long userId = 1L;
         StoreCreateRequest request = createStoreCreateRequest();
-        Long storeId = storeService.createStore(userId, request);
+        Long storeId = storeService.createStore(userId, request, flowers);
         em.flush();
         em.clear();
 
