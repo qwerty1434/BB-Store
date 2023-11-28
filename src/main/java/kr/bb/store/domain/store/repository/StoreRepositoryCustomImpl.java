@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
-import kr.bb.store.domain.store.handler.response.QStoreForMapResponse;
+import kr.bb.store.domain.store.controller.response.QStoreForMapResponse;
 import kr.bb.store.domain.store.controller.response.StoreForMapResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
