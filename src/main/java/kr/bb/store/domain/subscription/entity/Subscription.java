@@ -2,14 +2,15 @@ package kr.bb.store.domain.subscription.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
 import kr.bb.store.domain.store.entity.Store;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @Getter
 @Entity
 public class Subscription extends BaseEntity {
@@ -32,5 +33,8 @@ public class Subscription extends BaseEntity {
 
     @NotNull
     private String subscriptionCode;
+
+    @NotNull
+    private LocalDate deliveryDate;
 
 }
