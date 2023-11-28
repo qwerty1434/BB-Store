@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -91,5 +92,10 @@ public class StoreReader {
         return StoreListForMapResponse.builder()
                 .stores(storesWithRegion)
                 .build();
+    }
+
+    public Store getStoreByUserId(Long userId) {
+        return storeRepository.findByStoreManagerId(userId)
+                .orElseThrow(StoreNotFoundException::new);
     }
 }
