@@ -3,7 +3,7 @@ package kr.bb.store.domain.store.handler;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.exception.CannotOwnMultipleStoreException;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import kr.bb.store.domain.store.dto.StoreRequest;
+import kr.bb.store.domain.store.dto.StoreDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 public class StoreCreator {
     private final StoreRepository storeRepository;
 
-    public Store create(Long userId, StoreRequest storeRequest) {
+    public Store create(Long userId, StoreDto storeDto) {
         if(ownerAlreadyHavingStore(userId)) {
             throw new CannotOwnMultipleStoreException();
         }
@@ -22,12 +22,12 @@ public class StoreCreator {
         Store store = Store.builder()
                 .storeManagerId(userId)
                 .storeCode(UUID.randomUUID().toString())
-                .storeName(storeRequest.getStoreName())
-                .detailInfo(storeRequest.getDetailInfo())
-                .storeThumbnailImage(storeRequest.getStoreThumbnailImage())
-                .phoneNumber(storeRequest.getPhoneNumber())
-                .accountNumber(storeRequest.getAccountNumber())
-                .bank(storeRequest.getBank())
+                .storeName(storeDto.getStoreName())
+                .detailInfo(storeDto.getDetailInfo())
+                .storeThumbnailImage(storeDto.getStoreThumbnailImage())
+                .phoneNumber(storeDto.getPhoneNumber())
+                .accountNumber(storeDto.getAccountNumber())
+                .bank(storeDto.getBank())
                 .build();
         return storeRepository.save(store);
     }

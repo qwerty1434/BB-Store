@@ -6,9 +6,7 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
-import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
-import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
-import kr.bb.store.domain.store.dto.StoreAddressRequest;
+import kr.bb.store.domain.store.dto.StoreAddressDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +35,11 @@ class StoreAddressCreatorTest {
         Gugun gugun = new Gugun("110011",sido,"강남구");
         gugunRepository.save(gugun);
 
-        StoreAddressRequest storeAddressRequest = createStoreAddressRequest();
+        StoreAddressDto storeAddressDto = createStoreAddressRequest();
         Store store = createStore();
 
         // when
-        StoreAddress storeAddress = storeAddressCreator.create(sido, gugun, store, storeAddressRequest);
+        StoreAddress storeAddress = storeAddressCreator.create(sido, gugun, store, storeAddressDto);
 
         // then
         assertThat(storeAddress.getId()).isNotNull();
@@ -51,8 +49,8 @@ class StoreAddressCreatorTest {
 
 
 
-    private StoreAddressRequest createStoreAddressRequest() {
-        return StoreAddressRequest.builder()
+    private StoreAddressDto createStoreAddressRequest() {
+        return StoreAddressDto.builder()
                 .sido("서울")
                 .gugun("강남구")
                 .address("서울 강남구 남부순환로")

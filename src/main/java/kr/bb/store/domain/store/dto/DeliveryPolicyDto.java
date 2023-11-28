@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeliveryPolicyRequest {
+public class DeliveryPolicyDto {
     private Long minOrderPrice;
     private Long deliveryPrice;
     private Long freeDeliveryMinPrice;

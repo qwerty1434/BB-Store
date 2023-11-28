@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreRequest {
+public class StoreDto {
     private String storeName;
     private String detailInfo;
     private String storeThumbnailImage;

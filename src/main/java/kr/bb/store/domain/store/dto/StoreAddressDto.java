@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreAddressRequest {
+public class StoreAddressDto {
     private String sido;
     private String gugun;
     private String address;

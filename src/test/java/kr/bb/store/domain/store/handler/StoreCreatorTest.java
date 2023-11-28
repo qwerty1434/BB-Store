@@ -2,7 +2,7 @@ package kr.bb.store.domain.store.handler;
 
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.exception.CannotOwnMultipleStoreException;
-import kr.bb.store.domain.store.dto.StoreRequest;
+import kr.bb.store.domain.store.dto.StoreDto;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,10 +30,10 @@ class StoreCreatorTest {
     void createStore() {
         // given
         Long userId = 1L;
-        StoreRequest storeRequest = createStoreRequest();
+        StoreDto storeDto = createStoreRequest();
 
         // when
-        Store store = storeCreator.create(userId, storeRequest);
+        Store store = storeCreator.create(userId, storeDto);
 
         // then
         assertThat(store.getId()).isNotNull();
@@ -45,10 +45,10 @@ class StoreCreatorTest {
     void storeHasBasicProperties() {
         // given
         Long userId = 1L;
-        StoreRequest storeRequest = createStoreRequest();
+        StoreDto storeDto = createStoreRequest();
 
         // when
-        Store store = storeCreator.create(userId, storeRequest);
+        Store store = storeCreator.create(userId, storeDto);
         em.flush();
         em.clear();
 
@@ -64,19 +64,19 @@ class StoreCreatorTest {
     void userCanCreateOnlyOneStore() {
         // given
         Long userId = 1L;
-        StoreRequest storeRequest = createStoreRequest();
+        StoreDto storeDto = createStoreRequest();
 
         // when // then
         assertThatThrownBy(() -> {
-            storeCreator.create(userId, storeRequest);
-            storeCreator.create(userId, storeRequest);
+            storeCreator.create(userId, storeDto);
+            storeCreator.create(userId, storeDto);
         }).isInstanceOf(CannotOwnMultipleStoreException.class)
             .hasMessage("둘 이상의 가게를 생성할 수 없습니다.");
 
     }
 
-    private StoreRequest createStoreRequest() {
-        return StoreRequest.builder()
+    private StoreDto createStoreRequest() {
+        return StoreDto.builder()
                 .storeName("가게1")
                 .detailInfo("가게 상세정보")
                 .storeThumbnailImage("가게 썸네일")
