@@ -18,4 +18,11 @@ public class SubscriptionFeignController {
 
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{orderSubscriptionId}")
+    public ResponseEntity deleteSubscription(@PathVariable Long orderSubscriptionId) {
+        subscriptionService.softDeleteSubscription(orderSubscriptionId);
+
+        return ResponseEntity.ok().build();
+    }
 }
