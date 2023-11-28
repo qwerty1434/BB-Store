@@ -3,6 +3,8 @@ package kr.bb.store.domain.subscription.service;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
 import kr.bb.store.domain.subscription.controller.request.SubscriptionCreateRequest;
+import kr.bb.store.domain.subscription.controller.response.SubscriptionsForMypage;
+import kr.bb.store.domain.subscription.dto.SubscriptionForUserDto;
 import kr.bb.store.domain.subscription.entity.Subscription;
 import kr.bb.store.domain.subscription.handler.SubscriptionCreator;
 import kr.bb.store.domain.subscription.handler.SubscriptionManager;
@@ -10,6 +12,9 @@ import kr.bb.store.domain.subscription.handler.SubscriptionReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -32,4 +37,13 @@ public class SubscriptionService {
         subscriptionManager.softDelete(subscription);
     }
 
+    @Transactional
+    public SubscriptionsForMypage getSubscriptionsOfUser(Long userId) {
+        // TODO : product와 feign통신
+        // TODO : payment와 feign통신
+        List<SubscriptionForUserDto> subscriptionsForUserDtos = new ArrayList<>();
+        return SubscriptionsForMypage.builder()
+                .data(subscriptionsForUserDtos)
+                .build();
+    }
 }
