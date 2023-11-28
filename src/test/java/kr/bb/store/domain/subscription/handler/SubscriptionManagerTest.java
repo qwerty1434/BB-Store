@@ -1,12 +1,9 @@
 package kr.bb.store.domain.subscription.handler;
 
-
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import kr.bb.store.domain.subscription.controller.request.SubscriptionCreateRequest;
 import kr.bb.store.domain.subscription.entity.Subscription;
 import kr.bb.store.domain.subscription.repository.SubscriptionRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,34 +12,48 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 
 @SpringBootTest
 @Transactional
-class SubscriptionCreatorTest {
-    @Autowired
-    private SubscriptionCreator subscriptionCreator;
+class SubscriptionManagerTest {
     @Autowired
     private StoreRepository storeRepository;
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+    @Autowired
+    private SubscriptionManager subscriptionManager;
 
-    @DisplayName("구독정보를 생성한다")
+    @DisplayName("구독을 취소한다")
     @Test
-    void createSubscription() {
+    void deleteCoupon() {
         // given
         Store store = createStore();
         storeRepository.save(store);
-        SubscriptionCreateRequest request = createRequest(store.getId());
+
+        Subscription subscription = makeSubscription(store);
+        subscriptionRepository.save(subscription);
 
         // when
-        Subscription subscription = subscriptionCreator.create(store, request);
+        subscriptionManager.softDelete(subscription);
 
         // then
-        assertThat(subscription.getId()).isNotNull();
+        assertThat(subscription.getIsDeleted()).isTrue();
 
     }
 
+
+    private Subscription makeSubscription(Store store) {
+        return Subscription.builder()
+                .store(store)
+                .orderSubscriptionId(1L)
+                .userId(1L)
+                .subscriptionProductId(1L)
+                .subscriptionCode("Code")
+                .deliveryDate(LocalDate.now())
+                .build();
+    }
 
     private Store createStore() {
         return Store.builder()
@@ -54,16 +65,6 @@ class SubscriptionCreatorTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .build();
-    }
-
-    private SubscriptionCreateRequest createRequest(Long storeId) {
-        return SubscriptionCreateRequest.builder()
-                .orderSubscriptionId(1L)
-                .storeId(storeId)
-                .userId(1L)
-                .subscriptionProductId(1L)
-                .deliveryDate(LocalDate.now())
                 .build();
     }
 }

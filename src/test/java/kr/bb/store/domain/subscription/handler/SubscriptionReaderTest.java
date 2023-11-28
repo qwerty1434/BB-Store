@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -74,6 +77,55 @@ class SubscriptionReaderTest {
 
     }
 
+    @DisplayName("특정 유저의 구독 목록을 읽어온다")
+    @Test
+    void readAllSubscriptionsOfUser() {
+        // given
+        Long targetUser = 1L;
+
+        Store s1 = createStore();
+        Store s2 = createStore();
+        storeRepository.saveAll(List.of(s1,s2));
+
+        Subscription sub1 = makeSubscriptionWithUserId(s1, targetUser);
+        Subscription sub2 = makeSubscriptionWithUserId(s2, targetUser);
+        Subscription sub3 = makeSubscriptionWithUserId(s1, 2L);
+        subscriptionRepository.saveAll(List.of(sub1,sub2,sub3));
+        em.flush();
+        em.clear();
+
+        // when
+        List<Subscription> subscriptions = subscriptionReader.readAllSubscriptionsOfUser(targetUser);
+
+        // then
+        assertThat(subscriptions).hasSize(2);
+
+    }
+
+    @DisplayName("가게는 날짜의 구독정보를 확인할 수 있다")
+    @Test
+    void readAllSubscriptionsOfStoreByDate() {
+        // given
+        LocalDate targetDate = LocalDate.now();
+
+        Store targetStore = createStore();
+        Store s2 = createStore();
+        storeRepository.saveAll(List.of(targetStore,s2));
+
+        Subscription sub1 = makeSubscription(targetStore, targetDate);
+        Subscription sub2 = makeSubscription(s2, targetDate);
+        Subscription sub3 = makeSubscription(targetStore, targetDate.plusDays(5));
+        subscriptionRepository.saveAll(List.of(sub1,sub2,sub3));
+        em.flush();
+        em.clear();
+
+        // when
+        List<Subscription> result = subscriptionReader.readAllSubscriptionsOfStoreByDate(targetStore.getId(), targetDate);
+
+        // then
+        assertThat(result).hasSize(1);
+
+    }
 
     private Subscription makeSubscription(Store store, Long orderSubscriptionId) {
         return Subscription.builder()
@@ -82,6 +134,27 @@ class SubscriptionReaderTest {
                 .userId(1L)
                 .subscriptionProductId(1L)
                 .subscriptionCode("Code")
+                .deliveryDate(LocalDate.now())
+                .build();
+    }
+    private Subscription makeSubscription(Store store, LocalDate deliveryDate) {
+        return Subscription.builder()
+                .store(store)
+                .orderSubscriptionId(1L)
+                .userId(1L)
+                .subscriptionProductId(1L)
+                .subscriptionCode("Code")
+                .deliveryDate(deliveryDate)
+                .build();
+    }
+    private Subscription makeSubscriptionWithUserId(Store store, Long userId) {
+        return Subscription.builder()
+                .store(store)
+                .orderSubscriptionId(1L)
+                .userId(userId)
+                .subscriptionProductId(1L)
+                .subscriptionCode("Code")
+                .deliveryDate(LocalDate.now())
                 .build();
     }
 

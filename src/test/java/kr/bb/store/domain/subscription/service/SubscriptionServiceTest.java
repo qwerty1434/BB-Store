@@ -1,12 +1,9 @@
-package kr.bb.store.domain.subscription.handler;
-
+package kr.bb.store.domain.subscription.service;
 
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import kr.bb.store.domain.subscription.controller.request.SubscriptionCreateRequest;
 import kr.bb.store.domain.subscription.entity.Subscription;
-import kr.bb.store.domain.subscription.repository.SubscriptionRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class SubscriptionCreatorTest {
+class SubscriptionServiceTest {
     @Autowired
-    private SubscriptionCreator subscriptionCreator;
+    private SubscriptionService subscriptionService;
     @Autowired
     private StoreRepository storeRepository;
-    @Autowired
-    private SubscriptionRepository subscriptionRepository;
 
-    @DisplayName("구독정보를 생성한다")
+    @DisplayName("구독생성 정보를 받아 구독을 생성한다")
     @Test
     void createSubscription() {
         // given
@@ -36,7 +31,7 @@ class SubscriptionCreatorTest {
         SubscriptionCreateRequest request = createRequest(store.getId());
 
         // when
-        Subscription subscription = subscriptionCreator.create(store, request);
+        Subscription subscription = subscriptionService.createSubscription(request);
 
         // then
         assertThat(subscription.getId()).isNotNull();
