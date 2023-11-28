@@ -22,6 +22,7 @@ public class SubscriptionCreator {
                 .userId(subscriptionCreateRequest.getUserId())
                 .subscriptionProductId(subscriptionCreateRequest.getSubscriptionProductId())
                 .subscriptionCode(UUID.randomUUID().toString())
+                .deliveryDate(subscriptionCreateRequest.getDeliveryDate())
                 .build();
 
         return subscriptionRepository.save(subscription);

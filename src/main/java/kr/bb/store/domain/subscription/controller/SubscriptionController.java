@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
-    @GetMapping
+    @GetMapping("store-subscriptions")
     public ResponseEntity subscriptionsForMypage() {
         // TODO : requestHeader로 변경
         Long userId = 1L;

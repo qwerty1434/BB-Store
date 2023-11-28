@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -14,5 +16,6 @@ public class SubscriptionCreateRequest {
     private Long storeId;
     private Long userId;
     private Long subscriptionProductId;
+    private LocalDate deliveryDate;
 
 }
