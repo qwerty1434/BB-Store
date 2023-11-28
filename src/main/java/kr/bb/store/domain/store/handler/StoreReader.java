@@ -34,6 +34,18 @@ public class StoreReader {
         return storeRepository.findById(storeId).orElseThrow(StoreAddressNotFoundException::new);
     }
 
+    public StoreAddress findStoreAddressByStoreId(Long storeId) {
+        return storeAddressRepository.findByStoreId(storeId)
+                .orElseThrow(StoreAddressNotFoundException::new);
+    }
+
+    public DeliveryPolicy findDeliveryPolicyByStoreId(Long storeId) {
+        return deliveryPolicyRepository.findByStoreId(storeId)
+                .orElseThrow(DeliveryPolicyNotFoundException::new);
+    }
+
+
+
     public StoreDetailInfoResponse readDetailInfo(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         DeliveryPolicy deliveryPolicy = deliveryPolicyRepository.findByStoreId(storeId)
