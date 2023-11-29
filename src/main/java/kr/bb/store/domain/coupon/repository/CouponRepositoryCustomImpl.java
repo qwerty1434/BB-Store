@@ -60,7 +60,13 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
     public List<Coupon> findAllValidateCouponsByStoreId(Long storeId) {
         return queryFactory
                 .selectFrom(coupon)
-                .where(coupon.isDeleted.isFalse())
+                .leftJoin(issuedCoupon)
+                .on(issuedCoupon.coupon.id.eq(coupon.id))
+                .where(
+                        coupon.store.id.eq(storeId),
+                        issuedCoupon.id.isNull(),
+                        coupon.isDeleted.isFalse()
+                )
                 .fetch();
     }
 

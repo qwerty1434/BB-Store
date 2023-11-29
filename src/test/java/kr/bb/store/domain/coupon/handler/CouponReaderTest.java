@@ -106,10 +106,10 @@ class CouponReaderTest {
         Store s1 = createStore(1L);
         Store s2 = createStore(1L);
         storeRepository.saveAll(List.of(s1,s2));
+
         Coupon c1 = createCoupon(s1);
         Coupon c2 = createCoupon(s1);
-        Coupon c3 = createCoupon(s2);
-        couponRepository.saveAll(List.of(c1,c2,c3));
+        couponRepository.saveAll(List.of(c1,c2));
 
         Long userId = 1L;
         // 사용할 수 있는 쿠폰
@@ -123,6 +123,8 @@ class CouponReaderTest {
         couponsToUse.use(LocalDate.now());
 
         // 해당 상품과 관련없는 쿠폰
+        Coupon c3 = createCoupon(s2);
+        couponRepository.save(c3);
         issuedCouponRepository.save(createIssuedCoupon(c3, userId));
 
         // when
@@ -143,13 +145,12 @@ class CouponReaderTest {
         storeRepository.saveAll(List.of(s1,s2));
         Coupon c1 = createCouponWithDate(s1,now,now.plusDays(5));
         Coupon c2 = createCoupon(s1);
-        Coupon c3 = createCouponWithDate(s2,now,now);
-        couponRepository.saveAll(List.of(c1,c2,c3));
+
+        couponRepository.saveAll(List.of(c1,c2));
 
         Long userId = 1L;
         // 사용할 수 있는 쿠폰
         issuedCouponRepository.save(createIssuedCoupon(c1, userId));
-
 
         // 이미 사용한 쿠폰
         IssuedCoupon issuedCoupon = issuedCouponRepository.save(createIssuedCoupon(c2, userId));
@@ -159,6 +160,8 @@ class CouponReaderTest {
         couponsToUse.use(LocalDate.now());
 
         // 사용 기간이 지난 쿠폰
+        Coupon c3 = createCouponWithDate(s2,now,now);
+        couponRepository.save(c3);
         issuedCouponRepository.save(createIssuedCoupon(c3, userId));
 
         // when

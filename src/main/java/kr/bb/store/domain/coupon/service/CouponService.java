@@ -5,11 +5,10 @@ import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
 import kr.bb.store.domain.coupon.entity.Coupon;
+import kr.bb.store.domain.coupon.entity.IssuedCoupon;
+import kr.bb.store.domain.coupon.entity.IssuedCouponId;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
-import kr.bb.store.domain.coupon.handler.CouponCreator;
-import kr.bb.store.domain.coupon.handler.CouponIssuer;
-import kr.bb.store.domain.coupon.handler.CouponManager;
-import kr.bb.store.domain.coupon.handler.CouponReader;
+import kr.bb.store.domain.coupon.handler.*;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,7 @@ public class CouponService {
     private final CouponCreator couponCreator;
     private final CouponManager couponManager;
     private final CouponReader couponReader;
+    private final IssuedCouponReader issuedCouponReader;
     private final CouponIssuer couponIssuer;
     private final StoreReader storeReader;
 
@@ -75,6 +75,11 @@ public class CouponService {
                 .build();
     }
 
+    public void useCoupon(Long couponId, Long userId, LocalDate useDate) {
+        IssuedCoupon issuedCoupon = issuedCouponReader.read(couponId,userId);
+        couponManager.use(issuedCoupon, useDate);
+    }
+
     @Transactional
     public void downloadCoupon(Long userId, Long couponId, LocalDate issueDate) {
         Coupon coupon = couponReader.read(couponId);
@@ -86,6 +91,9 @@ public class CouponService {
         List<Coupon> coupons = couponReader.readStoresAllValidateCoupon(storeId);
         couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
     }
+
+
+
 
 
 

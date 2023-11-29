@@ -3,6 +3,7 @@ package kr.bb.store.domain.coupon.handler;
 
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
+import kr.bb.store.domain.coupon.exception.AlreadyIssuedCouponException;
 import kr.bb.store.domain.coupon.exception.CouponOutOfStockException;
 import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
@@ -84,31 +85,29 @@ class CouponIssuerTest {
 
     }
 
-    // TODO : clear를 했는데 em.merge로 update쿼리가 나가는 이유 알아보기
-//    @DisplayName("유저는 동일한 쿠폰을 여러개 발급받을 수 없다")
-//    @Test
-//    public void func() {
-//        // given
-//        Store store = createStore();
-//        storeRepository.save(store);
-//
-//        Integer limitCnt = 100;
-//        Coupon coupon = createCoupon(store, limitCnt);
-//        couponRepository.save(coupon);
-//
-//        Long userId = 1L;
-//        LocalDate issueDate = LocalDate.now();
-//
-//        // when
-//        IssuedCoupon issuedCoupon = couponIssuer.issueCoupon(coupon, userId, issueDate);
-//        em.flush();
-//        em.clear();
-//        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-//        IssuedCoupon issuedCoupon1 = couponIssuer.issueCoupon(coupon, userId, issueDate);
-//        em.flush();
-//        em.clear();
-//
-//    };
+    @DisplayName("유저는 동일한 쿠폰을 여러개 발급받을 수 없다")
+    @Test
+    public void func() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+
+        Integer limitCnt = 100;
+        Coupon coupon = createCoupon(store, limitCnt);
+        couponRepository.save(coupon);
+
+        Long userId = 1L;
+        LocalDate issueDate = LocalDate.now();
+
+        // when
+        assertThatThrownBy(() -> {
+            couponIssuer.issueCoupon(coupon, userId, issueDate);
+            couponIssuer.issueCoupon(coupon, userId, issueDate);
+        })
+                .isInstanceOf(AlreadyIssuedCouponException.class)
+                .hasMessage("이미 발급받은 쿠폰입니다.");
+
+    }
 
     @DisplayName("발급 수량을 초과해서 쿠폰을 발급할 수 없다")
     @Test
@@ -132,35 +131,38 @@ class CouponIssuerTest {
 
     }
 
-//    @DisplayName("해당 가게에서 다운받을 수 있는 모든 쿠폰을 다운받는다")
-//    @Test
-//    public void issueAllCouponsOfStore() {
-//        // given
-//        Store store = createStore();
-//        storeRepository.save(store);
-//
-//        Coupon normalCoupon = createCoupon(store, 100);
-//        Coupon possessedCoupon = createCoupon(store,100);
-//        Coupon exhaustedCoupon = createCoupon(store, 0);
-//        List<Coupon> coupons = List.of(normalCoupon,possessedCoupon,exhaustedCoupon);
-//
-//        couponRepository.saveAll(coupons);
-//
-//        Long userId = 1L;
-//        LocalDate issueDate = LocalDate.now();
-//
-//        IssuedCoupon issuedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, issueDate);
-//
-//        // when
-//        couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
-//        em.flush();
-//        em.clear();
-//
-//        List<IssuedCoupon> issuedCoupons = issuedCouponRepository.findAllByUserId(userId);
-//
-//        // then
-//        assertThat(issuedCoupons).hasSize(2);
-//    }
+    @DisplayName("해당 가게에서 다운받을 수 있는 모든 쿠폰을 다운받는다")
+    @Test
+    public void issueAllCouponsOfStore() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+
+        Coupon normalCoupon = createCoupon(store, 100);
+        Coupon possessedCoupon = createCoupon(store,100);
+        Coupon exhaustedCoupon = createCoupon(store, 0);
+        List<Coupon> coupons = List.of(normalCoupon,possessedCoupon,exhaustedCoupon);
+
+        couponRepository.saveAll(coupons);
+
+        Long userId = 1L;
+        LocalDate issueDate = LocalDate.now();
+
+        IssuedCoupon usedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, issueDate);
+        usedCoupon.use(LocalDate.now());
+        em.flush();
+        em.clear();
+
+        // when
+        couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
+        em.flush();
+        em.clear();
+
+        List<IssuedCoupon> usableCouponsOfUser = issuedCouponRepository.findUsableCouponsByUserId(userId);
+
+        // then
+        assertThat(usableCouponsOfUser).hasSize(1);
+    }
 
 
     private Store createStore() {

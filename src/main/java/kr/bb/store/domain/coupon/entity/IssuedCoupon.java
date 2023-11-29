@@ -25,8 +25,9 @@ public class IssuedCoupon extends BaseEntity {
     @JoinColumn(name="coupon_id")
     private Coupon coupon;
 
+    @Builder.Default
     @Column(nullable = false, columnDefinition = "boolean default false")
-    private Boolean isUsed;
+    private Boolean isUsed = false;
 
     public void use(LocalDate now) {
         if(isUsed) throw new AlreadyUsedCouponException();
