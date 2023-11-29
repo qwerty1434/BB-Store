@@ -6,6 +6,8 @@ import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component
 public class SidoReader {
@@ -13,5 +15,9 @@ public class SidoReader {
     public Sido readSido(String sidoName) {
         return sidoRepository.findByName(sidoName)
                 .orElseThrow(SidoNotFoundException::new);
+    }
+
+    public List<Sido> readAll() {
+        return sidoRepository.findAll();
     }
 }

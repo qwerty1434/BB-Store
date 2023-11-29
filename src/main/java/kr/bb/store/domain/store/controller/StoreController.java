@@ -66,4 +66,14 @@ public class StoreController {
     public ResponseEntity getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun) {
         return ResponseEntity.ok().body(storeService.getStoresWithRegion(sido,gugun));
     }
+
+    @GetMapping("/address/sido")
+    public ResponseEntity getSido() {
+        return ResponseEntity.ok().body(storeService.getSido());
+    }
+
+    @GetMapping("/address/gugun")
+    public ResponseEntity getGugun(@RequestParam String sidoCode) {
+        return ResponseEntity.ok().body(storeService.getGugun(sidoCode));
+    }
 }
