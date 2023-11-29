@@ -35,6 +35,7 @@ class StoreControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/stores")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(storeCreateRequest))
+                .header("userId",1L)
         )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());

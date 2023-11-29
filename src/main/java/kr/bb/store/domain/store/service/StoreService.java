@@ -5,6 +5,8 @@ import kr.bb.store.domain.cargo.service.CargoService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.dto.GugunDto;
+import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
@@ -82,9 +84,9 @@ public class StoreService {
         return storeReader.readForManager(storeId);
     }
 
-    public StoreListForMapResponse getNearbyStores(Double lat, Double lon) {
+    public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
         // TODO : 좋아요 여부 feign으로 받아와서 채우기
-        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(lat, lon);
+        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(lat, lon, level);
 
         return nearbyStores;
     }
@@ -98,5 +100,19 @@ public class StoreService {
 
     public Long getStoreId(Long userId) {
         return storeReader.getStoreByUserId(userId).getId();
+    }
+
+    public List<SidoDto> getSido() {
+        return sidoReader.readAll()
+                .stream()
+                .map(SidoDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<GugunDto> getGugun(String sidoCode) {
+        return gugunReader.readGuguns(sidoCode)
+                .stream()
+                .map(GugunDto::fromEntity)
+                .collect(Collectors.toList());
     }
 }

@@ -45,43 +45,37 @@ public class CouponController {
     }
 
     @PostMapping("/coupons/{couponId}")
-    public ResponseEntity downloadCoupon(@PathVariable Long couponId) {
-        // TODO : header로 받기
-        Long userId = 1L;
+    public ResponseEntity downloadCoupon(@PathVariable Long couponId,
+                                         @RequestHeader(value = "userId") Long userId) {
         couponService.downloadCoupon(userId, couponId, LocalDate.now());
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{storeId}/coupons/all")
-    public ResponseEntity downloadAllCoupons(@PathVariable Long storeId) {
-        // TODO : header로 받기
-        Long userId = 1L;
+    public ResponseEntity downloadAllCoupons(@PathVariable Long storeId,
+                                             @RequestHeader(value = "userId") Long userId) {
         couponService.downloadAllCoupons(userId, storeId, LocalDate.now());
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{storeId}/coupons/product")
-    public ResponseEntity storeCouponsForUser(@PathVariable Long storeId) {
-        // TODO : header로 받기
-        Long userId = 1L;
+    public ResponseEntity storeCouponsForUser(@PathVariable Long storeId,
+                                              @RequestHeader(value = "userId") Long userId) {
 
         return ResponseEntity.ok().body(couponService.getAllStoreCouponsForUser(userId, storeId));
     }
 
     @GetMapping("/{storeId}/coupons/my")
-    public ResponseEntity couponsInPaymentStep(@PathVariable Long storeId) {
-        // TODO : header로 받기
-        Long userId = 1L;
+    public ResponseEntity couponsInPaymentStep(@PathVariable Long storeId,
+                                               @RequestHeader(value = "userId") Long userId) {
 
         return ResponseEntity.ok().body(couponService.getAvailableCouponsInPayment(userId, storeId));
     }
 
     @GetMapping("/coupons/list")
-    public ResponseEntity myCoupons() {
-        // TODO : header로 받기
-        Long userId = 1L;
+    public ResponseEntity myCoupons(@RequestHeader(value = "userId") Long userId) {
 
         return ResponseEntity.ok().body(couponService.getMyValidCoupons(userId));
     }

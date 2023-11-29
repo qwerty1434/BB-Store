@@ -22,9 +22,8 @@ public class StoreController {
     private final StoreService storeService;
 
     @PostMapping
-    public ResponseEntity createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest) {
-        // TODO : header값으로 바꾸기
-        Long userId = 1L;
+    public ResponseEntity createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
+                                      @RequestHeader(value = "userId") Long userId) {
         // TODO : feign통신
         List<FlowerDto> flowers = new ArrayList<>();
         return ResponseEntity.ok().body(storeService.createStore(userId, storeCreateRequest, flowers));
@@ -58,12 +57,23 @@ public class StoreController {
     }
 
     @GetMapping("/map/location")
-    public ResponseEntity getNearbyStores(@RequestParam Double lat, @RequestParam Double lon) {
-        return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon));
+    public ResponseEntity getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
+                                          @RequestParam Integer level) {
+        return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon,level));
     }
 
     @GetMapping("/map/region")
     public ResponseEntity getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun) {
         return ResponseEntity.ok().body(storeService.getStoresWithRegion(sido,gugun));
+    }
+
+    @GetMapping("/address/sido")
+    public ResponseEntity getSido() {
+        return ResponseEntity.ok().body(storeService.getSido());
+    }
+
+    @GetMapping("/address/gugun")
+    public ResponseEntity getGugun(@RequestParam String sidoCode) {
+        return ResponseEntity.ok().body(storeService.getGugun(sidoCode));
     }
 }

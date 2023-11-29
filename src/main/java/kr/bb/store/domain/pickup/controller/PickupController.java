@@ -17,9 +17,8 @@ public class PickupController {
     private final PickupService pickupService;
 
     @GetMapping("/reservations")
-    public ResponseEntity myPickups(Pageable pageable) {
-        // TODO : requestHeader로 변경
-        Long userId = 1L;
+    public ResponseEntity myPickups(Pageable pageable,
+                                    @RequestHeader(value = "userId") Long userId) {
 
         return ResponseEntity.ok().body(pickupService.getPickupsForUser(userId, pageable));
     }

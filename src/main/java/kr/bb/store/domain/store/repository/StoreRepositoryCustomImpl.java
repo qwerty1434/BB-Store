@@ -44,7 +44,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
     }
 
     @Override
-    public List<StoreForMapResponse> getNearbyStores(double lat, double lon, double radius) {
+    public List<StoreForMapResponse> getNearbyStores(double lat, double lon, double meter) {
         return queryFactory.select(new QStoreForMapResponse(
                     store.id,
                     store.storeName,
@@ -56,7 +56,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 .from(storeAddress)
                 .leftJoin(storeAddress.store, store)
                 .where(
-                        withinRadius(lat, lon, radius)
+                        withinRadius(lat, lon, meter)
                 )
                 .fetch();
     }
@@ -82,20 +82,22 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
 
 
 
-    private BooleanExpression withinRadius(double centerLat, double centerLon, double radius) {
-        return storeAddress.lat.between(centerLat - calculateLatDifference(radius), centerLat + calculateLatDifference(radius))
-                .and(storeAddress.lon.between(centerLon - calculateLonDifference(centerLat, radius), centerLon + calculateLonDifference(centerLat, radius)));
+    private BooleanExpression withinRadius(double centerLat, double centerLon, double meter) {
+        return storeAddress.lat.between(centerLat - metersToLatitude(meter), centerLat + metersToLatitude(meter))
+                .and(storeAddress.lon.between(centerLon - metersToLongitude(centerLat, meter), centerLon + metersToLongitude(centerLat, meter)));
     }
 
-    private double calculateLatDifference(double radius) {
-        // 위도 1도 == 111km
-        return radius / 111.0;
+    private static double metersToLatitude(double meters) {
+        // 위도 1도당 거리 계산 (Haversine 공식 사용)
+        double latDiff = meters / 6371000.0; // 지구 반지름: 6371km (미터 단위로 변환)
+        return Math.toDegrees(latDiff);
     }
 
-    private double calculateLonDifference(double centerLat, double radius) {
+    private static double metersToLongitude(double centerLat, double meters) {
+        // 경도 1도당 거리 계산 (Haversine 공식 사용)
         double latRadians = Math.toRadians(centerLat);
-        // 경도 1도 == 111 * cos(위도) km
-        return radius / (111.0 * Math.cos(latRadians));
+        double lonDiff = meters / (6371000.0 * Math.cos(latRadians)); // 지구 반지름: 6371km (미터 단위로 변환)
+        return Math.toDegrees(lonDiff);
     }
 
 }

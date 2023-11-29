@@ -17,9 +17,8 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/questions")
-    public ResponseEntity createQuestion(@RequestBody QuestionCreateRequest questionCreateRequest) {
-        // TODO : header값으로 바꾸기
-        Long userId = 1L;
+    public ResponseEntity createQuestion(@RequestBody QuestionCreateRequest questionCreateRequest,
+                                         @RequestHeader(value = "userId") Long userId) {
         questionService.createQuestion(userId, questionCreateRequest);
 
         return ResponseEntity.ok().build();
@@ -43,23 +42,22 @@ public class QuestionController {
     }
 
     @GetMapping("/questions/product/{productId}")
-    public ResponseEntity productQuestions(@PathVariable Long productId, @RequestParam(required = false) Boolean isReplied, Pageable pageable) {
-        // TODO : header값으로 바꾸기
-        Long userId = 1L;
+    public ResponseEntity productQuestions(@PathVariable Long productId, @RequestParam(required = false) Boolean isReplied,
+                                           Pageable pageable,
+                                           @RequestHeader(value = "userId") Long userId) {
         return ResponseEntity.ok().body(questionService.getQuestionsInProduct(userId, productId, isReplied, pageable));
     }
 
     @GetMapping("/questions/product/{productId}/my")
-    public ResponseEntity myQuestionsInProduct(@PathVariable Long productId, @RequestParam(required = false) Boolean isReplied, Pageable pageable) {
-        // TODO : header값으로 바꾸기
-        Long userId = 1L;
+    public ResponseEntity myQuestionsInProduct(@PathVariable Long productId, @RequestParam(required = false) Boolean isReplied,
+                                               Pageable pageable,
+                                               @RequestHeader(value = "userId") Long userId) {
         return ResponseEntity.ok().body(questionService.getMyQuestionsInProduct(userId, productId, isReplied, pageable));
     }
 
     @GetMapping("/questions/my-page")
-    public ResponseEntity myQuestions(@RequestParam(required = false) Boolean isReplied, Pageable pageable) {
-        // TODO : header값으로 바꾸기
-        Long userId = 1L;
+    public ResponseEntity myQuestions(@RequestParam(required = false) Boolean isReplied, Pageable pageable,
+                                      @RequestHeader(value = "userId") Long userId) {
         return ResponseEntity.ok().body(questionService.getMyQuestions(userId, isReplied, pageable));
     }
 

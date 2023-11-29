@@ -27,7 +27,6 @@ public class StoreReader {
     private final StoreAddressRepository storeAddressRepository;
     private final DeliveryPolicyRepository deliveryPolicyRepository;
 
-    private final Double RADIUS_FOR_MAP = 5D;
 
     public Store findStoreById(Long storeId) {
         return storeRepository.findById(storeId).orElseThrow(StoreAddressNotFoundException::new);
@@ -91,8 +90,8 @@ public class StoreReader {
                 .build();
     }
 
-    public StoreListForMapResponse getNearbyStores(Double lat, Double lon) {
-        List<StoreForMapResponse> nearbyStores = storeRepository.getNearbyStores(lat, lon, RADIUS_FOR_MAP);
+    public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
+        List<StoreForMapResponse> nearbyStores = storeRepository.getNearbyStores(lat, lon, levelToMeter(level));
         return StoreListForMapResponse.builder()
                 .stores(nearbyStores)
                 .build();
@@ -108,5 +107,23 @@ public class StoreReader {
     public Store getStoreByUserId(Long userId) {
         return storeRepository.findByStoreManagerId(userId)
                 .orElseThrow(StoreNotFoundException::new);
+    }
+
+    private Double levelToMeter(int level) {
+        switch (level) {
+            case 1 :
+                return 150d;
+            case 2 :
+                return 250d;
+            case 3 :
+                return 500d;
+            case 4 :
+                return 1000d;
+            case 5 :
+                return 2000d;
+            default:
+                throw new IllegalArgumentException("정의되지 않은 레벨입니다");
+        }
+
     }
 }
