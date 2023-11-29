@@ -14,7 +14,7 @@ public class PickupFeignController {
     private final PickupService pickupService;
 
     @PostMapping
-    public ResponseEntity createPickup(@RequestBody PickupCreateRequest pickupCreateRequest) {
+    public ResponseEntity<Void> createPickup(@RequestBody PickupCreateRequest pickupCreateRequest) {
         pickupService.createPickup(pickupCreateRequest);
 
         return ResponseEntity.ok().build();

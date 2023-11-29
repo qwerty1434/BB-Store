@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.*;
 public class CargoFeignController {
     private final CargoService cargoService;
     @PutMapping("/add")
-    public ResponseEntity addStock(@RequestBody StockFeignRequest stockFeignRequest) {
+    public ResponseEntity<Void> addStock(@RequestBody StockFeignRequest stockFeignRequest) {
         cargoService.plusStockCount(stockFeignRequest.getStoreId(), stockFeignRequest.getFlowerId(), stockFeignRequest.getStock());
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/substract")
-    public ResponseEntity substractStock(@RequestBody StockFeignRequest stockFeignRequest) {
+    public ResponseEntity<Void> substractStock(@RequestBody StockFeignRequest stockFeignRequest) {
         cargoService.minusStockCount(stockFeignRequest.getStoreId(), stockFeignRequest.getFlowerId(), stockFeignRequest.getStock());
         return ResponseEntity.ok().build();
     }

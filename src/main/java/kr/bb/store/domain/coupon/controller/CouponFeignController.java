@@ -15,7 +15,7 @@ public class CouponFeignController {
     private final CouponService couponService;
 
     @PostMapping("/{couponId}/users/{userId}")
-    public ResponseEntity userCoupon(@PathVariable Long couponId, @PathVariable Long userId) {
+    public ResponseEntity<Void> useCoupon(@PathVariable Long couponId, @PathVariable Long userId) {
         LocalDate useDate = LocalDate.now();
         couponService.useCoupon(couponId, userId, useDate);
 
