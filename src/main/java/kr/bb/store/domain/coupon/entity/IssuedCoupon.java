@@ -21,7 +21,7 @@ public class IssuedCoupon extends BaseEntity {
     private IssuedCouponId id;
 
     @MapsId("couponId")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="coupon_id")
     private Coupon coupon;
 

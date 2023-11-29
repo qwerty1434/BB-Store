@@ -18,7 +18,7 @@ public class FlowerCargo extends BaseEntity {
     private FlowerCargoId id;
 
     @MapsId("storeId")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="store_id")
     private Store store;
 
