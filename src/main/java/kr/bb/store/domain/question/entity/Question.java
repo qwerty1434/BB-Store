@@ -39,7 +39,7 @@ public class Question extends BaseEntity {
     @NotNull
     private String content;
 
-    @NotNull
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean isSecret;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
