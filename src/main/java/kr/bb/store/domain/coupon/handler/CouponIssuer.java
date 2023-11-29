@@ -32,6 +32,7 @@ public class CouponIssuer {
         coupons.stream()
                 .filter(Predicate.not(coupon -> coupon.isExpired(issueDate)))
                 .filter(Predicate.not(this::isExhausted))
+                .filter(Predicate.not(coupon -> isDuplicated(coupon,userId)))
                 .forEach(coupon -> issuedCouponRepository.save(makeIssuedCoupon(coupon,userId)));
     }
 
