@@ -22,9 +22,8 @@ public class StoreController {
     private final StoreService storeService;
 
     @PostMapping
-    public ResponseEntity createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest) {
-        // TODO : header값으로 바꾸기
-        Long userId = 1L;
+    public ResponseEntity createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
+                                      @RequestHeader(value = "userId") Long userId) {
         // TODO : feign통신
         List<FlowerDto> flowers = new ArrayList<>();
         return ResponseEntity.ok().body(storeService.createStore(userId, storeCreateRequest, flowers));

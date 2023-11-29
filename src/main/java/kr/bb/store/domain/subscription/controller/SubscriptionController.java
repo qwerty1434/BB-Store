@@ -15,9 +15,7 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @GetMapping("store-subscriptions")
-    public ResponseEntity subscriptionsForMypage() {
-        // TODO : requestHeader로 변경
-        Long userId = 1L;
+    public ResponseEntity subscriptionsForMypage(@RequestHeader(value = "userId") Long userId) {
 
         return ResponseEntity.ok().body(subscriptionService.getSubscriptionsOfUser(userId));
     }
