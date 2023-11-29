@@ -10,6 +10,7 @@ import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,22 @@ class CouponReaderTest {
         assertThat(result).hasSize(2);
 
     }
+    @DisplayName("아무도 발급받지 않은 쿠폰의 수량은 처음 설정과 동일하다")
+    @Test
+    void couponCountWillEqualIfNobodyIssueTheCoupon() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+        Coupon c1 = createCoupon(store);
+        couponRepository.save(c1);
+
+        // when
+        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId());
+
+        // then
+        assertThat(result.get(0).getUnusedCount()).isEqualTo(c1.getLimitCount());
+
+    }
 
     @DisplayName("쿠폰이 발급되면 가게사장이 보는 쿠폰 정보에도 차감된 개수가 전달된다")
     @Test
@@ -74,7 +91,7 @@ class CouponReaderTest {
 
     }
 
-    @DisplayName("해당 가게의 쿠폰을 모두 보여준다")
+    @DisplayName("해당 가게의 모든 쿠폰을 유저에게 보여준다")
     @Test
     void readStoreCouponsForUser() {
         // given
@@ -90,25 +107,52 @@ class CouponReaderTest {
         em.flush();
         em.clear();
 
+        LocalDate now = LocalDate.now();
+
         // when
-        List<CouponWithIssueStatusDto> result = couponReader.readStoreCouponsForUser(userId, store.getId());
+        List<CouponWithIssueStatusDto> result = couponReader.readStoreCouponsForUser(userId, store.getId(), now);
 
         // then
         assertThat(result).hasSize(2);
         assertThat(result).extracting("isIssued")
                 .containsExactlyInAnyOrder(true,false);
     }
+    @DisplayName("만료된 쿠폰은 유저에게 노출되지 않는다")
+    @Test
+    void expiredCouponWillNotExposedToUser() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+        Coupon c1 = createCoupon(store);
+        Coupon c2 = createCoupon(store);
+        couponRepository.saveAll(List.of(c1,c2));
 
-    @DisplayName("사용 가능한 쿠폰을 조회한다")
+        Long userId = 1L;
+        issuedCouponRepository.save(createIssuedCoupon(c1, userId));
+
+        em.flush();
+        em.clear();
+
+        LocalDate expirationDate = LocalDate.now().plusDays(5);
+
+        // when
+        List<CouponWithIssueStatusDto> result = couponReader.readStoreCouponsForUser(userId, store.getId(), expirationDate);
+
+        // then
+        assertThat(result).hasSize(0);
+    }
+
+    @DisplayName("특정 가게의 상품을 주문할 때 사용 가능한 쿠폰을 조회한다")
     @Test
     void readAvailableCouponsInStore() {
         // given
+        LocalDate now = LocalDate.now();
         Store s1 = createStore(1L);
         Store s2 = createStore(1L);
         storeRepository.saveAll(List.of(s1,s2));
 
-        Coupon c1 = createCoupon(s1);
-        Coupon c2 = createCoupon(s1);
+        Coupon c1 = createCouponWithDate(s1,now,now.plusDays(5));
+        Coupon c2 = createCouponWithDate(s1,now,now.plusDays(5));
         couponRepository.saveAll(List.of(c1,c2));
 
         Long userId = 1L;
@@ -122,20 +166,28 @@ class CouponReaderTest {
         IssuedCoupon couponsToUse = issuedCouponRepository.findById(issuedCoupon.getId()).get();
         couponsToUse.use(LocalDate.now());
 
-        // 해당 상품과 관련없는 쿠폰
-        Coupon c3 = createCoupon(s2);
+        // 해당 상품(가게)과 관련없는 쿠폰
+        Coupon c3 = createCouponWithDate(s2,now,now.plusDays(5));
         couponRepository.save(c3);
         issuedCouponRepository.save(createIssuedCoupon(c3, userId));
 
+        // 해당 가게의 유효한 쿠폰이지만 다운로드 받지 않은 쿠폰
+        Coupon c4 = createCouponWithDate(s1,now,now.plusDays(5));
+        couponRepository.save(c4);
+
+        // 해당 가게의 기간이 지난 쿠폰
+        Coupon c5 = createCouponWithDate(s1,now,now);
+        couponRepository.save(c5);
+
         // when
-        List<CouponDto> result = couponReader.readAvailableCouponsInStore(userId, s1.getId(), LocalDate.now());
+        List<CouponDto> result = couponReader.readAvailableCouponsInStore(userId, s1.getId(), LocalDate.now().plusDays(2));
 
         // then
         assertThat(result).hasSize(1);
 
     }
 
-    @DisplayName("내가 사용할 수 있는 모든 쿠폰을 조회한다")
+    @DisplayName("내가 보유한 사용할 수 있는 모든 쿠폰을 조회한다")
     @Test
     void readMyValidCoupons() {
         // given
@@ -164,11 +216,48 @@ class CouponReaderTest {
         couponRepository.save(c3);
         issuedCouponRepository.save(createIssuedCoupon(c3, userId));
 
+        // 유효하지만 다운로드 받지 않은 쿠폰
+        Coupon c4 = createCouponWithDate(s1,now,now.plusDays(5));
+        couponRepository.save(c4);
+
         // when
         List<CouponDto> result = couponReader.readMyValidCoupons(userId,now.plusDays(1));
 
         // then
         assertThat(result).hasSize(1);
+    }
+
+    @DisplayName("현재 다운받을 수 있는 쿠폰 목록을 반환한다")
+    @Test
+    void readStoresAllValidateCoupon() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store s1 = createStore(1L);
+        Store s2 = createStore(1L);
+        storeRepository.saveAll(List.of(s1,s2));
+        Long userId = 1L;
+
+        Coupon c1 = createCouponWithDate(s1,now,now.plusDays(5)); // 다운로드 가능한 쿠폰
+
+        Coupon c2 = createCouponWithDate(s1,now,now.plusDays(5)); // 다운로드 받은 쿠폰
+        Coupon c3 = createCouponWithDate(s1,now,now.plusDays(5)); // 다운로드 받아서 사용한 쿠폰
+        Coupon c4 = createCoupon(s1); // 만료된 쿠폰
+        Coupon c5 = createCouponWithDate(s2,now,now.plusDays(5)); // 다른 가게의 쿠폰
+        couponRepository.saveAll(List.of(c1,c2,c3,c4,c5));
+
+        issuedCouponRepository.save(createIssuedCoupon(c2, userId));
+
+        IssuedCoupon issuedCoupon = issuedCouponRepository.save(createIssuedCoupon(c3, userId));
+        issuedCoupon.use(now);
+
+        // when
+        List<Coupon> result = couponReader.readStoresAllValidateCoupon(s1.getId(), now.plusDays(3));
+
+        // then
+        assertThat(result).hasSize(1)
+                .containsExactly(c1);
+
+
     }
 
 
