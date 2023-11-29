@@ -30,6 +30,7 @@ public class QuestionService {
         return questionCreator.create(userId, questionCreateRequest);
     }
 
+    @Transactional
     public QuestionDetailInfoResponse getQuestionInfo(Long questionId) {
         // TODO : Feign통신으로 값 받아오기
         String nickname = "유저명";
