@@ -57,8 +57,9 @@ public class StoreController {
     }
 
     @GetMapping("/map/location")
-    public ResponseEntity getNearbyStores(@RequestParam Double lat, @RequestParam Double lon) {
-        return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon));
+    public ResponseEntity getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
+                                          @RequestParam Integer level) {
+        return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon,level));
     }
 
     @GetMapping("/map/region")

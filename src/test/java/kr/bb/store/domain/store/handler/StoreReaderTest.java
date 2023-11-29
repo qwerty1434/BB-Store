@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.domain.store.dto.Position;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
@@ -175,12 +176,12 @@ class StoreReaderTest {
 
     }
 
-    @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아 반환한다")
+    @DisplayName("위/경도를 기반으로 반경 2KM 이내 가게를 찾아 반환한다")
     @Test
     void getNearbyStores() {
         // given
         Double centerLat = 0.0D;
-        Double centerLON = 0.0D;
+        Double centerLon = 0.0D;
 
         Store s1 = createStore(1L,"가게1");
         Store s2 = createStore(1L,"가게2");
@@ -189,27 +190,27 @@ class StoreReaderTest {
         Store s5 = createStore(1L,"가게5");
         storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
 
-        StoreAddress sa1 = createStoreAddress(s1,0.0D, 5D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이내
-        StoreAddress sa2 = createStoreAddress(s2,0.0D, 5.001D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이외
+        StoreAddress sa1 = createStoreAddress(s1,0.0D, metersToLatitude(2000)); // 반경 2KM 이내
+        StoreAddress sa2 = createStoreAddress(s2,0.0D, metersToLatitude(2001)); // 반경 2KM 이외
 
-        StoreAddress sa3 = createStoreAddress(s3,-5D/111D,0.0D); // 반경 5KM 이내
-        StoreAddress sa4 = createStoreAddress(s4,-5.001D/111D,0.0D); // 반경 5KM 이외
+        StoreAddress sa3 = createStoreAddress(s3,metersToLatitude(-2000),0.0D); // 반경 2KM 이내
+        StoreAddress sa4 = createStoreAddress(s4,metersToLatitude(-2001),0.0D); // 반경 2KM 이외
 
-        StoreAddress sa5 = createStoreAddress(s5,100D,100D); // 반경 5KM 이외
+        StoreAddress sa5 = createStoreAddress(s5,100D,100D); // 반경 2KM 이외
         storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
 
         em.flush();
         em.clear();
 
         // when
-        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(centerLat, centerLON);
+        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(centerLat, centerLon, 5);
 
         // then
         assertThat(nearbyStores.getStores()).hasSize(2);
-        assertThat(nearbyStores.getStores()).extracting("storeName","lat","lon")
+        assertThat(nearbyStores.getStores()).extracting("storeName","position")
                 .containsExactlyInAnyOrder(
-                        tuple("가게1",0.0D,5D / (111.0 * Math.cos(0.0D))),
-                        tuple("가게3",-5D/111D,0.0D)
+                        tuple("가게1",new Position(0.0D, metersToLatitude(2000))),
+                        tuple("가게3",new Position(metersToLatitude(-2000),0.0D))
                 );
 
     }
@@ -339,6 +340,17 @@ class StoreReaderTest {
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();
+    }
+
+    private static double metersToLatitude(double meters) {
+        double latDiff = meters / 6371000.0;
+        return Math.toDegrees(latDiff);
+    }
+
+    private static double metersToLongitude(double centerLat, double meters) {
+        double latRadians = Math.toRadians(centerLat);
+        double lonDiff = meters / (6371000.0 * Math.cos(latRadians));
+        return Math.toDegrees(lonDiff);
     }
 
 

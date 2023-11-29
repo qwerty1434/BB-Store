@@ -82,9 +82,9 @@ public class StoreService {
         return storeReader.readForManager(storeId);
     }
 
-    public StoreListForMapResponse getNearbyStores(Double lat, Double lon) {
+    public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
         // TODO : 좋아요 여부 feign으로 받아와서 채우기
-        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(lat, lon);
+        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(lat, lon, level);
 
         return nearbyStores;
     }

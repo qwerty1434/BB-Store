@@ -255,44 +255,6 @@ class StoreServiceTest {
 
     }
 
-    @DisplayName("위/경도를 기반으로 반경 5KM 이내 가게를 찾아 반환한다")
-    @Test
-    void getNearbyStores() {
-        // given
-        Double centerLat = 0.0D;
-        Double centerLON = 0.0D;
-
-        Store s1 = createStoreEntity(1L,"가게1");
-        Store s2 = createStoreEntity(1L,"가게2");
-        Store s3 = createStoreEntity(1L,"가게3");
-        Store s4 = createStoreEntity(1L,"가게4");
-        Store s5 = createStoreEntity(1L,"가게5");
-        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
-
-        StoreAddress sa1 = createStoreAddressEntity(s1,0.0D, 5D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이내
-        StoreAddress sa2 = createStoreAddressEntity(s2,0.0D, 5.001D / (111.0 * Math.cos(0.0D))); // 반경 5KM 이외
-
-        StoreAddress sa3 = createStoreAddressEntity(s3,-5D/111D,0.0D); // 반경 5KM 이내
-        StoreAddress sa4 = createStoreAddressEntity(s4,-5.001D/111D,0.0D); // 반경 5KM 이외
-
-        StoreAddress sa5 = createStoreAddressEntity(s5,100D,100D); // 반경 5KM 이외
-        storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
-
-        em.flush();
-        em.clear();
-
-        // when
-        StoreListForMapResponse nearbyStores = storeService.getNearbyStores(centerLat, centerLON);
-
-        // then
-        assertThat(nearbyStores.getStores()).hasSize(2);
-        assertThat(nearbyStores.getStores()).extracting("storeName","lat","lon")
-                .containsExactlyInAnyOrder(
-                        tuple("가게1",0.0D,5D / (111.0 * Math.cos(0.0D))),
-                        tuple("가게3",-5D/111D,0.0D)
-                );
-
-    }
     @DisplayName("시/도 이름과 구/군 이름을 통해 가게를 검색한다")
     @Test
     void getStoresWithRegion() {
