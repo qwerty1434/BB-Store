@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,8 +37,8 @@ class CouponCreatorTest {
         String couponName = "쿠폰명";
         Long discountPrice = 10000L;
         Long minPrice = 100000L;
-        LocalDate startDate = LocalDate.of(2023,12,13);
-        LocalDate endDate = LocalDate.of(2023,12,15);
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now();
         CouponDto couponDto = CouponDto.builder()
                 .limitCount(limitCount)
                 .couponName(couponName)
@@ -61,8 +62,8 @@ class CouponCreatorTest {
         // given
         Store store = createStore();
         storeRepository.save(store);
-        LocalDate startDate = LocalDate.of(2023,12,15);
-        LocalDate endDate = LocalDate.of(2023,12,13);
+        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now().minusDays(1);
         CouponDto couponDto = createCouponDtoWithDate(startDate, endDate);
 
         // when // then

@@ -36,7 +36,10 @@ public class PickupReservationRepositoryCustomImpl implements PickupReservationR
                 .from(pickupReservation)
                 .leftJoin(storeAddress)
                 .on(pickupReservation.store.id.eq(storeAddress.id))
-                .where(pickupReservation.userId.eq(userId))
+                .where(
+                        pickupReservation.userId.eq(userId),
+                        pickupReservation.isDeleted.isFalse()
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -56,10 +59,13 @@ public class PickupReservationRepositoryCustomImpl implements PickupReservationR
                 pickupReservation.reservationCode,
                 pickupReservation.pickupDate,
                 pickupReservation.pickupTime
-        ))
+                ))
                 .from(pickupReservation)
-                .where(pickupReservation.store.id.eq(storeId),
-                        pickupReservation.pickupDate.eq(date))
+                .where(
+                        pickupReservation.store.id.eq(storeId),
+                        pickupReservation.pickupDate.eq(date),
+                        pickupReservation.isDeleted.isFalse()
+                )
                 .fetch();
     }
 }

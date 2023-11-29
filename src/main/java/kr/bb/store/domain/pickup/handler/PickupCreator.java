@@ -21,7 +21,7 @@ public class PickupCreator {
                 .userId(pickupCreateRequest.getUserId())
                 .orderPickupId(pickupCreateRequest.getOrderPickupId())
                 .productId(pickupCreateRequest.getProductId())
-                .reservationCode(UUID.randomUUID().toString())
+                .reservationCode(UUID.randomUUID().toString().substring(0,8))
                 .pickupDate(pickupCreateRequest.getPickupDate())
                 .pickupTime(pickupCreateRequest.getPickupTime())
                 .build();

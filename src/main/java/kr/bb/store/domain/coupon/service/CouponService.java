@@ -55,9 +55,9 @@ public class CouponService {
                 .build();
     }
 
-    public CouponsForUserResponse getAllStoreCouponsForUser(Long userId, Long storeId) {
+    public CouponsForUserResponse getAllStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
         return CouponsForUserResponse.builder()
-                .data(couponReader.readStoreCouponsForUser(userId, storeId))
+                .data(couponReader.readStoreCouponsForUser(userId, storeId, now))
                 .build();
     }
 
@@ -81,15 +81,15 @@ public class CouponService {
     }
 
     @Transactional
-    public void downloadCoupon(Long userId, Long couponId, LocalDate issueDate) {
+    public void downloadCoupon(Long userId, Long couponId, LocalDate now) {
         Coupon coupon = couponReader.read(couponId);
-        couponIssuer.issueCoupon(coupon, userId, issueDate);
+        couponIssuer.issueCoupon(coupon, userId, now);
     }
 
     @Transactional
-    public void downloadAllCoupons(Long userId, Long storeId, LocalDate issueDate) {
-        List<Coupon> coupons = couponReader.readStoresAllValidateCoupon(storeId);
-        couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
+    public void downloadAllCoupons(Long userId, Long storeId, LocalDate now) {
+        List<Coupon> coupons = couponReader.readStoresAllValidateCoupon(storeId, now);
+        couponIssuer.issuePossibleCoupons(coupons, userId, now);
     }
 
 

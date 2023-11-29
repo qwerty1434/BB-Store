@@ -1,5 +1,8 @@
 package kr.bb.store.domain.pickup.controller;
 
+import kr.bb.store.domain.pickup.controller.response.PickAndSubResponse;
+import kr.bb.store.domain.pickup.controller.response.PickupsForDateResponse;
+import kr.bb.store.domain.pickup.controller.response.PickupsInMypageWithPageingResponse;
 import kr.bb.store.domain.pickup.service.PickupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -17,14 +20,14 @@ public class PickupController {
     private final PickupService pickupService;
 
     @GetMapping("/reservations")
-    public ResponseEntity myPickups(Pageable pageable,
-                                    @RequestHeader(value = "userId") Long userId) {
+    public ResponseEntity<PickupsInMypageWithPageingResponse> myPickups(Pageable pageable,
+                                                                        @RequestHeader(value = "userId") Long userId) {
 
         return ResponseEntity.ok().body(pickupService.getPickupsForUser(userId, pageable));
     }
 
     @GetMapping("/{storeId}/reservations/subscriptions")
-    public ResponseEntity pickAndSubForCalendar(@PathVariable Long storeId) {
+    public ResponseEntity<PickAndSubResponse> pickAndSubForCalendar(@PathVariable Long storeId) {
         // TODO : payment와 feign통신
         List<String> subscriptionDates = List.of("2023-11-27","2023-11-28");
 
@@ -32,8 +35,8 @@ public class PickupController {
     }
 
     @GetMapping("/{storeId}/reservations")
-    public ResponseEntity pickupsForDate(@PathVariable Long storeId,
-                                         @RequestParam String year, @RequestParam String month, @RequestParam String day) {
+    public ResponseEntity<PickupsForDateResponse> pickupsForDate(@PathVariable Long storeId,
+                                                                 @RequestParam String year, @RequestParam String month, @RequestParam String day) {
         LocalDate date = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
         return ResponseEntity.ok().body(pickupService.getPickupsForDate(storeId, date));
     }

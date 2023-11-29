@@ -88,7 +88,7 @@ class PickupReaderTest {
                 .userId(1L)
                 .orderPickupId(1L)
                 .productId(1L)
-                .reservationCode(UUID.randomUUID().toString())
+                .reservationCode(UUID.randomUUID().toString().substring(0,8))
                 .pickupDate(pickupDate)
                 .pickupTime("13:00")
                 .build();
@@ -100,7 +100,7 @@ class PickupReaderTest {
                 .userId(userId)
                 .orderPickupId(1L)
                 .productId(1L)
-                .reservationCode(UUID.randomUUID().toString())
+                .reservationCode(UUID.randomUUID().toString().substring(0,8))
                 .pickupDate(LocalDate.now())
                 .pickupTime("13:00")
                 .build();

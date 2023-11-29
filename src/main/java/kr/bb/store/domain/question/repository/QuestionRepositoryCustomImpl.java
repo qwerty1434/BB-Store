@@ -35,7 +35,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .from(answer)
                 .rightJoin(answer.question, question)
                 .where(
-                        isReplied != null ? checkRepliedCondition(isReplied) : null
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.isDeleted.isFalse()
                 )
                 .fetch();
 
@@ -44,7 +45,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .from(answer)
                 .rightJoin(answer.question, question)
                 .where(
-                        isReplied != null ? checkRepliedCondition(isReplied) : null
+                        isReplied != null ? checkRepliedCondition(isReplied) : null,
+                        question.isDeleted.isFalse()
                 )
                 .fetchOne();
         return new PageImpl<>(contents,pageable,count);
@@ -69,7 +71,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .rightJoin(answer.question, question)
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
-                        question.productId.eq(productId)
+                        question.productId.eq(productId),
+                        question.isDeleted.isFalse()
                 )
                 .fetch();
 
@@ -79,7 +82,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .rightJoin(answer.question, question)
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
-                        question.productId.eq(productId)
+                        question.productId.eq(productId),
+                        question.isDeleted.isFalse()
                 )
                 .fetchOne();
         return new PageImpl<>(contents,pageable,count);
@@ -103,7 +107,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
                         question.productId.eq(productId),
-                        question.userId.eq(userId)
+                        question.userId.eq(userId),
+                        question.isDeleted.isFalse()
                 )
                 .fetch();
 
@@ -114,13 +119,15 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
                         question.productId.eq(productId),
-                        question.userId.eq(userId)
+                        question.userId.eq(userId),
+                        question.isDeleted.isFalse()
                 )
                 .fetchOne();
         return new PageImpl<>(contents,pageable,count);
 
     }
 
+    @Override
     public Page<MyQuestionInMypageDto> getMyQuestionsWithPaging(Long userId, Boolean isReplied, Pageable pageable) {
         List<MyQuestionInMypageDto> contents = queryFactory.select(new QMyQuestionInMypageDto(
                         question.id,
@@ -136,7 +143,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .rightJoin(answer.question, question)
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
-                        question.userId.eq(userId)
+                        question.userId.eq(userId),
+                        question.isDeleted.isFalse()
                 )
                 .fetch();
 
@@ -146,7 +154,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .rightJoin(answer.question, question)
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
-                        question.userId.eq(userId)
+                        question.userId.eq(userId),
+                        question.isDeleted.isFalse()
                 )
                 .fetchOne();
         return new PageImpl<>(contents,pageable,count);

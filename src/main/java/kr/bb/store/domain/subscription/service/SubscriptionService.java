@@ -51,7 +51,7 @@ public class SubscriptionService {
                 .build();
     }
 
-    public Object getSubscriptionsForDate(Long storeId, LocalDate date) {
+    public SubscriptionsForDateResponse getSubscriptionsForDate(Long storeId, LocalDate date) {
         // TODO : product와 feign통신
         // TODO : payment와 feign통신
         // TODO : user와 feign통신

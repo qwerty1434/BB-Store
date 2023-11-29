@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 public class SubscriptionFeignController {
     private final SubscriptionService subscriptionService;
     @PostMapping
-    public ResponseEntity createSubscription(@RequestBody SubscriptionCreateRequest subscriptionCreateRequest) {
+    public ResponseEntity<Void> createSubscription(@RequestBody SubscriptionCreateRequest subscriptionCreateRequest) {
         subscriptionService.createSubscription(subscriptionCreateRequest);
 
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{orderSubscriptionId}")
-    public ResponseEntity deleteSubscription(@PathVariable Long orderSubscriptionId) {
+    public ResponseEntity<Void> deleteSubscription(@PathVariable Long orderSubscriptionId) {
         subscriptionService.softDeleteSubscription(orderSubscriptionId);
 
         return ResponseEntity.ok().build();

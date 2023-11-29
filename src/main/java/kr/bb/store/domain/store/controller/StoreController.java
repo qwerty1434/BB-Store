@@ -4,6 +4,9 @@ package kr.bb.store.domain.store.controller;
 import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
+import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.dto.GugunDto;
+import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +25,7 @@ public class StoreController {
     private final StoreService storeService;
 
     @PostMapping
-    public ResponseEntity createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
+    public ResponseEntity<Long> createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
                                       @RequestHeader(value = "userId") Long userId) {
         // TODO : feign통신
         List<FlowerDto> flowers = new ArrayList<>();
@@ -30,50 +33,50 @@ public class StoreController {
     }
 
     @PutMapping("/{storeId}")
-    public ResponseEntity editStoreInfo(@PathVariable Long storeId,
+    public ResponseEntity<Void> editStoreInfo(@PathVariable Long storeId,
                                         @Valid @RequestBody StoreInfoEditRequest storeInfoEditRequest) {
         storeService.editStoreInfo(storeId, storeInfoEditRequest);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity getStoreInfo(@PathVariable Long storeId) {
+    public ResponseEntity<StoreDetailInfoResponse> getStoreInfo(@PathVariable Long storeId) {
         return ResponseEntity.ok().body(storeService.getStoreInfo(storeId));
     }
 
     @GetMapping("/list")
-    public ResponseEntity getStores(Pageable pageable) {
+    public ResponseEntity<SimpleStorePagingResponse> getStores(Pageable pageable) {
         return ResponseEntity.ok().body(storeService.getStoresWithPaging(pageable));
     }
 
     @GetMapping("/{storeId}/user")
-    public ResponseEntity getStoreInfoForUser(@PathVariable Long storeId){
+    public ResponseEntity<StoreInfoUserResponse> getStoreInfoForUser(@PathVariable Long storeId){
         return ResponseEntity.ok().body(storeService.getStoreInfoForUser(storeId));
     }
 
     @GetMapping("/{storeId}/manager")
-    public ResponseEntity getStoreInfoForManager(@PathVariable Long storeId){
+    public ResponseEntity<StoreInfoManagerResponse> getStoreInfoForManager(@PathVariable Long storeId){
         return ResponseEntity.ok().body(storeService.getStoreInfoForManager(storeId));
     }
 
     @GetMapping("/map/location")
-    public ResponseEntity getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
-                                          @RequestParam Integer level) {
+    public ResponseEntity<StoreListForMapResponse> getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
+                                                                   @RequestParam Integer level) {
         return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon,level));
     }
 
     @GetMapping("/map/region")
-    public ResponseEntity getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun) {
+    public ResponseEntity<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun) {
         return ResponseEntity.ok().body(storeService.getStoresWithRegion(sido,gugun));
     }
 
     @GetMapping("/address/sido")
-    public ResponseEntity getSido() {
+    public ResponseEntity<List<SidoDto>> getSido() {
         return ResponseEntity.ok().body(storeService.getSido());
     }
 
     @GetMapping("/address/gugun")
-    public ResponseEntity getGugun(@RequestParam String sidoCode) {
+    public ResponseEntity<List<GugunDto>> getGugun(@RequestParam String sidoCode) {
         return ResponseEntity.ok().body(storeService.getGugun(sidoCode));
     }
 }

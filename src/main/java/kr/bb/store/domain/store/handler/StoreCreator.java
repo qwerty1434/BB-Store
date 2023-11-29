@@ -21,7 +21,7 @@ public class StoreCreator {
 
         Store store = Store.builder()
                 .storeManagerId(userId)
-                .storeCode(UUID.randomUUID().toString())
+                .storeCode(UUID.randomUUID().toString().substring(0,8))
                 .storeName(storeDto.getStoreName())
                 .detailInfo(storeDto.getDetailInfo())
                 .storeThumbnailImage(storeDto.getStoreThumbnailImage())
