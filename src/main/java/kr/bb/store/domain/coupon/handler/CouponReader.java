@@ -25,12 +25,12 @@ public class CouponReader {
         return couponRepository.findAllDtoByStoreId(storeId);
     }
 
-    public List<Coupon> readStoresAllValidateCoupon(Long storeId) {
-        return couponRepository.findAllValidateCouponsByStoreId(storeId);
+    public List<Coupon> readStoresAllValidateCoupon(Long storeId, LocalDate now) {
+        return couponRepository.findAllDownloadableCouponsByStoreId(storeId, now);
     }
 
-    public List<CouponWithIssueStatusDto> readStoreCouponsForUser(Long userId, Long storeId) {
-        return couponRepository.findStoreCouponsForUser(userId, storeId);
+    public List<CouponWithIssueStatusDto> readStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
+        return couponRepository.findStoreCouponsForUser(userId, storeId, now);
     }
 
     public List<CouponDto> readAvailableCouponsInStore(Long userId, Long storeId, LocalDate readDate) {

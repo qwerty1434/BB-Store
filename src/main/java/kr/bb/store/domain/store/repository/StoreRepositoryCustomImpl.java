@@ -56,7 +56,9 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 .from(storeAddress)
                 .leftJoin(storeAddress.store, store)
                 .where(
-                        withinRadius(lat, lon, meter)
+                        withinRadius(lat, lon, meter),
+                        store.isDeleted.isFalse()
+
                 )
                 .fetch();
     }
@@ -75,7 +77,8 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 .leftJoin(storeAddress.store, store)
                 .where(
                         storeAddress.sido.eq(sido),
-                        gugun != null ? storeAddress.gugun.eq(gugun) : null
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null,
+                        store.isDeleted.isFalse()
                 )
                 .fetch();
     }

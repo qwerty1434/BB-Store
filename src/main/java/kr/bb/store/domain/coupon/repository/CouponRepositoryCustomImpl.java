@@ -24,7 +24,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
     public List<CouponForOwnerDto> findAllDtoByStoreId(Long storeId) {
         return queryFactory
                 .select(new QCouponForOwnerDto(
-                        coupon.store.id,
+                        coupon.id,
                         coupon.couponCode,
                         coupon.couponName,
                         coupon.minPrice,
@@ -41,7 +41,10 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .from(coupon)
                 .leftJoin(issuedCoupon)
                 .on(coupon.id.eq(issuedCoupon.id.couponId))
-                .where(coupon.store.id.eq(storeId))
+                .where(
+                        coupon.store.id.eq(storeId),
+                        coupon.isDeleted.isFalse()
+                )
                 .groupBy(
                         coupon.store.id,
                         coupon.couponCode,
@@ -57,7 +60,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
     }
 
     @Override
-    public List<Coupon> findAllValidateCouponsByStoreId(Long storeId) {
+    public List<Coupon> findAllDownloadableCouponsByStoreId(Long storeId, LocalDate now) {
         return queryFactory
                 .selectFrom(coupon)
                 .leftJoin(issuedCoupon)
@@ -65,13 +68,14 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .where(
                         coupon.store.id.eq(storeId),
                         issuedCoupon.id.isNull(),
+                        isCouponUnexpired(now),
                         coupon.isDeleted.isFalse()
                 )
                 .fetch();
     }
 
     @Override
-    public List<CouponWithIssueStatusDto> findStoreCouponsForUser(Long userId, Long storeId) {
+    public List<CouponWithIssueStatusDto> findStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
         return queryFactory
                 .select(new QCouponWithIssueStatusDto(
                     coupon.id,
@@ -83,14 +87,20 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                     JPAExpressions
                             .select(issuedCoupon.count().gt(0))
                             .from(issuedCoupon)
-                            .where(issuedCoupon.id.couponId.eq(coupon.id),
+                            .where(
+                                    issuedCoupon.id.couponId.eq(coupon.id),
                                     issuedCoupon.id.userId.eq(userId),
-                                    issuedCoupon.isUsed.eq(false))
+                                    issuedCoupon.isUsed.isFalse(),
+                                    coupon.isDeleted.isFalse()
+                            )
                 ))
                 .from(coupon)
                 .leftJoin(issuedCoupon)
                 .on(coupon.id.eq(issuedCoupon.id.couponId))
-                .where(coupon.store.id.eq(storeId))
+                .where(
+                        coupon.store.id.eq(storeId),
+                        isCouponUnexpired(now)
+                )
                 .fetch();
     }
 
@@ -111,8 +121,9 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .where(
                         coupon.store.id.eq(storeId),
                         issuedCoupon.id.userId.eq(userId),
-                        issuedCoupon.isUsed.eq(false),
-                        isCouponUnexpired(now)
+                        issuedCoupon.isUsed.isFalse(),
+                        isCouponUnexpired(now),
+                        coupon.isDeleted.isFalse()
                 )
                 .fetch();
     }
@@ -133,8 +144,9 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .on(coupon.id.eq(issuedCoupon.id.couponId))
                 .where(
                         issuedCoupon.id.userId.eq(userId),
-                        issuedCoupon.isUsed.eq(false),
-                        isCouponUnexpired(now)
+                        issuedCoupon.isUsed.isFalse(),
+                        isCouponUnexpired(now),
+                        coupon.isDeleted.isFalse()
                 )
                 .fetch();
     }

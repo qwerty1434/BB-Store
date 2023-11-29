@@ -66,7 +66,8 @@ public class CouponController {
     public ResponseEntity<CouponsForUserResponse> storeCouponsForUser(@PathVariable Long storeId,
                                                                       @RequestHeader(value = "userId") Long userId) {
 
-        return ResponseEntity.ok().body(couponService.getAllStoreCouponsForUser(userId, storeId));
+        LocalDate now = LocalDate.now();
+        return ResponseEntity.ok().body(couponService.getAllStoreCouponsForUser(userId, storeId, now));
     }
 
     @GetMapping("/{storeId}/coupons/my")
