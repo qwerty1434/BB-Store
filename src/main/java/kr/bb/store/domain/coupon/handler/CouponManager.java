@@ -1,9 +1,14 @@
 package kr.bb.store.domain.coupon.handler;
 
 import kr.bb.store.domain.coupon.entity.Coupon;
+import kr.bb.store.domain.coupon.entity.IssuedCoupon;
+import kr.bb.store.domain.coupon.entity.IssuedCouponId;
+import kr.bb.store.domain.coupon.exception.AlreadyUsedCouponException;
 import kr.bb.store.domain.coupon.handler.dto.CouponDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +24,13 @@ public class CouponManager {
         );
     }
 
+    public void use(IssuedCoupon issuedCoupon, LocalDate useDate) {
+        issuedCoupon.use(useDate);
+    }
+
     public void softDelete(Coupon coupon) {
         coupon.softDelete();
     }
+
+
 }
