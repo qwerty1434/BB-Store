@@ -17,7 +17,7 @@ public class CouponCreator {
     public Coupon create(Store store, CouponDto couponDto) {
 
         Coupon coupon = Coupon.builder()
-                .couponCode(UUID.randomUUID().toString())
+                .couponCode(UUID.randomUUID().toString().substring(0,8))
                 .store(store)
                 .limitCount(couponDto.getLimitCount())
                 .couponName(couponDto.getCouponName())
