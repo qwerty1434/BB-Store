@@ -16,14 +16,16 @@ public class StoreForMapResponse {
     private String storeName;
     private Boolean isLiked;
     private String detailInfo;
+    private String thumbnailImage;
     private Double averageRating;
     private Position position;
 
     @QueryProjection
-    public StoreForMapResponse(Long storeId, String storeName,String detailInfo, Double averageRating, Double lat, Double lon) {
+    public StoreForMapResponse(Long storeId, String storeName,String detailInfo, String thumbnailImage, Double averageRating, Double lat, Double lon) {
         this.storeId = storeId;
         this.storeName = storeName;
         this.detailInfo = detailInfo;
+        this.thumbnailImage = thumbnailImage;
         this.averageRating = averageRating;
         this.position = new Position(lat,lon);
     }

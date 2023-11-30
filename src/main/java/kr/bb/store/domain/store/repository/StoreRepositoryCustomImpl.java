@@ -49,6 +49,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                     store.id,
                     store.storeName,
                     store.detailInfo,
+                    store.storeThumbnailImage,
                     store.averageRating,
                     storeAddress.lat,
                     storeAddress.lon
@@ -69,6 +70,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                         store.id,
                         store.storeName,
                         store.detailInfo,
+                        store.storeThumbnailImage,
                         store.averageRating,
                         storeAddress.lat,
                         storeAddress.lon
