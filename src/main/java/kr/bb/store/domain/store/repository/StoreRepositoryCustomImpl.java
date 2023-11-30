@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.repository;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.store.entity.Store;
@@ -44,7 +45,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
     }
 
     @Override
-    public List<StoreForMapResponse> getNearbyStores(double lat, double lon, double meter) {
+    public List<StoreForMapResponse> getNearbyStores(double centerLat, double centerLon, double meter) {
         return queryFactory.select(new QStoreForMapResponse(
                     store.id,
                     store.storeName,
@@ -57,10 +58,10 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 .from(storeAddress)
                 .leftJoin(storeAddress.store, store)
                 .where(
-                        withinRadius(lat, lon, meter),
+                        withinRadius(centerLat, centerLon, meter),
                         store.isDeleted.isFalse()
-
                 )
+                .orderBy(nearbyStoreOrderer(centerLat,centerLon))
                 .fetch();
     }
 
@@ -86,6 +87,11 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
     }
 
 
+    private OrderSpecifier<Double> nearbyStoreOrderer(double centerLat, double centerLon) {
+        return storeAddress.lat.abs().subtract(centerLat)
+                .add(storeAddress.lon.abs().subtract(centerLon))
+                .asc();
+    }
 
     private BooleanExpression withinRadius(double centerLat, double centerLon, double meter) {
         return storeAddress.lat.between(centerLat - metersToLatitude(meter), centerLat + metersToLatitude(meter))
