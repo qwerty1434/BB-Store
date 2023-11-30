@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 public class StoreService {
     private final StoreCreator storeCreator;
     private final StoreManager storeManager;
-    private final StoreAddressCreator storeAddressCreator;
-    private final DeliveryPolicyCreator deliveryPolicyCreator;
     private final StoreReader storeReader;
     private final SidoReader sidoReader;
     private final GugunReader gugunReader;
@@ -38,11 +36,9 @@ public class StoreService {
 
     @Transactional
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest, List<FlowerDto> flowers) {
-        Store store = storeCreator.create(userId, storeCreateRequest.toStoreRequest());
         Sido sido = sidoReader.readSido(storeCreateRequest.getSido());
         Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeCreateRequest.getGugun());
-        storeAddressCreator.create(sido, gugun, store, storeCreateRequest.toStoreAddressRequest());
-        deliveryPolicyCreator.create(store, storeCreateRequest.toDeliveryPolicyRequest());
+        Store store = storeCreator.create(userId, storeCreateRequest, sido, gugun);
         cargoService.createBasicCargo(store, flowers);
         return store.getId();
     }
