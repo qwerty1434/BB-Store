@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GugunDto {
-    private String code;
-    private String name;
+    private String value;
+    private String label;
     public static GugunDto fromEntity(Gugun gugun) {
         return GugunDto.builder()
-                .code(gugun.getCode())
-                .name(gugun.getName())
+                .value(gugun.getCode())
+                .label(gugun.getName())
                 .build();
     }
 

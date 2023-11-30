@@ -36,7 +36,7 @@ class GugunReaderTest {
         gugunRepository.save(gugun);
 
         // when
-        Gugun gugunResult = gugunReader.readGugunCorrespondingSido(sido, "강남구");
+        Gugun gugunResult = gugunReader.readGugunCorrespondingSidoWithCode(sido, "110011");
 
         // then
         assertThat(gugunResult.getSido().getCode()).isEqualTo(sido.getCode());
@@ -55,7 +55,7 @@ class GugunReaderTest {
         gugunRepository.saveAll(List.of(gugun1,gugun2));
 
         // when // then
-        assertThatThrownBy(() -> gugunReader.readGugunCorrespondingSido(sido1,"영통구"))
+        assertThatThrownBy(() -> gugunReader.readGugunCorrespondingSidoWithCode(sido1,"223322"))
                 .isInstanceOf(InvalidParentException.class)
                 .hasMessage("선택한 시/도와 구/군이 맞지 않습니다.");
     }

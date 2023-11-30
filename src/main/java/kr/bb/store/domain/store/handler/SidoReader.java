@@ -12,10 +12,17 @@ import java.util.List;
 @Component
 public class SidoReader {
     private final SidoRepository sidoRepository;
-    public Sido readSido(String sidoName) {
+
+    public Sido readSidoByName(String sidoName) {
         return sidoRepository.findByName(sidoName)
                 .orElseThrow(SidoNotFoundException::new);
+
     }
+    public Sido readSido(String sidoCode) {
+        return sidoRepository.findById(sidoCode)
+                .orElseThrow(SidoNotFoundException::new);
+    }
+
 
     public List<Sido> readAll() {
         return sidoRepository.findAll();
