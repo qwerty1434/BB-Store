@@ -53,6 +53,9 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '0.1.0-alpha1'
 }
 
