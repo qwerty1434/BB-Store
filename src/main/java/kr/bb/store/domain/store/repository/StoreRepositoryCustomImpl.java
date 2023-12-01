@@ -31,8 +31,8 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 .where(
                         store.isDeleted.isFalse()
                 )
-                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
         Long count = queryFactory
                 .select(store.id.count())
