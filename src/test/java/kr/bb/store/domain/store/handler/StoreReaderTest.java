@@ -223,7 +223,9 @@ class StoreReaderTest {
         Sido sido2 = new Sido("2", "부산");
         Gugun gugun1 = new Gugun("100",sido1,"강남구");
         Gugun gugun2 = new Gugun("200",sido1,"종로구");
-
+        Gugun gugun3 = new Gugun("300",sido2,"거창군");
+        Gugun gugun4 = new Gugun("400",sido2,"창녕군");
+        Gugun gugun5 = new Gugun("500",sido2,"진해군");
 
         Store s1 = createStore(1L,"가게1");
         Store s2 = createStore(1L,"가게2");
@@ -233,23 +235,24 @@ class StoreReaderTest {
         storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
 
         StoreAddress sa1 = createStoresAddressWithSidoGugun(s1, sido1, gugun1);
-        StoreAddress sa2 = createStoresAddressWithSidoGugun(s2, sido1, gugun1);
-        StoreAddress sa3 = createStoresAddressWithSidoGugun(s3, sido1, gugun2);
-        StoreAddress sa4 = createStoresAddressWithSidoGugun(s4, sido1, gugun2);
-        StoreAddress sa5 = createStoresAddressWithSidoGugun(s5, sido1, gugun2);
+        StoreAddress sa2 = createStoresAddressWithSidoGugun(s2, sido1, gugun2);
+        StoreAddress sa3 = createStoresAddressWithSidoGugun(s3, sido2, gugun3);
+        StoreAddress sa4 = createStoresAddressWithSidoGugun(s4, sido2, gugun4);
+        StoreAddress sa5 = createStoresAddressWithSidoGugun(s5, sido2, gugun5);
         storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
 
         em.flush();
         em.clear();
 
+        // when
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido1, gugun1);
-        assertThat(storesWithRegion.getStores()).hasSize(2)
-                .extracting("storeName")
-                .containsExactlyInAnyOrder(
-                        "가게1","가게2"
-                );
 
+        // then
+        assertThat(storesWithRegion.getStores()).hasSize(1)
+                .extracting("storeName")
+                .containsExactly("가게1");
     }
+
     @DisplayName("시만 입력하면 해당 시에 해당하는 가게 정보를 가져온다")
     @Test
     public void getStoresWithRegionOnlySido() {
@@ -277,7 +280,10 @@ class StoreReaderTest {
         em.flush();
         em.clear();
 
+        // when
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido1, null);
+
+        // then
         assertThat(storesWithRegion.getStores()).hasSize(4)
                 .extracting("storeName")
                 .containsExactlyInAnyOrder(
