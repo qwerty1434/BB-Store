@@ -17,7 +17,7 @@ public class DeliveryPolicy extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="store_id")
     private Store store;
 
