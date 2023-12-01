@@ -56,7 +56,7 @@ public class CouponIssuer {
 
     private boolean isExhausted(Coupon coupon) {
         Long issuedCouponCount = issuedCouponRepository.findIssuedCountByCouponId(coupon.getId());
-        return coupon.getLimitCount() - issuedCouponCount == 0;
+        return coupon.getLimitCount() - issuedCouponCount <= 0;
     }
 
     private boolean isDuplicated(Coupon coupon, Long userId) {
