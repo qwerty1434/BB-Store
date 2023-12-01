@@ -24,6 +24,14 @@ public class GugunReader {
         }
         return gugun;
     }
+    public Gugun readGugunCorrespondingSidoWithCode(Sido sido, String gugunCode) {
+        Gugun gugun = gugunRepository.findById(gugunCode)
+                .orElseThrow(GugunNotFoundException::new);
+        if(!gugun.getSido().getCode().equals(sido.getCode())) {
+            throw new InvalidParentException();
+        }
+        return gugun;
+    }
 
     public List<Gugun> readGuguns(String sidoCode) {
         return gugunRepository.findGugunBySidoCode(sidoCode);

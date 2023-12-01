@@ -38,6 +38,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
                         question.isDeleted.isFalse()
                 )
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
 
         Long count = queryFactory
@@ -74,6 +76,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.productId.eq(productId),
                         question.isDeleted.isFalse()
                 )
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
 
         Long count = queryFactory
@@ -110,6 +114,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.userId.eq(userId),
                         question.isDeleted.isFalse()
                 )
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
 
         Long count = queryFactory
@@ -146,6 +152,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.userId.eq(userId),
                         question.isDeleted.isFalse()
                 )
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetch();
 
         Long count = queryFactory

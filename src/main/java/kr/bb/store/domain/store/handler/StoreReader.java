@@ -66,6 +66,7 @@ public class StoreReader {
                 .storeName(store.getStoreName())
                 .storeThumbnailImage(store.getStoreThumbnailImage())
                 .address(storeAddress.getAddress())
+                .detailAddress(storeAddress.getDetailAddress())
                 .averageRating(store.getAverageRating())
                 .detailInfo(store.getDetailInfo())
                 .phoneNumber(store.getPhoneNumber())

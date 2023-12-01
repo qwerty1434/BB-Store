@@ -21,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -282,7 +283,7 @@ class StoreServiceTest {
         em.flush();
         em.clear();
 
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getName(), gugun1.getName());
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getCode(), gugun1.getCode());
         assertThat(storesWithRegion.getStores()).hasSize(2)
                 .extracting("storeName")
                 .containsExactlyInAnyOrder(
@@ -296,8 +297,7 @@ class StoreServiceTest {
     void sidoMustNotBeNullWhenGetStoresWithRegion() {
         // when // then
         assertThatThrownBy(() -> storeService.getStoresWithRegion(null,"강남구"))
-                .isInstanceOf(SidoNotFoundException.class)
-                .hasMessage("해당 시/도가 존재하지 않습니다.");
+                .isInstanceOf(InvalidDataAccessApiUsageException.class);
 
     }
     @DisplayName("시에 맞지 않는 군을 입력하면 에러가 발생한다")
@@ -311,7 +311,7 @@ class StoreServiceTest {
         gugunRepository.save(gugun1);
 
         // when // then
-        assertThatThrownBy(() -> storeService.getStoresWithRegion(sido1.getName(),gugun1.getName()))
+        assertThatThrownBy(() -> storeService.getStoresWithRegion(sido1.getCode(),gugun1.getCode()))
                 .isInstanceOf(InvalidParentException.class)
                 .hasMessage("선택한 시/도와 구/군이 맞지 않습니다.");
 
@@ -343,7 +343,7 @@ class StoreServiceTest {
         em.flush();
         em.clear();
 
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getName(), "");
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getCode(), "");
         assertThat(storesWithRegion.getStores()).hasSize(4)
                 .extracting("storeName")
                 .containsExactlyInAnyOrder(

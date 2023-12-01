@@ -6,7 +6,6 @@ import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
-import kr.bb.store.domain.coupon.entity.IssuedCouponId;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.handler.*;
 import kr.bb.store.domain.store.entity.Store;
@@ -49,6 +48,18 @@ public class CouponService {
         couponManager.softDelete(coupon);
     }
 
+    @Transactional
+    public void downloadCoupon(Long userId, Long couponId, LocalDate now) {
+        Coupon coupon = couponReader.read(couponId);
+        couponIssuer.issueCoupon(coupon, userId, now);
+    }
+
+    @Transactional
+    public void downloadAllCoupons(Long userId, Long storeId, LocalDate now) {
+        List<Coupon> coupons = couponReader.readStoresAllValidateCoupon(storeId, now);
+        couponIssuer.issuePossibleCoupons(coupons, userId, now);
+    }
+
     public CouponsForOwnerResponse getAllStoreCoupons(Long storeId) {
         return CouponsForOwnerResponse.builder()
                 .data(couponReader.readCouponsForOwner(storeId))
@@ -80,17 +91,6 @@ public class CouponService {
         couponManager.use(issuedCoupon, useDate);
     }
 
-    @Transactional
-    public void downloadCoupon(Long userId, Long couponId, LocalDate now) {
-        Coupon coupon = couponReader.read(couponId);
-        couponIssuer.issueCoupon(coupon, userId, now);
-    }
-
-    @Transactional
-    public void downloadAllCoupons(Long userId, Long storeId, LocalDate now) {
-        List<Coupon> coupons = couponReader.readStoresAllValidateCoupon(storeId, now);
-        couponIssuer.issuePossibleCoupons(coupons, userId, now);
-    }
 
 
 

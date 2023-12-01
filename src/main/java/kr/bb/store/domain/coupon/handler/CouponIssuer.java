@@ -1,10 +1,12 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.domain.common.entity.BaseEntity;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.entity.IssuedCouponId;
 import kr.bb.store.domain.coupon.exception.AlreadyIssuedCouponException;
 import kr.bb.store.domain.coupon.exception.CouponOutOfStockException;
+import kr.bb.store.domain.coupon.exception.DeletedCouponException;
 import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ public class CouponIssuer {
     private final IssuedCouponRepository issuedCouponRepository;
 
     public IssuedCoupon issueCoupon(Coupon coupon, Long userId, LocalDate issueDate) {
+        if(coupon.getIsDeleted()) throw new DeletedCouponException();
         if(coupon.isExpired(issueDate)) throw new ExpiredCouponException();
         if(isExhausted(coupon)) throw new CouponOutOfStockException();
         // TODO : Persistable을 이용한 코드로 수정
@@ -30,6 +33,7 @@ public class CouponIssuer {
 
     public void issuePossibleCoupons(List<Coupon> coupons, Long userId, LocalDate issueDate) {
         coupons.stream()
+                .filter(Predicate.not(Coupon::getIsDeleted))
                 .filter(Predicate.not(coupon -> coupon.isExpired(issueDate)))
                 .filter(Predicate.not(this::isExhausted))
                 .filter(Predicate.not(coupon -> isDuplicated(coupon,userId)))

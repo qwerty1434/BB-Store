@@ -76,7 +76,7 @@ public class StoreController {
     }
 
     @GetMapping("/address/gugun")
-    public ResponseEntity<List<GugunDto>> getGugun(@RequestParam String sidoCode) {
-        return ResponseEntity.ok().body(storeService.getGugun(sidoCode));
+    public ResponseEntity<List<GugunDto>> getGugun(@RequestParam String sido) {
+        return ResponseEntity.ok().body(storeService.getGugun(sido));
     }
 }

@@ -99,7 +99,8 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .on(coupon.id.eq(issuedCoupon.id.couponId))
                 .where(
                         coupon.store.id.eq(storeId),
-                        isCouponUnexpired(now)
+                        isCouponUnexpired(now),
+                        coupon.isDeleted.isFalse()
                 )
                 .fetch();
     }

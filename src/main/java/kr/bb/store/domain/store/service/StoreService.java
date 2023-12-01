@@ -36,7 +36,7 @@ public class StoreService {
 
     @Transactional
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest, List<FlowerDto> flowers) {
-        Sido sido = sidoReader.readSido(storeCreateRequest.getSido());
+        Sido sido = sidoReader.readSidoByName(storeCreateRequest.getSido());
         Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeCreateRequest.getGugun());
         Store store = storeCreator.create(userId, storeCreateRequest, sido, gugun);
         cargoService.createBasicCargo(store, flowers);
@@ -48,7 +48,7 @@ public class StoreService {
         Store store = storeReader.findStoreById(storeId);
         StoreAddress storeAddress = storeReader.findStoreAddressByStoreId(storeId);
         DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(storeId);
-        Sido sido = sidoReader.readSido(storeInfoEditRequest.getSido());
+        Sido sido = sidoReader.readSidoByName(storeInfoEditRequest.getSido());
         Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeInfoEditRequest.getGugun());
         storeManager.edit(store, storeAddress, deliveryPolicy, sido, gugun, storeInfoEditRequest);
     }
@@ -86,10 +86,10 @@ public class StoreService {
 
         return nearbyStores;
     }
-    public StoreListForMapResponse getStoresWithRegion(String sidoName, String gugunName) {
+    public StoreListForMapResponse getStoresWithRegion(String sidoCode, String gugunCode) {
         // TODO : 좋아요 여부 feign으로 받아와서 채우기
-        Sido sido = sidoReader.readSido(sidoName);
-        Gugun gugun = "".equals(gugunName) ? null : gugunReader.readGugunCorrespondingSido(sido, gugunName);
+        Sido sido = sidoReader.readSido(sidoCode);
+        Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido, gugun);
         return storesWithRegion;
     }
