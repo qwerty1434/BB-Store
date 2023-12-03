@@ -98,7 +98,7 @@ class CargoServiceTest {
     
     @DisplayName("특정 가게, 특정 꽃의 재고를 차감한다")
     @Test
-    void substractStock() {
+    void subtractStock() {
         // given
         Store store = createStore();
         storeRepository.save(store);
