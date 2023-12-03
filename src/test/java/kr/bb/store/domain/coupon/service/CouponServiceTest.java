@@ -8,11 +8,11 @@ import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-@Transactional
 class CouponServiceTest {
     @Autowired
     private CouponService couponService;
@@ -38,6 +37,13 @@ class CouponServiceTest {
     private EntityManager em;
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
+
+    @AfterEach
+    public void teardown() {
+        issuedCouponRepository.deleteAllInBatch();
+        couponRepository.deleteAllInBatch();
+        storeRepository.deleteAllInBatch();
+    }
 
     @DisplayName("요청받은 내용으로 쿠폰 정보를 수정한다")
     @Test
@@ -58,9 +64,6 @@ class CouponServiceTest {
 
         // when
         couponService.editCoupon(store.getId(), coupon.getId(), couponRequest);
-
-        em.flush();
-        em.clear();
 
         Coupon result = couponRepository.findById(savedCoupon.getId()).get();
         assertThat(result.getCouponName()).isEqualTo("변경된 쿠폰이름");
@@ -107,9 +110,10 @@ class CouponServiceTest {
 
         // when
         couponService.softDeleteCoupon(store.getId(),coupon.getId());
+        Coupon coupon1 = couponRepository.findById(coupon.getId()).get();
 
         // then
-        assertThat(coupon.getIsDeleted()).isTrue();
+        assertThat(coupon1.getIsDeleted()).isTrue();
 
     }
 
