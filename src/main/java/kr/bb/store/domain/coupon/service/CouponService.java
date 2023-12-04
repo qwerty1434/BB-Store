@@ -29,9 +29,9 @@ public class CouponService {
     private final StoreReader storeReader;
 
     @Transactional
-    public Coupon createCoupon(Long storeId, CouponCreateRequest couponCreateRequest) {
+    public void createCoupon(Long storeId, CouponCreateRequest couponCreateRequest) {
         Store store = storeReader.findStoreById(storeId);
-        return couponCreator.create(store, couponCreateRequest.toDto());
+        couponCreator.create(store, couponCreateRequest.toDto());
     }
 
     @Transactional

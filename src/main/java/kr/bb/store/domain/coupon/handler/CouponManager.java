@@ -2,9 +2,8 @@ package kr.bb.store.domain.coupon.handler;
 
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
-import kr.bb.store.domain.coupon.entity.IssuedCouponId;
-import kr.bb.store.domain.coupon.exception.AlreadyUsedCouponException;
 import kr.bb.store.domain.coupon.handler.dto.CouponDto;
+import kr.bb.store.domain.coupon.repository.CouponRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +12,7 @@ import java.time.LocalDate;
 @Component
 @RequiredArgsConstructor
 public class CouponManager {
+    private final CouponRedisRepository couponRedisRepository;
     public void edit(Coupon coupon, CouponDto couponEditDto) {
         coupon.update(
                 couponEditDto.getLimitCount(),
@@ -22,6 +22,8 @@ public class CouponManager {
                 couponEditDto.getStartDate(),
                 couponEditDto.getEndDate()
         );
+        couponRedisRepository.setExpirationDate(coupon.getCouponCode(), couponEditDto.getEndDate());
+
     }
 
     public void use(IssuedCoupon issuedCoupon, LocalDate useDate) {
