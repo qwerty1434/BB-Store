@@ -17,6 +17,9 @@ public class FlowerCargo extends BaseEntity {
     @EmbeddedId
     private FlowerCargoId id;
 
+    @Version
+    private Integer version;
+
     @MapsId("storeId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="store_id")
