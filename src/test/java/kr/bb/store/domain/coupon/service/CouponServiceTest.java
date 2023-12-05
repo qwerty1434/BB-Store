@@ -5,22 +5,27 @@ import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
+import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-@Transactional
 class CouponServiceTest {
     @Autowired
     private CouponService couponService;
@@ -30,6 +35,15 @@ class CouponServiceTest {
     private StoreRepository storeRepository;
     @Autowired
     private EntityManager em;
+    @Autowired
+    private IssuedCouponRepository issuedCouponRepository;
+
+    @AfterEach
+    public void teardown() {
+        issuedCouponRepository.deleteAllInBatch();
+        couponRepository.deleteAllInBatch();
+        storeRepository.deleteAllInBatch();
+    }
 
     @DisplayName("요청받은 내용으로 쿠폰 정보를 수정한다")
     @Test
@@ -50,9 +64,6 @@ class CouponServiceTest {
 
         // when
         couponService.editCoupon(store.getId(), coupon.getId(), couponRequest);
-
-        em.flush();
-        em.clear();
 
         Coupon result = couponRepository.findById(savedCoupon.getId()).get();
         assertThat(result.getCouponName()).isEqualTo("변경된 쿠폰이름");
@@ -99,9 +110,10 @@ class CouponServiceTest {
 
         // when
         couponService.softDeleteCoupon(store.getId(),coupon.getId());
+        Coupon coupon1 = couponRepository.findById(coupon.getId()).get();
 
         // then
-        assertThat(coupon.getIsDeleted()).isTrue();
+        assertThat(coupon1.getIsDeleted()).isTrue();
 
     }
 
@@ -123,6 +135,47 @@ class CouponServiceTest {
 
     }
 
+    @DisplayName("멀티쓰레드 환경에서도 동시에 쿠폰 발급을 요청해도 정해진 수량만큼의 발급이 보장된다")
+    @Test
+    void issueCouponInMultiThread() throws InterruptedException {
+        // given
+        int limitCount = 100;
+        int applicantsCount = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(applicantsCount);
+
+        Future<Long> couponCreate = executorService.submit(() -> {
+            Store store = createStore();
+            storeRepository.save(store);
+
+            Coupon coupon = couponCreator(store, limitCount);
+            return couponRepository.save(coupon).getId();
+
+        });
+
+        // when
+        LongStream.rangeClosed(1L, applicantsCount)
+                .forEach(userId ->
+                    executorService.submit(() -> {
+                        try {
+                            Long couponId = couponCreate.get();
+                            couponService.downloadCoupon(userId,couponId,LocalDate.now());
+                        } catch (Exception ignored) {
+                        } finally {
+                            latch.countDown();
+                        }
+                    })
+                );
+
+        latch.await();
+
+        long issuedCouponCount = issuedCouponRepository.count();
+
+        // then
+        assertThat(issuedCouponCount).isEqualTo(limitCount);
+
+    }
+
     private Store createStore() {
         return Store.builder()
                 .storeManagerId(1L)
@@ -141,6 +194,18 @@ class CouponServiceTest {
                 .couponCode("쿠폰코드")
                 .store(store)
                 .limitCount(100)
+                .couponName("쿠폰이름")
+                .discountPrice(10000L)
+                .minPrice(100000L)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .build();
+    }
+    private Coupon couponCreator(Store store, int limitCount) {
+        return Coupon.builder()
+                .couponCode("쿠폰코드")
+                .store(store)
+                .limitCount(limitCount)
                 .couponName("쿠폰이름")
                 .discountPrice(10000L)
                 .minPrice(100000L)
