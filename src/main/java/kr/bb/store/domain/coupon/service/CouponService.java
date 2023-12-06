@@ -91,12 +91,6 @@ public class CouponService {
         couponManager.use(issuedCoupon, useDate);
     }
 
-
-
-
-
-
-
     private void validateCouponAuthorization(Coupon coupon, Long storeId) {
         if(!coupon.getStore().getId().equals(storeId)) throw new UnAuthorizedCouponException();
     }

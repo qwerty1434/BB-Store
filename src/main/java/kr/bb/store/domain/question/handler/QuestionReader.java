@@ -27,15 +27,7 @@ public class QuestionReader {
         Answer answer = answerRepository.findById(questionId)
                 .orElse(null);
 
-        return QuestionDetailInfoResponse.builder()
-                .title(question.getTitle())
-                .nickname(question.getNickname())
-                .createdAt(question.getCreatedAt())
-                .productName(question.getProductName())
-                .content(question.getContent())
-                .isReplied(answer != null)
-                .answer(answer == null ? null : AnswerDto.fromEntity(answer))
-                .build();
+        return QuestionDetailInfoResponse.of(question,answer);
     }
 
     public Page<QuestionForOwnerDto> readQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {
