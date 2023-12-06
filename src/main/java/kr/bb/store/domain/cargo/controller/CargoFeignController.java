@@ -19,7 +19,7 @@ public class CargoFeignController {
     }
 
     @PutMapping("/substract")
-    public ResponseEntity<Void> substractStock(@RequestBody StockFeignRequest stockFeignRequest) {
+    public ResponseEntity<Void> subtractStock(@RequestBody StockFeignRequest stockFeignRequest) {
         cargoService.minusStockCount(stockFeignRequest.getStoreId(), stockFeignRequest.getFlowerId(), stockFeignRequest.getStock());
         return ResponseEntity.ok().build();
     }

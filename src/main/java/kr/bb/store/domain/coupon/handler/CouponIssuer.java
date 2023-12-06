@@ -24,14 +24,14 @@ public class CouponIssuer {
     private final CouponRedisRepository couponRedisRepository;
 
     public IssuedCoupon issueCoupon(Coupon coupon, Long userId, LocalDate issueDate) {
-        String key = coupon.getCouponCode();
-        Integer limitCnt = coupon.getLimitCount();
-        Long issueCount = couponRedisRepository.increaseCount(key);
-
         if(coupon.getIsDeleted()) throw new DeletedCouponException();
         if(coupon.isExpired(issueDate)) throw new ExpiredCouponException();
         // TODO : Persistable을 이용한 코드로 수정
         if(isDuplicated(coupon, userId)) throw new AlreadyIssuedCouponException();
+
+        String key = coupon.getCouponCode();
+        Integer limitCnt = coupon.getLimitCount();
+        Long issueCount = couponRedisRepository.increaseCount(key);
         if(isExhausted(limitCnt,issueCount)) {
             couponRedisRepository.decreaseCount(key);
             throw new CouponOutOfStockException();

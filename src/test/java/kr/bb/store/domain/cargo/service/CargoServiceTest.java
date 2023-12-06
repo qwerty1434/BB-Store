@@ -8,20 +8,26 @@ import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
-@Transactional
 class CargoServiceTest {
 
     @Autowired
@@ -36,7 +42,17 @@ class CargoServiceTest {
     @Autowired
     private EntityManager em;
 
+    @Autowired
+    PlatformTransactionManager txManager;
+
+    @AfterEach
+    public void teardown() {
+        flowerCargoRepository.deleteAllInBatch();
+        storeRepository.deleteAllInBatch();
+    }
+
     @DisplayName("꽃 아이디와 수량을 입력받아 재고를 변경한다")
+    @Transactional
     @Test
     void modifyAllStocks() {
         // given
@@ -74,6 +90,7 @@ class CargoServiceTest {
     }
 
     @DisplayName("특정 가게, 특정 꽃의 재고를 더한다")
+    @Transactional
     @Test
     void addStock() {
         // given
@@ -95,10 +112,52 @@ class CargoServiceTest {
         assertThat(flowerCargoFromDB.getStock()).isEqualTo(110L);
 
     }
+
+    @DisplayName("재고 수정이 동시에 들어올 경우 가장 처음 수정만 유효하고, 뒤이은 수정은 실패한다(낙관락)")
+    @Test
+    void OptimisticLockWithVersion() throws InterruptedException, ExecutionException {
+        // given
+        final int concurrentRequestCount = 3;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(concurrentRequestCount);
+        final Long flowerId = 1L;
+
+        Future<Long> storeCreate = executorService.submit(() -> {
+            TransactionStatus status = txManager.getTransaction(new DefaultTransactionAttribute());
+            Store store = createStore();
+            storeRepository.save(store);
+            FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(), flowerId);
+            FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
+            flowerCargoRepository.save(flowerCargo);
+            txManager.commit(status);
+            return store.getId();
+        });
+
+        final Long storeId = storeCreate.get();
+
+
+        LongStream.rangeClosed(1L, concurrentRequestCount)
+                .forEach( idx -> executorService.submit(() -> {
+                    try {
+                        cargoService.plusStockCount(storeId,flowerId,idx);
+                    } catch (Exception ignored) {
+                    } finally {
+                        latch.countDown();
+                    }
+                }));
+
+        latch.await();
+        FlowerCargoId flowerCargoId = createFlowerCargoId(storeId, flowerId);
+        FlowerCargo result = flowerCargoRepository.findById(flowerCargoId).get();
+
+        Assertions.assertThat(result.getVersion()).isNotEqualTo(0);
+    }
+
     
     @DisplayName("특정 가게, 특정 꽃의 재고를 차감한다")
+    @Transactional
     @Test
-    void substractStock() {
+    void subtractStock() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -120,6 +179,7 @@ class CargoServiceTest {
     }
 
     @DisplayName("재고는 음수가 될 수 없다")
+    @Transactional
     @Test
     void stockCannotBeNegative() {
         // given
@@ -141,6 +201,7 @@ class CargoServiceTest {
 
     }
     @DisplayName("재고는 음수가 될 수 없다")
+    @Transactional
     @Test
     void stockCannotBeNegative2() {
         // given
@@ -168,6 +229,7 @@ class CargoServiceTest {
     }
 
     @DisplayName("해당 가게의 모든 재고정보를 가져온다")
+    @Transactional
     @Test
     void getAllStocks() {
         // given
@@ -199,6 +261,7 @@ class CargoServiceTest {
     }
 
     @DisplayName("꽃 종류를 입력받아 수량이 0인 기본 정보를 생성한다")
+    @Transactional
     @Test
     void createBasicCargo() {
         // given
