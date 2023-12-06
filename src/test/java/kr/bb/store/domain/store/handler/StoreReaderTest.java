@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.Position;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -9,10 +10,6 @@ import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
-import kr.bb.store.domain.store.controller.response.StoreDetailInfoResponse;
-import kr.bb.store.domain.store.controller.response.StoreInfoManagerResponse;
-import kr.bb.store.domain.store.controller.response.StoreInfoUserResponse;
-import kr.bb.store.domain.store.controller.response.StoreListForMapResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -112,7 +109,7 @@ class StoreReaderTest {
         Pageable pageable = PageRequest.of(page,size);
 
         // when
-        Page<Store> stores = storeReader.readStoresWithPaging(pageable);
+        Page<StoreListResponse> stores = storeReader.readStoresWithPaging(pageable);
 
         // then
         assertThat(stores.getTotalPages()).isEqualTo(2);

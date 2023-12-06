@@ -54,7 +54,7 @@ public class StoreReader {
         return StoreDetailInfoResponse.of(store,deliveryPolicy,storeAddress);
     }
 
-    public Page<Store> readStoresWithPaging(Pageable pageable) {
+    public Page<StoreListResponse> readStoresWithPaging(Pageable pageable) {
         return storeRepository.getStoresWithPaging(pageable);
     }
 

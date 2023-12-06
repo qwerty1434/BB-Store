@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SimpleStorePagingResponse {
-    private List<SimpleStoreResponse> simpleStores;
+    private List<StoreListResponse> stores;
     private Long totalCnt;
 }

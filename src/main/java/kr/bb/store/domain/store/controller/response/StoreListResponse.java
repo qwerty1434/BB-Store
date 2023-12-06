@@ -1,7 +1,7 @@
 package kr.bb.store.domain.store.controller.response;
 
+
 import com.querydsl.core.annotations.QueryProjection;
-import kr.bb.store.domain.store.dto.Position;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,27 +11,23 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreForMapResponse {
+public class StoreListResponse {
     private Long storeId;
+    private String storeThumbnailImage;
     private String storeName;
-    private Boolean isLiked;
     private String detailInfo;
-    private String thumbnailImage;
     private Double averageRating;
-    private Position position;
+    private Boolean isLiked;
     private String address;
     private String detailAddress;
 
     @QueryProjection
-    public StoreForMapResponse(Long storeId, String storeName,String detailInfo, String thumbnailImage,
-                               Double averageRating, Double lat, Double lon,
-                               String address, String detailAddress) {
+    public StoreListResponse(Long storeId, String storeThumbnailImage, String storeName, String detailInfo, Double averageRating, String address, String detailAddress) {
         this.storeId = storeId;
+        this.storeThumbnailImage = storeThumbnailImage;
         this.storeName = storeName;
         this.detailInfo = detailInfo;
-        this.thumbnailImage = thumbnailImage;
         this.averageRating = averageRating;
-        this.position = new Position(lat,lon);
         this.address = address;
         this.detailAddress = detailAddress;
     }

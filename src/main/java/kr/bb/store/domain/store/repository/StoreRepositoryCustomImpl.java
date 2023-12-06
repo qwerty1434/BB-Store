@@ -3,6 +3,8 @@ package kr.bb.store.domain.store.repository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kr.bb.store.domain.store.controller.response.QStoreListResponse;
+import kr.bb.store.domain.store.controller.response.StoreListResponse;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
@@ -26,8 +28,19 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
     }
 
     @Override
-    public Page<Store> getStoresWithPaging(Pageable pageable) {
-        List<Store> contents = queryFactory.selectFrom(store)
+    public Page<StoreListResponse> getStoresWithPaging(Pageable pageable) {
+        List<StoreListResponse> contents = queryFactory.select(new QStoreListResponse(
+                    store.id,
+                    store.storeThumbnailImage,
+                    store.storeName,
+                    store.detailInfo,
+                    store.averageRating,
+                    storeAddress.address,
+                    storeAddress.detailAddress
+                ))
+                .from(store)
+                .leftJoin(storeAddress)
+                .on(store.id.eq(storeAddress.id))
                 .where(
                         store.isDeleted.isFalse()
                 )
@@ -53,7 +66,9 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                     store.storeThumbnailImage,
                     store.averageRating,
                     storeAddress.lat,
-                    storeAddress.lon
+                    storeAddress.lon,
+                    storeAddress.address,
+                    storeAddress.detailAddress
                 ))
                 .from(storeAddress)
                 .leftJoin(storeAddress.store, store)
@@ -74,7 +89,9 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                         store.storeThumbnailImage,
                         store.averageRating,
                         storeAddress.lat,
-                        storeAddress.lon
+                        storeAddress.lon,
+                        storeAddress.address,
+                        storeAddress.detailAddress
                 ))
                 .from(storeAddress)
                 .leftJoin(storeAddress.store, store)

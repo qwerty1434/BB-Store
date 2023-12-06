@@ -58,15 +58,14 @@ public class StoreService {
     }
 
     public SimpleStorePagingResponse getStoresWithPaging(Pageable pageable) {
-        Page<Store> storePages = storeReader.readStoresWithPaging(pageable);
-        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+        Page<StoreListResponse> storePages = storeReader.readStoresWithPaging(pageable);
 
-        List<SimpleStoreResponse> contents = storePages.getContent().stream()
-                .map(SimpleStoreResponse::from)
+        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+        List<StoreListResponse> contents = storePages.getContent().stream()
                 .collect(Collectors.toList());
 
         return SimpleStorePagingResponse.builder()
-                .simpleStores(contents)
+                .stores(contents)
                 .totalCnt(storePages.getTotalElements())
                 .build();
     }

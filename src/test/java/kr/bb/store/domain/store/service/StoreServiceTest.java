@@ -202,7 +202,7 @@ class StoreServiceTest {
 
         // then
         assertThat(response.getTotalCnt()).isEqualTo(7);
-        assertThat(response.getSimpleStores().get(0)).isInstanceOf(SimpleStoreResponse.class);
+        assertThat(response.getStores().get(0)).isInstanceOf(StoreListResponse.class);
     }
 
     @DisplayName("유저에게 보이는 가게정보를 반환한다")
