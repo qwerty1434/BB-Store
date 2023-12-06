@@ -16,10 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.UUID;
+import java.util.concurrent.*;
 import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -137,7 +135,7 @@ class CouponServiceTest {
 
     @DisplayName("멀티쓰레드 환경에서도 동시에 쿠폰 발급을 요청해도 정해진 수량만큼의 발급이 보장된다")
     @Test
-    void issueCouponInMultiThread() throws InterruptedException {
+    void issueCouponInMultiThread() throws InterruptedException, ExecutionException {
         // given
         int limitCount = 100;
         int applicantsCount = 1000;
@@ -153,12 +151,13 @@ class CouponServiceTest {
 
         });
 
+        final Long couponId = couponCreate.get();
+
         // when
         LongStream.rangeClosed(1L, applicantsCount)
                 .forEach(userId ->
                     executorService.submit(() -> {
                         try {
-                            Long couponId = couponCreate.get();
                             couponService.downloadCoupon(userId,couponId,LocalDate.now());
                         } catch (Exception ignored) {
                         } finally {
@@ -191,7 +190,7 @@ class CouponServiceTest {
 
     private Coupon couponCreator(Store store) {
         return Coupon.builder()
-                .couponCode("쿠폰코드")
+                .couponCode(UUID.randomUUID().toString())
                 .store(store)
                 .limitCount(100)
                 .couponName("쿠폰이름")
@@ -203,7 +202,7 @@ class CouponServiceTest {
     }
     private Coupon couponCreator(Store store, int limitCount) {
         return Coupon.builder()
-                .couponCode("쿠폰코드")
+                .couponCode(UUID.randomUUID().toString())
                 .store(store)
                 .limitCount(limitCount)
                 .couponName("쿠폰이름")
