@@ -19,7 +19,7 @@ public class QuestionReader {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
-    public QuestionDetailInfoResponse readDetailInfo(Long questionId, String nickname, String productName) {
+    public QuestionDetailInfoResponse readDetailInfo(Long questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(QuestionNotFoundException::new);
         question.check();
@@ -29,9 +29,9 @@ public class QuestionReader {
 
         return QuestionDetailInfoResponse.builder()
                 .title(question.getTitle())
-                .nickname(nickname)
+                .nickname(question.getNickname())
                 .createdAt(question.getCreatedAt())
-                .productName(productName)
+                .productName(question.getProductName())
                 .content(question.getContent())
                 .isReplied(answer != null)
                 .answer(answer == null ? null : AnswerDto.fromEntity(answer))

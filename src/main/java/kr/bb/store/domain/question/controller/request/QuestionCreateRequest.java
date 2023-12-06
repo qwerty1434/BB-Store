@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class QuestionCreateRequest {
     private Long storeId;
+    private String productName;
     private Long productId;
     private String title;
     private String content;

@@ -77,6 +77,7 @@ class QuestionCreatorTest {
         return QuestionCreateRequest.builder()
                 .storeId(storeId)
                 .productId(1L)
+                .productName("제품명")
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)

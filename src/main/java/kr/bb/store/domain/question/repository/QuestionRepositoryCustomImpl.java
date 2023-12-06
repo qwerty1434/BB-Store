@@ -26,6 +26,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     public Page<QuestionForOwnerDto> getQuestionsForStoreOwnerWithPaging(Long storeId, Boolean isReplied, Pageable pageable) {
         List<QuestionForOwnerDto> contents = queryFactory.select(new QQuestionForOwnerDto(
                         question.id,
+                        question.productName,
                         question.nickname,
                         question.title,
                         question.createdAt,

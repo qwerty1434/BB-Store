@@ -54,7 +54,7 @@ class QuestionReaderTest {
         String productName = "가게명";
 
         // when
-        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId(), nickname, productName);
+        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId());
 
         // then
         assertThat(questionDetailInfoResponse.getTitle()).isEqualTo("질문제목");
@@ -76,7 +76,7 @@ class QuestionReaderTest {
         String productName = "가게명";
 
         // when
-        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId(), nickname, productName);
+        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId());
 
         // then
         assertThat(questionDetailInfoResponse.getAnswer()).isNull();
@@ -97,7 +97,7 @@ class QuestionReaderTest {
         String productName = "가게명";
 
         // when
-        questionReader.readDetailInfo(question.getId(), nickname, productName);
+        questionReader.readDetailInfo(question.getId());
 
         em.flush();
         em.clear();
@@ -289,12 +289,13 @@ class QuestionReaderTest {
     }
 
 
-    private Question createQuestionWithProductIdAndUserId(Store store, Long productId, Long userId) {
+    private Question createQuestionWithProductIdAndUserId(Store store,Long productId, Long userId) {
         return Question.builder()
                 .store(store)
                 .userId(userId)
                 .nickname("닉네임")
                 .productId(productId)
+                .productName("상품명")
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)
@@ -307,6 +308,7 @@ class QuestionReaderTest {
                 .userId(1L)
                 .nickname("닉네임")
                 .productId(1L)
+                .productName("상품명")
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)
