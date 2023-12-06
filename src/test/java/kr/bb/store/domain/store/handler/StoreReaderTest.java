@@ -137,9 +137,10 @@ class StoreReaderTest {
 
         Boolean isLiked = true;
         Boolean isSubscribed = true;
+        String subscriptionProductId = "구독용 상품 아이디";
 
         // when
-        StoreInfoUserResponse response = storeReader.readForUser(store.getId(),isLiked, isSubscribed);
+        StoreInfoUserResponse response = storeReader.readForUser(store.getId(),isLiked, isSubscribed, subscriptionProductId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");

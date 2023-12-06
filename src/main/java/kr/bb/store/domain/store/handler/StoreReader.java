@@ -56,11 +56,12 @@ public class StoreReader {
         return storeRepository.getStoresWithPaging(pageable);
     }
 
-    public StoreInfoUserResponse readForUser(Long storeId, Boolean isLiked, Boolean isSubscribed) {
+    public StoreInfoUserResponse readForUser(Long storeId, Boolean isLiked, Boolean isSubscribed,
+                                             String subscriptionProductId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         StoreAddress storeAddress = storeAddressRepository.findByStoreId(storeId)
                 .orElseThrow(StoreAddressNotFoundException::new);
-        return StoreInfoUserResponse.of(store, storeAddress, isLiked, isSubscribed);
+        return StoreInfoUserResponse.of(store, storeAddress, isLiked, isSubscribed, subscriptionProductId);
     }
 
     public StoreInfoManagerResponse readForManager(Long storeId) {

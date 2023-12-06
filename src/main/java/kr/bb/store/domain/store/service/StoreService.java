@@ -74,7 +74,8 @@ public class StoreService {
         // TODO : Feign통신으로 값 받아오기
         Boolean isLiked = false;
         Boolean isSubscribed = false;
-        return storeReader.readForUser(storeId, isLiked, isSubscribed);
+        String subscriptionProductId = "구독상품아이디";
+        return storeReader.readForUser(storeId, isLiked, isSubscribed, subscriptionProductId);
     }
 
     public StoreInfoManagerResponse getStoreInfoForManager(Long storeId) {

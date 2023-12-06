@@ -21,8 +21,10 @@ public class StoreInfoUserResponse {
     private String phoneNumber;
     private Boolean isLiked;
     private Boolean isSubscribed;
+    private String subscriptionProductId;
 
-    public static StoreInfoUserResponse of(Store store, StoreAddress storeAddress, Boolean isLiked, Boolean isSubscribed) {
+    public static StoreInfoUserResponse of(Store store, StoreAddress storeAddress, Boolean isLiked,
+                                           Boolean isSubscribed, String subscriptionProductId) {
         return StoreInfoUserResponse.builder()
                 .storeName(store.getStoreName())
                 .storeThumbnailImage(store.getStoreThumbnailImage())
@@ -33,6 +35,7 @@ public class StoreInfoUserResponse {
                 .phoneNumber(store.getPhoneNumber())
                 .isLiked(isLiked)
                 .isSubscribed(isSubscribed)
+                .subscriptionProductId(subscriptionProductId)
                 .build();
     }
 }
