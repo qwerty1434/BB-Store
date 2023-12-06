@@ -16,6 +16,7 @@ public class SimpleStoreResponse {
     private String storeName;
     private String detailInfo;
     private Double averageRating;
+    private Boolean isLiked;
 
     public static SimpleStoreResponse from(Store store) {
         return SimpleStoreResponse.builder()

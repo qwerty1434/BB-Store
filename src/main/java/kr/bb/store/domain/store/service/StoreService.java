@@ -59,6 +59,8 @@ public class StoreService {
 
     public SimpleStorePagingResponse getStoresWithPaging(Pageable pageable) {
         Page<Store> storePages = storeReader.readStoresWithPaging(pageable);
+        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+
         List<SimpleStoreResponse> contents = storePages.getContent().stream()
                 .map(SimpleStoreResponse::from)
                 .collect(Collectors.toList());
