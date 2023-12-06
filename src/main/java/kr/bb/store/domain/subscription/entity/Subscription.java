@@ -29,7 +29,7 @@ public class Subscription extends BaseEntity {
     private Long userId;
 
     @NotNull
-    private Long subscriptionProductId;
+    private String subscriptionProductId;
 
     @NotNull
     private String subscriptionCode;

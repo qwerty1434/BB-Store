@@ -57,7 +57,7 @@ class SubscriptionServiceTest {
                 .orderSubscriptionId(1L)
                 .storeId(storeId)
                 .userId(1L)
-                .subscriptionProductId(1L)
+                .subscriptionProductId("1")
                 .deliveryDate(LocalDate.now())
                 .build();
     }

@@ -49,7 +49,7 @@ class SubscriptionManagerTest {
                 .store(store)
                 .orderSubscriptionId(1L)
                 .userId(1L)
-                .subscriptionProductId(1L)
+                .subscriptionProductId("1")
                 .subscriptionCode("Code")
                 .deliveryDate(LocalDate.now())
                 .build();

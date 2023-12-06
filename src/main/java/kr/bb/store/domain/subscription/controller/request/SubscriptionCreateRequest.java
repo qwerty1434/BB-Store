@@ -15,7 +15,7 @@ public class SubscriptionCreateRequest {
     private Long orderSubscriptionId;
     private Long storeId;
     private Long userId;
-    private Long subscriptionProductId;
+    private String subscriptionProductId;
     private LocalDate deliveryDate;
 
 }

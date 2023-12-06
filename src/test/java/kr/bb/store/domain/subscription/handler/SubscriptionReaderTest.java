@@ -132,7 +132,7 @@ class SubscriptionReaderTest {
                 .store(store)
                 .orderSubscriptionId(orderSubscriptionId)
                 .userId(1L)
-                .subscriptionProductId(1L)
+                .subscriptionProductId("1")
                 .subscriptionCode("Code")
                 .deliveryDate(LocalDate.now())
                 .build();
@@ -142,7 +142,7 @@ class SubscriptionReaderTest {
                 .store(store)
                 .orderSubscriptionId(1L)
                 .userId(1L)
-                .subscriptionProductId(1L)
+                .subscriptionProductId("1")
                 .subscriptionCode("Code")
                 .deliveryDate(deliveryDate)
                 .build();
@@ -152,7 +152,7 @@ class SubscriptionReaderTest {
                 .store(store)
                 .orderSubscriptionId(1L)
                 .userId(userId)
-                .subscriptionProductId(1L)
+                .subscriptionProductId("1")
                 .subscriptionCode("Code")
                 .deliveryDate(LocalDate.now())
                 .build();
