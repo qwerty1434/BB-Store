@@ -195,10 +195,11 @@ class StoreServiceTest {
 
         int page = 1;
         int size = 5;
+        long userId = 1L;
         Pageable pageable = PageRequest.of(page,size);
 
         // when
-        SimpleStorePagingResponse response = storeService.getStoresWithPaging(pageable);
+        SimpleStorePagingResponse response = storeService.getStoresWithPaging(userId, pageable);
 
         // then
         assertThat(response.getTotalCnt()).isEqualTo(7);
@@ -210,7 +211,7 @@ class StoreServiceTest {
     public void getStoreInfoForUser() {
         Long userId = 1L;
 
-        Store store = createStoreEntity(userId,"가게1");
+        Store store = createStoreEntity(1L,"가게1");
         storeRepository.save(store);
 
         StoreAddress storeAddress = createStoreAddressEntity(store,0D,0D);
@@ -223,7 +224,7 @@ class StoreServiceTest {
         em.clear();
 
         // when
-        StoreInfoUserResponse response = storeService.getStoreInfoForUser(store.getId());
+        StoreInfoUserResponse response = storeService.getStoreInfoForUser(userId, store.getId());
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
@@ -264,7 +265,7 @@ class StoreServiceTest {
         Sido sido2 = new Sido("2", "부산");
         Gugun gugun1 = new Gugun("100",sido1,"강남구");
         Gugun gugun2 = new Gugun("200",sido1,"종로구");
-
+        Long userId = 1L;
 
         Store s1 = createStoreEntity(1L,"가게1");
         Store s2 = createStoreEntity(1L,"가게2");
@@ -283,7 +284,7 @@ class StoreServiceTest {
         em.flush();
         em.clear();
 
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getCode(), gugun1.getCode());
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(userId, sido1.getCode(), gugun1.getCode());
         assertThat(storesWithRegion.getStores()).hasSize(2)
                 .extracting("storeName")
                 .containsExactlyInAnyOrder(
@@ -296,7 +297,7 @@ class StoreServiceTest {
     @Test
     void sidoMustNotBeNullWhenGetStoresWithRegion() {
         // when // then
-        assertThatThrownBy(() -> storeService.getStoresWithRegion(null,"강남구"))
+        assertThatThrownBy(() -> storeService.getStoresWithRegion(1L, null,"강남구"))
                 .isInstanceOf(InvalidDataAccessApiUsageException.class);
 
     }
@@ -309,9 +310,10 @@ class StoreServiceTest {
         Gugun gugun1 = new Gugun("300",sido2,"해운대구");
         sidoRepository.saveAll(List.of(sido1, sido2));
         gugunRepository.save(gugun1);
+        Long userId = 1L;
 
         // when // then
-        assertThatThrownBy(() -> storeService.getStoresWithRegion(sido1.getCode(),gugun1.getCode()))
+        assertThatThrownBy(() -> storeService.getStoresWithRegion(userId, sido1.getCode(),gugun1.getCode()))
                 .isInstanceOf(InvalidParentException.class)
                 .hasMessage("선택한 시/도와 구/군이 맞지 않습니다.");
 
@@ -325,6 +327,7 @@ class StoreServiceTest {
         Gugun gugun1 = new Gugun("100",sido1,"강남구");
         Gugun gugun2 = new Gugun("200",sido1,"종로구");
         Gugun gugun3 = new Gugun("300",sido2,"해운대구");
+        Long userId = 1L;
 
         Store s1 = createStoreEntity(1L,"가게1");
         Store s2 = createStoreEntity(1L,"가게2");
@@ -343,7 +346,7 @@ class StoreServiceTest {
         em.flush();
         em.clear();
 
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getCode(), "");
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(userId, sido1.getCode(), "");
         assertThat(storesWithRegion.getStores()).hasSize(4)
                 .extracting("storeName")
                 .containsExactlyInAnyOrder(

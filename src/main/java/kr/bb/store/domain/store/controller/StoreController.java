@@ -45,13 +45,15 @@ public class StoreController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<SimpleStorePagingResponse> getStores(Pageable pageable) {
-        return ResponseEntity.ok().body(storeService.getStoresWithPaging(pageable));
+    public ResponseEntity<SimpleStorePagingResponse> getStores(@RequestHeader(value = "userId") Long userId,
+                                                               Pageable pageable) {
+        return ResponseEntity.ok().body(storeService.getStoresWithPaging(userId, pageable));
     }
 
     @GetMapping("/{storeId}/user")
-    public ResponseEntity<StoreInfoUserResponse> getStoreInfoForUser(@PathVariable Long storeId){
-        return ResponseEntity.ok().body(storeService.getStoreInfoForUser(storeId));
+    public ResponseEntity<StoreInfoUserResponse> getStoreInfoForUser(@RequestHeader(value = "userId") Long userId,
+                                                                     @PathVariable Long storeId){
+        return ResponseEntity.ok().body(storeService.getStoreInfoForUser(userId, storeId));
     }
 
     @GetMapping("/{storeId}/manager")
@@ -61,13 +63,15 @@ public class StoreController {
 
     @GetMapping("/map/location")
     public ResponseEntity<StoreListForMapResponse> getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
+                                                                   @RequestHeader(value = "userId") Long userId,
                                                                    @RequestParam Integer level) {
-        return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon,level));
+        return ResponseEntity.ok().body(storeService.getNearbyStores(userId, lat, lon, level));
     }
 
     @GetMapping("/map/region")
-    public ResponseEntity<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun) {
-        return ResponseEntity.ok().body(storeService.getStoresWithRegion(sido,gugun));
+    public ResponseEntity<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun,
+                                                                       @RequestHeader(value = "userId") Long userId) {
+        return ResponseEntity.ok().body(storeService.getStoresWithRegion(userId, sido, gugun));
     }
 
     @GetMapping("/address/sido")

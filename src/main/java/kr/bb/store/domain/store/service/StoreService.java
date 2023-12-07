@@ -57,10 +57,10 @@ public class StoreService {
         return storeReader.readDetailInfo(storeId);
     }
 
-    public SimpleStorePagingResponse getStoresWithPaging(Pageable pageable) {
+    public SimpleStorePagingResponse getStoresWithPaging(Long userId, Pageable pageable) {
         Page<StoreListResponse> storePages = storeReader.readStoresWithPaging(pageable);
 
-        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+        // TODO : 좋아요 여부 feign으로 받아와서 채우기, userId가 null이면 통신하지 말기
         List<StoreListResponse> contents = storePages.getContent().stream()
                 .collect(Collectors.toList());
 
@@ -70,8 +70,8 @@ public class StoreService {
                 .build();
     }
 
-    public StoreInfoUserResponse getStoreInfoForUser(Long storeId) {
-        // TODO : Feign통신으로 값 받아오기
+    public StoreInfoUserResponse getStoreInfoForUser(Long userId, Long storeId) {
+        // TODO : Feign통신으로 값 받아오기, userId가 null이면 통신하지 말기
         Boolean isLiked = false;
         Boolean isSubscribed = false;
         String subscriptionProductId = "구독상품아이디";
@@ -82,14 +82,14 @@ public class StoreService {
         return storeReader.readForManager(storeId);
     }
 
-    public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
-        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+    public StoreListForMapResponse getNearbyStores(Long userId, Double lat, Double lon, Integer level) {
+        // TODO : 좋아요 여부 feign으로 받아와서 채우기, null이면 요청하지말기
         StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(lat, lon, level);
 
         return nearbyStores;
     }
-    public StoreListForMapResponse getStoresWithRegion(String sidoCode, String gugunCode) {
-        // TODO : 좋아요 여부 feign으로 받아와서 채우기
+    public StoreListForMapResponse getStoresWithRegion(Long userId, String sidoCode, String gugunCode) {
+        // TODO : 좋아요 여부 feign으로 받아와서 채우기, null이면 요청하지말기
         Sido sido = sidoReader.readSido(sidoCode);
         Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
         StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido, gugun);
