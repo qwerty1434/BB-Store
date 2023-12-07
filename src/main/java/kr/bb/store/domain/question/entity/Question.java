@@ -31,7 +31,7 @@ public class Question extends BaseEntity {
     private String nickname;
 
     @NotNull
-    private Long productId;
+    private String productId;
 
     @NotNull
     private String productName;
@@ -49,7 +49,7 @@ public class Question extends BaseEntity {
     private Boolean isRead;
 
     @Builder
-    public Question(Store store, Long userId, String nickname, Long productId, String productName, String title, String content, Boolean isSecret) {
+    public Question(Store store, Long userId, String nickname, String productId, String productName, String title, String content, Boolean isSecret) {
         this.store = store;
         this.userId = userId;
         this.nickname = nickname;

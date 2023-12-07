@@ -62,7 +62,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     }
 
     @Override
-    public Page<QuestionInProductDto> getQuestionsInProductWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<QuestionInProductDto> getQuestionsInProductWithPaging(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         List<QuestionInProductDto> contents = queryFactory.select(new QQuestionInProductDto(
                         question.id,
                         Expressions.asBoolean(answer.question.id.isNotNull()),
@@ -101,7 +101,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     }
 
     @Override
-    public Page<MyQuestionInMypageDto> getMyQuestionsInProductWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<MyQuestionInMypageDto> getMyQuestionsInProductWithPaging(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         List<MyQuestionInMypageDto> contents = queryFactory.select(new QMyQuestionInMypageDto(
                         question.id,
                         Expressions.asBoolean(answer.question.id.isNotNull()),

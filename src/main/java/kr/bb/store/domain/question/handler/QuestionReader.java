@@ -34,11 +34,11 @@ public class QuestionReader {
         return questionRepository.getQuestionsForStoreOwnerWithPaging(storeId, isReplied, pageable);
     }
 
-    public Page<QuestionInProductDto> readQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<QuestionInProductDto> readQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 
-    public Page<MyQuestionInMypageDto> readMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<MyQuestionInMypageDto> readMyQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getMyQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 

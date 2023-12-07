@@ -76,7 +76,7 @@ class QuestionCreatorTest {
     private QuestionCreateRequest createQuestionCreateRequest(Long storeId) {
         return QuestionCreateRequest.builder()
                 .storeId(storeId)
-                .productId(1L)
+                .productId("1")
                 .productName("제품명")
                 .title("질문제목")
                 .content("질문내용")

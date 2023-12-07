@@ -48,7 +48,7 @@ public class QuestionService {
                 .build();
     }
 
-    public QuestionsInProductPagingResponse getQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public QuestionsInProductPagingResponse getQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(userId, productId, isReplied, pageable);
         return QuestionsInProductPagingResponse.builder()
                 .data(questionInProductDtos.getContent())
@@ -56,7 +56,7 @@ public class QuestionService {
                 .build();
     }
 
-    public MyQuestionsInProductPagingResponse getMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public MyQuestionsInProductPagingResponse getMyQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         Page<MyQuestionInMypageDto> questionInProductDtos = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageable);
         return MyQuestionsInProductPagingResponse.builder()
                 .data(questionInProductDtos.getContent())

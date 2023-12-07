@@ -14,8 +14,8 @@ import java.time.LocalDate;
 public class PickupCreateRequest {
     private Long storeId;
     private Long userId;
-    private Long orderPickupId;
-    private Long productId;
+    private String orderPickupId;
+    private String productId;
     private LocalDate pickupDate;
     private String pickupTime;
 }

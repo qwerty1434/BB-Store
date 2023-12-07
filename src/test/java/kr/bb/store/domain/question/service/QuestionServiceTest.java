@@ -101,7 +101,7 @@ class QuestionServiceTest {
     private QuestionCreateRequest createQuestionCreateRequest(Long storeId) {
         return QuestionCreateRequest.builder()
                 .storeId(storeId)
-                .productId(1L)
+                .productId("1")
                 .productName("상품명")
                 .title("질문제목")
                 .content("질문내용")
@@ -115,7 +115,7 @@ class QuestionServiceTest {
                 .store(store)
                 .userId(1L)
                 .productName("상품명")
-                .productId(1L)
+                .productId("1")
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)

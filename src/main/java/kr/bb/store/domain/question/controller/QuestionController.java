@@ -45,7 +45,7 @@ public class QuestionController {
     }
 
     @GetMapping("/questions/product/{productId}")
-    public ResponseEntity<QuestionsInProductPagingResponse> productQuestions(@PathVariable Long productId,
+    public ResponseEntity<QuestionsInProductPagingResponse> productQuestions(@PathVariable String productId,
                                                                              @RequestParam(required = false) Boolean isReplied,
                                                                              Pageable pageable,
                                                                              @RequestHeader(value = "userId", required = false) Long userId) {
@@ -53,7 +53,7 @@ public class QuestionController {
     }
 
     @GetMapping("/questions/product/{productId}/my")
-    public ResponseEntity<MyQuestionsInProductPagingResponse> myQuestionsInProduct(@PathVariable Long productId,
+    public ResponseEntity<MyQuestionsInProductPagingResponse> myQuestionsInProduct(@PathVariable String productId,
                                                                                    @RequestParam(required = false) Boolean isReplied,
                                                                                    Pageable pageable,
                                                                                    @RequestHeader(value = "userId") Long userId) {

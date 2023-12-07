@@ -216,14 +216,14 @@ class QuestionReaderTest {
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
-        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
-        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        Question q1 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,"1",3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,"2",3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,"2",2L);
         questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
 
-        Long productId = 1L;
+        String productId = "1";
         Long userId = 2L;
         Boolean isReplied = false;
         PageRequest pageRequest = PageRequest.of(0, 10);
@@ -247,7 +247,7 @@ class QuestionReaderTest {
         questionRepository.save(q1);
 
         long readerId = 2L;
-        long productId = 1L;
+        String productId = "1";
         Boolean isReplied = false;
         PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -273,7 +273,7 @@ class QuestionReaderTest {
         questionRepository.save(q1);
 
         Long nonMemberId = null;
-        long productId = 1L;
+        String productId = "1";
         Boolean isReplied = false;
         PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -296,14 +296,14 @@ class QuestionReaderTest {
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
-        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
-        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        Question q1 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,"1",3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,"2",3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,"2",2L);
         questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
 
-        Long productId = 1L;
+        String productId = "1";
         Long userId = 2L;
         Boolean isReplied = false;
         PageRequest pageRequest = PageRequest.of(0, 10);
@@ -323,11 +323,11 @@ class QuestionReaderTest {
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
-        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
-        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        Question q1 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,"1",3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,"2",3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,"2",2L);
         questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
 
         Long userId = 2L;
@@ -343,7 +343,7 @@ class QuestionReaderTest {
     }
 
 
-    private Question createQuestionWithProductIdAndUserId(Store store,Long productId, Long userId) {
+    private Question createQuestionWithProductIdAndUserId(Store store,String productId, Long userId) {
         return Question.builder()
                 .store(store)
                 .userId(userId)
@@ -361,7 +361,7 @@ class QuestionReaderTest {
                 .store(store)
                 .userId(1L)
                 .nickname("닉네임")
-                .productId(1L)
+                .productId("1")
                 .productName("상품명")
                 .title("질문제목")
                 .content("질문내용")
@@ -373,7 +373,7 @@ class QuestionReaderTest {
                 .store(store)
                 .userId(writerId)
                 .nickname("닉네임")
-                .productId(1L)
+                .productId("1")
                 .productName("상품명")
                 .title("질문제목")
                 .content("질문내용")

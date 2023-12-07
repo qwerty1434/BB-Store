@@ -28,10 +28,10 @@ public class PickupReservation extends BaseEntity {
     private Long userId;
 
     @NotNull
-    private Long orderPickupId;
+    private String orderPickupId;
 
     @NotNull
-    private Long productId;
+    private String productId;
 
     @NotNull
     private String reservationCode;
@@ -47,7 +47,7 @@ public class PickupReservation extends BaseEntity {
     private ReservationStatus reservationStatus = ReservationStatus.READY;
 
     @Builder
-    public PickupReservation(Store store, Long userId, Long orderPickupId, Long productId, String reservationCode, LocalDate pickupDate, String pickupTime) {
+    public PickupReservation(Store store, Long userId, String orderPickupId, String productId, String reservationCode, LocalDate pickupDate, String pickupTime) {
         this.store = store;
         this.userId = userId;
         this.orderPickupId = orderPickupId;

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class QuestionCreateRequest {
     private Long storeId;
     private String productName;
-    private Long productId;
+    private String productId;
     private String title;
     private String content;
     private Boolean isSecret;

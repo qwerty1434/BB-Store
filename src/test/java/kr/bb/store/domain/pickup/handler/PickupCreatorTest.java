@@ -58,8 +58,8 @@ class PickupCreatorTest {
         return PickupCreateRequest.builder()
                 .storeId(storeId)
                 .userId(1L)
-                .orderPickupId(1L)
-                .productId(1L)
+                .orderPickupId("1")
+                .productId("1")
                 .pickupDate(LocalDate.now())
                 .pickupTime("13:00")
                 .build();
