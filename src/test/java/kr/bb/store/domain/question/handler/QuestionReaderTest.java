@@ -235,6 +235,60 @@ class QuestionReaderTest {
         assertThat(result.getTotalElements()).isEqualTo(3);
     }
 
+    @DisplayName("내가 작성하지 않은 비밀글은 제목과 내용이 비밀처리된다")
+    @Test
+    void cannotSeeOthersSecretQuesetion() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+        long writerId = 1L;
+
+        Question q1 = createQuestion(store,writerId,true);
+        questionRepository.save(q1);
+
+        long readerId = 2L;
+        long productId = 1L;
+        Boolean isReplied = false;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(readerId, productId, isReplied, pageRequest);
+        QuestionInProductDto result = questionInProductDtos.getContent().get(0);
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("비밀글입니다");
+        assertThat(result.getContent()).isEqualTo("");
+
+    }
+
+    @DisplayName("비회원은 비밀글을 볼 수 없다")
+    @Test
+    void nonMembersCannotSeeSecretQuestion() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+        long writerId = 1L;
+
+        Question q1 = createQuestion(store,writerId,true);
+        questionRepository.save(q1);
+
+        Long nonMemberId = null;
+        long productId = 1L;
+        Boolean isReplied = false;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(nonMemberId, productId, isReplied, pageRequest);
+        QuestionInProductDto result = questionInProductDtos.getContent().get(0);
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("비밀글입니다");
+        assertThat(result.getContent()).isEqualTo("");
+    }
+
+
+
+
     @DisplayName("해당 상품에서 내가 남긴 문의만 모아본다")
     @Test
     void readMyQuestionsInProduct() {
@@ -312,6 +366,18 @@ class QuestionReaderTest {
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)
+                .build();
+    }
+    private Question createQuestion(Store store, Long writerId, boolean isSecret) {
+        return Question.builder()
+                .store(store)
+                .userId(writerId)
+                .nickname("닉네임")
+                .productId(1L)
+                .productName("상품명")
+                .title("질문제목")
+                .content("질문내용")
+                .isSecret(isSecret)
                 .build();
     }
 

@@ -15,6 +15,6 @@ public class QuestionCreateRequest {
     private Long productId;
     private String title;
     private String content;
-    private boolean isSecret;
+    private Boolean isSecret;
     private String nickname;
 }

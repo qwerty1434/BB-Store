@@ -48,7 +48,7 @@ public class QuestionController {
     public ResponseEntity<QuestionsInProductPagingResponse> productQuestions(@PathVariable Long productId,
                                                                              @RequestParam(required = false) Boolean isReplied,
                                                                              Pageable pageable,
-                                                                             @RequestHeader(value = "userId") Long userId) {
+                                                                             @RequestHeader(value = "userId", required = false) Long userId) {
         return ResponseEntity.ok().body(questionService.getQuestionsInProduct(userId, productId, isReplied, pageable));
     }
 

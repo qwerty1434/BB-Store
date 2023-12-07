@@ -27,7 +27,7 @@ public class QuestionCreator {
                 .productName(questionCreateRequest.getProductName())
                 .title(questionCreateRequest.getTitle())
                 .content(questionCreateRequest.getContent())
-                .isSecret(questionCreateRequest.isSecret())
+                .isSecret(questionCreateRequest.getIsSecret())
                 .build();
 
         return questionRepository.save(question);
