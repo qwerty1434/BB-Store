@@ -70,7 +70,7 @@ class StoreReaderTest {
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
-        assertThat(response.getMinOrderPrice()).isEqualTo(10_000L);
+        assertThat(response.getDeliveryPrice()).isEqualTo(5_000L);
         assertThat(response.getSido()).isEqualTo("서울");
     }
 
@@ -340,7 +340,6 @@ class StoreReaderTest {
     private DeliveryPolicy createDeliveryPolicy(Store store) {
         return DeliveryPolicy.builder()
                 .store(store)
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();

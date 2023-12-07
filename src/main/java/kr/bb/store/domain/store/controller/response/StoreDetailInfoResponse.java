@@ -20,7 +20,6 @@ public class StoreDetailInfoResponse {
     private String accountNumber;
     private String bank;
 
-    private Long minOrderPrice;
     private Long deliveryPrice;
     private Long freeDeliveryMinPrice;
 
@@ -40,7 +39,6 @@ public class StoreDetailInfoResponse {
                 .phoneNumber(store.getPhoneNumber())
                 .accountNumber(store.getAccountNumber())
                 .bank(store.getBank())
-                .minOrderPrice(deliveryPolicy.getMinOrderPrice())
                 .deliveryPrice(deliveryPolicy.getDeliveryPrice())
                 .freeDeliveryMinPrice(deliveryPolicy.getFreeDeliveryMinPrice())
                 .sido(storeAddress.getSido().getName())

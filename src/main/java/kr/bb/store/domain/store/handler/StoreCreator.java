@@ -53,7 +53,6 @@ public class StoreCreator {
     private DeliveryPolicy createDeliveryPolicy(Store store, DeliveryPolicyDto deliveryPolicyDto) {
         DeliveryPolicy deliveryPolicy = DeliveryPolicy.builder()
                 .store(store)
-                .minOrderPrice(deliveryPolicyDto.getMinOrderPrice())
                 .freeDeliveryMinPrice(deliveryPolicyDto.getFreeDeliveryMinPrice())
                 .deliveryPrice(deliveryPolicyDto.getDeliveryPrice())
                 .build();

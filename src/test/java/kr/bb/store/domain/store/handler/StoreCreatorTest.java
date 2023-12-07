@@ -114,7 +114,6 @@ class StoreCreatorTest {
                 .zipCode("001112")
                 .lat(33.33322D)
                 .lon(127.13123D)
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();

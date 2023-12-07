@@ -67,8 +67,7 @@ class StoreManagerTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(99_999L) // 수정됨
-                .deliveryPrice(5_000L)
+                .deliveryPrice(9_999L) // 수정됨
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
                 .gugun("강남구")
@@ -95,7 +94,7 @@ class StoreManagerTest {
 
         assertThat(changedStore.getStoreName()).isEqualTo("가게2");
         assertThat(changedStoreAddress.getLat()).isEqualTo(-11.1111D);
-        assertThat(changedDeliveryPolicy.getMinOrderPrice()).isEqualTo(99_999L);
+        assertThat(changedDeliveryPolicy.getDeliveryPrice()).isEqualTo(9_999L);
 
     }
 
@@ -133,7 +132,6 @@ class StoreManagerTest {
     private DeliveryPolicy createDeliveryPolicy(Store store) {
         return DeliveryPolicy.builder()
                 .store(store)
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();

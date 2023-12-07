@@ -47,7 +47,6 @@ public class StoreManager {
 
 
         deliveryPolicy.update(
-                storeInfoEditRequest.getMinOrderPrice(),
                 storeInfoEditRequest.getDeliveryPrice(),
                 storeInfoEditRequest.getFreeDeliveryMinPrice()
         );

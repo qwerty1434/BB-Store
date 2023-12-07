@@ -128,7 +128,6 @@ class StoreServiceTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
@@ -172,7 +171,7 @@ class StoreServiceTest {
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
-        assertThat(response.getMinOrderPrice()).isEqualTo(10_000L);
+        assertThat(response.getDeliveryPrice()).isEqualTo(5000L);
         assertThat(response.getSido()).isEqualTo("서울");
     }
 
@@ -379,7 +378,6 @@ class StoreServiceTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
@@ -426,7 +424,6 @@ class StoreServiceTest {
     private DeliveryPolicy createDeliveryPolicyEntity(Store store) {
         return DeliveryPolicy.builder()
                 .store(store)
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();
