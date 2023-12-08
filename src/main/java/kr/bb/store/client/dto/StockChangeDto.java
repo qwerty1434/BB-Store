@@ -1,4 +1,4 @@
-package kr.bb.store.domain.cargo.controller.request;
+package kr.bb.store.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockFeignRequest {
+public class StockChangeDto {
     private Long storeId;
     private Long flowerId;
     private Long stock;
