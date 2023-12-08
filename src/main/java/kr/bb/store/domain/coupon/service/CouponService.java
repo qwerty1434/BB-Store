@@ -2,6 +2,7 @@ package kr.bb.store.domain.coupon.service;
 
 import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
+import kr.bb.store.domain.coupon.controller.request.TotalAmountRequest;
 import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
 import kr.bb.store.domain.coupon.entity.Coupon;
@@ -72,15 +73,14 @@ public class CouponService {
                 .build();
     }
 
-    public CouponsForUserResponse getAvailableCouponsInPayment(Long userId, Long storeId) {
-        LocalDate now = LocalDate.now();
+    public CouponsForUserResponse getAvailableCouponsInPayment(TotalAmountRequest totalAmountRequest,
+                                                               Long userId, Long storeId, LocalDate now) {
         return CouponsForUserResponse.builder()
-                .data(couponReader.readAvailableCouponsInStore(userId, storeId, now))
+                .data(couponReader.readAvailableCouponsInStore(totalAmountRequest.getTotalAmount(), userId, storeId, now))
                 .build();
     }
 
-    public CouponsForUserResponse getMyValidCoupons(Long userId) {
-        LocalDate now = LocalDate.now();
+    public CouponsForUserResponse getMyValidCoupons(Long userId, LocalDate now) {
         return CouponsForUserResponse.builder()
                 .data(couponReader.readMyValidCoupons(userId, now))
                 .build();

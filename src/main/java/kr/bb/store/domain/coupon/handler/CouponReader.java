@@ -2,6 +2,7 @@ package kr.bb.store.domain.coupon.handler;
 
 import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
+import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
 import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.CouponNotFoundException;
@@ -33,8 +34,9 @@ public class CouponReader {
         return couponRepository.findStoreCouponsForUser(userId, storeId, now);
     }
 
-    public List<CouponDto> readAvailableCouponsInStore(Long userId, Long storeId, LocalDate readDate) {
-        return couponRepository.findAvailableCoupons(userId, storeId, readDate);
+    public List<CouponWithAvailabilityDto> readAvailableCouponsInStore(Long totalAmount, Long userId, Long storeId,
+                                                                       LocalDate readDate) {
+        return couponRepository.findAvailableCoupons(totalAmount, userId, storeId, readDate);
     }
 
     public List<CouponDto> readMyValidCoupons(Long userId, LocalDate readDate) {

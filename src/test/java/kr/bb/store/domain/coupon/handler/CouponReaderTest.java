@@ -2,6 +2,7 @@ package kr.bb.store.domain.coupon.handler;
 
 import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
+import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
 import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
@@ -155,6 +156,8 @@ class CouponReaderTest {
         Coupon c2 = createCouponWithDate(s1,now,now.plusDays(5));
         couponRepository.saveAll(List.of(c1,c2));
 
+        Long totalAmount = Long.MAX_VALUE;
+
         Long userId = 1L;
         // 사용할 수 있는 쿠폰
         issuedCouponRepository.save(createIssuedCoupon(c1, userId));
@@ -180,12 +183,68 @@ class CouponReaderTest {
         couponRepository.save(c5);
 
         // when
-        List<CouponDto> result = couponReader.readAvailableCouponsInStore(userId, s1.getId(), LocalDate.now().plusDays(2));
+        List<CouponWithAvailabilityDto> result = couponReader.readAvailableCouponsInStore(totalAmount, userId, s1.getId(), LocalDate.now().plusDays(2));
 
         // then
         assertThat(result).hasSize(1);
 
     }
+
+    @DisplayName("주문금액이 쿠폰의 최소사용금액보다 작다면 사용불가로 표시된다")
+    @Test
+    void couponCannotUseWhenTotalAmountLowerThanCouponMinPrice() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Long minPrice = 10_000L;
+        Coupon coupon = createCouponWithMinPrice(store,minPrice);
+        couponRepository.save(coupon);
+
+        Long totalAmount = minPrice - 1;
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(coupon, userId));
+
+        // when
+        List<CouponWithAvailabilityDto> result = couponReader.readAvailableCouponsInStore(totalAmount, userId, store.getId(), LocalDate.now());
+
+        // then
+        assertThat(result)
+                .extracting("isAvailable")
+                .containsExactly(false);
+
+    }
+    @DisplayName("주문금액과 쿠폰의 최소사용금액이 동일할 때는 사용가능으로 표시된다")
+    @Test
+    void couponCanUseWhenTotalAmountIsEqualToCouponMinPrice() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Long minPrice = 10_000L;
+        Coupon coupon = createCouponWithMinPrice(store,minPrice);
+        couponRepository.save(coupon);
+
+        Long totalAmount = minPrice;
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(coupon, userId));
+
+        // when
+        List<CouponWithAvailabilityDto> result = couponReader.readAvailableCouponsInStore(totalAmount, userId, store.getId(), LocalDate.now());
+
+        // then
+        assertThat(result)
+                .extracting("isAvailable")
+                .containsExactly(true);
+
+    }
+
 
     @DisplayName("내가 보유한 사용할 수 있는 모든 쿠폰을 조회한다")
     @Test
@@ -311,6 +370,19 @@ class CouponReaderTest {
                 .minPrice(100000L)
                 .startDate(startDate)
                 .endDate(endDate)
+                .build();
+    }
+
+    private Coupon createCouponWithMinPrice(Store store, Long minPrice) {
+        return Coupon.builder()
+                .couponCode("쿠폰코드")
+                .store(store)
+                .limitCount(100)
+                .couponName("쿠폰이름")
+                .discountPrice(10000L)
+                .minPrice(minPrice)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
                 .build();
     }
 

@@ -106,15 +106,15 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
     }
 
     @Override
-    public List<CouponDto> findAvailableCoupons(Long userId, Long storeId, LocalDate now) {
-        return queryFactory
-                .select(new QCouponDto(
-                        coupon.id,
-                        coupon.couponName,
-                        coupon.store.storeName,
-                        coupon.discountPrice,
-                        coupon.endDate,
-                        coupon.minPrice
+    public List<CouponWithAvailabilityDto> findAvailableCoupons(Long totalAmount, Long userId, Long storeId, LocalDate now) {
+        return queryFactory.select(new QCouponWithAvailabilityDto(
+                coupon.id,
+                coupon.couponName,
+                coupon.store.storeName,
+                coupon.discountPrice,
+                coupon.endDate,
+                coupon.minPrice,
+                coupon.minPrice.loe(totalAmount)
                 ))
                 .from(coupon)
                 .leftJoin(issuedCoupon)
