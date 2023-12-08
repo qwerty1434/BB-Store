@@ -5,8 +5,8 @@ spring:
     name: store-service
   config:
     activate:
-      on-profile: local, dev, local
-    import: optional:configserver:http://localhost:8888
+      on-profile: dev
+    import: optional:configserver:http://config-service:8888
 management:
   endpoints:
     web:

@@ -13,8 +13,8 @@ public interface ProductFeignClient {
     List<FlowerDto> getFlowers();
 
     @GetMapping
-    String getProductThumbnail(@RequestParam Long productId);
+    String getProductThumbnail(@RequestParam(name="productId") Long productId);
 
     @GetMapping
-    String getSubscriptionProductId(@RequestParam Long storeId);
+    String getSubscriptionProductId(@RequestParam(name="storeId") Long storeId);
 }
