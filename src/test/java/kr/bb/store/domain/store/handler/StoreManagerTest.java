@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -40,6 +42,8 @@ class StoreManagerTest {
     private GugunRepository gugunRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("요청받은 내용으로 가게 정보를 수정한다 - 가게명, 위도, 최소주문금액 수정")
     @Test

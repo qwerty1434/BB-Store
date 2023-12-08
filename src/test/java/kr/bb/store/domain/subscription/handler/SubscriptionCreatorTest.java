@@ -1,6 +1,7 @@
 package kr.bb.store.domain.subscription.handler;
 
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import kr.bb.store.domain.subscription.controller.request.SubscriptionCreateRequest;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -26,6 +28,8 @@ class SubscriptionCreatorTest {
     private StoreRepository storeRepository;
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("구독정보를 생성한다")
     @Test

@@ -1,5 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.entity.IssuedCouponId;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -28,6 +30,8 @@ class IssuedCouponReaderTest {
     private CouponRepository couponRepository;
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("유저Id와 쿠폰Id로 해당 유저의 쿠폰 발급 여부를 조사한다")
     @Test

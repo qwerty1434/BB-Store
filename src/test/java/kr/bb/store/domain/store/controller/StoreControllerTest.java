@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.service.StoreService;
 import org.junit.jupiter.api.DisplayName;
@@ -18,12 +19,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class StoreControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockBean
     private StoreService storeService;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("주문생성 시 요청값은 모두 null이 아니여야 한다")
     @Test

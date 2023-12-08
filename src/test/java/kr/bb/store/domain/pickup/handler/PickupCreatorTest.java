@@ -1,5 +1,6 @@
 package kr.bb.store.domain.pickup.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.pickup.controller.request.PickupCreateRequest;
 import kr.bb.store.domain.pickup.entity.PickupReservation;
 import kr.bb.store.domain.pickup.entity.ReservationStatus;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -22,6 +24,9 @@ class PickupCreatorTest {
     private PickupCreator pickupCreator;
     @Autowired
     private StoreRepository storeRepository;
+    @MockBean
+    private ProductFeignClient productFeignClient;
+
     @DisplayName("픽업예약을 생성한다")
     @Test
     void create() {

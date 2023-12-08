@@ -1,5 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
 import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -37,6 +39,8 @@ class CouponReaderTest {
     private IssuedCouponRepository issuedCouponRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("가게 사장에게 보여줄 쿠폰 정보를 조회한다")
     @Test

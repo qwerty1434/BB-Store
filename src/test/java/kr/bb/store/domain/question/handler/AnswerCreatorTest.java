@@ -1,5 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.repository.AnswerRepository;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -27,7 +29,8 @@ class AnswerCreatorTest {
     private AnswerRepository answerRepository;
     @Autowired
     private StoreRepository storeRepository;
-
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("답변 정보를 전달받아 답변을 생성한다")
     @Test

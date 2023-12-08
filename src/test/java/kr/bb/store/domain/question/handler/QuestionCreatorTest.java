@@ -1,5 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.repository.QuestionRepository;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -26,6 +28,8 @@ class QuestionCreatorTest {
     private StoreRepository storeRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("질문 정보를 전달받아 질문을 생성한다")
     @Test

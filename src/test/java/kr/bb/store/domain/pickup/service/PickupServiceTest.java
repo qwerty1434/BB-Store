@@ -1,5 +1,6 @@
 package kr.bb.store.domain.pickup.service;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.pickup.controller.response.PickAndSubResponse;
 import kr.bb.store.domain.pickup.entity.PickupReservation;
 import kr.bb.store.domain.pickup.repository.PickupReservationRepository;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -25,6 +27,8 @@ class PickupServiceTest {
     private StoreRepository storeRepository;
     @Autowired
     private PickupReservationRepository pickupReservationRepository;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("특정 가게의 달력에 표시될 픽업예약 및 정기구독 정보를 가져온다")
     @Test

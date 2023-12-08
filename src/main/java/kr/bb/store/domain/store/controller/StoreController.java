@@ -1,7 +1,8 @@
 package kr.bb.store.domain.store.controller;
 
 
-import kr.bb.store.domain.cargo.dto.FlowerDto;
+import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.client.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -14,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -23,12 +23,12 @@ import java.util.List;
 @RequestMapping("/api/stores")
 public class StoreController {
     private final StoreService storeService;
+    private final ProductFeignClient productFeignClient;
 
     @PostMapping
     public ResponseEntity<Long> createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
                                       @RequestHeader(value = "userId") Long userId) {
-        // TODO : feign통신
-        List<FlowerDto> flowers = new ArrayList<>();
+        List<FlowerDto> flowers = productFeignClient.getFlowers();
         return ResponseEntity.ok().body(storeService.createStore(userId, storeCreateRequest, flowers));
     }
 
@@ -53,7 +53,8 @@ public class StoreController {
     @GetMapping("/{storeId}/user")
     public ResponseEntity<StoreInfoUserResponse> getStoreInfoForUser(@RequestHeader(value = "userId") Long userId,
                                                                      @PathVariable Long storeId){
-        return ResponseEntity.ok().body(storeService.getStoreInfoForUser(userId, storeId));
+        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId);
+        return ResponseEntity.ok().body(storeService.getStoreInfoForUser(userId, storeId, subscriptionProductId));
     }
 
     @GetMapping("/{storeId}/manager")

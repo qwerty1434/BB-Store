@@ -1,5 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -30,6 +32,8 @@ class CouponManagerTest {
     private StoreRepository storeRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("요청받은 내용으로 쿠폰 정보를 수정한다")
     @Test

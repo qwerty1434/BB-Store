@@ -31,4 +31,8 @@ public class StoreListResponse {
         this.address = address;
         this.detailAddress = detailAddress;
     }
+
+    public void setIsLiked(Boolean isLiked) {
+        this.isLiked = isLiked;
+    }
 }

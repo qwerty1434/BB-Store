@@ -35,4 +35,8 @@ public class StoreForMapResponse {
         this.address = address;
         this.detailAddress = detailAddress;
     }
+
+    public void setIsLiked(Boolean isLiked) {
+        this.isLiked = isLiked;
+    }
 }

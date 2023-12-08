@@ -1,5 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ class QuestionReaderTest {
     private StoreRepository storeRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("질문 Id를 바탕으로 질문 상세정보를 받아온다")
     @Test

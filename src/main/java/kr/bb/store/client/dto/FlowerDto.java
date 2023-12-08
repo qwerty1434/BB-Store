@@ -1,4 +1,4 @@
-package kr.bb.store.domain.cargo.dto;
+package kr.bb.store.client.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

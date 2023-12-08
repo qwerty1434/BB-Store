@@ -1,6 +1,9 @@
 package kr.bb.store.domain.store.service;
 
-import kr.bb.store.domain.cargo.dto.FlowerDto;
+import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.client.StoreLikeFeignClient;
+import kr.bb.store.client.StoreSubscriptionFeignClient;
+import kr.bb.store.client.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -21,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +36,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
 @Transactional
@@ -51,6 +54,12 @@ class StoreServiceTest {
     private DeliveryPolicyRepository deliveryPolicyRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
+    @MockBean
+    private StoreLikeFeignClient storeLikeFeignClient;
+    @MockBean
+    private StoreSubscriptionFeignClient storeSubscriptionFeignClient;
 
     @DisplayName("회원 번호를 전달받아 가게를 생성한다")
     @Test
@@ -219,11 +228,13 @@ class StoreServiceTest {
         DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store);
         deliveryPolicyRepository.save(deliveryPolicy);
 
+        String subscriptionProductId = "1";
+
         em.flush();
         em.clear();
 
         // when
-        StoreInfoUserResponse response = storeService.getStoreInfoForUser(userId, store.getId());
+        StoreInfoUserResponse response = storeService.getStoreInfoForUser(userId, store.getId(), subscriptionProductId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
