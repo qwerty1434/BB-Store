@@ -13,7 +13,7 @@ public class StoreFeignController {
     private final StoreService storeService;
 
     @GetMapping("/id")
-    public ResponseEntity getStoreId(@RequestHeader Long userId) {
+    public ResponseEntity<Long> getStoreId(@RequestHeader Long userId) {
         return ResponseEntity.ok().body(storeService.getStoreId(userId));
     }
 }

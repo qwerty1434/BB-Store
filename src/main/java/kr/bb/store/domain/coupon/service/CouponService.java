@@ -1,6 +1,5 @@
 package kr.bb.store.domain.coupon.service;
 
-import kr.bb.store.domain.coupon.controller.response.CouponCountResponse;
 import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.controller.request.TotalAmountRequest;
@@ -92,10 +91,8 @@ public class CouponService {
         couponManager.use(issuedCoupon, useDate);
     }
 
-    public CouponCountResponse getAvailableCouponCount(Long userId, LocalDate now) {
-        return CouponCountResponse.builder()
-                .couponCnt(couponReader.readMyValidCouponCount(userId, now))
-                .build();
+    public Integer getAvailableCouponCount(Long userId, LocalDate now) {
+        return couponReader.readMyValidCouponCount(userId, now);
     }
 
     private void validateCouponAuthorization(Coupon coupon, Long storeId) {

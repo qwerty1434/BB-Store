@@ -1,6 +1,5 @@
 package kr.bb.store.domain.coupon.controller;
 
-import kr.bb.store.domain.coupon.controller.response.CouponCountResponse;
 import kr.bb.store.domain.coupon.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ public class CouponFeignController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<CouponCountResponse> availableCouponCountOfUser(@RequestHeader(value = "userId") Long userId) {
+    public ResponseEntity<Integer> availableCouponCountOfUser(@RequestHeader(value = "userId") Long userId) {
         LocalDate now = LocalDate.now();
 
         return ResponseEntity.ok().body(couponService.getAvailableCouponCount(userId, now));
