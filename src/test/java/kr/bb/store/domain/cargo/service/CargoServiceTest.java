@@ -1,8 +1,8 @@
 package kr.bb.store.domain.cargo.service;
 
+import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
-import kr.bb.store.client.dto.FlowerDto;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;

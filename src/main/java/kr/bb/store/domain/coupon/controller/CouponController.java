@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/stores")
 public class CouponController {
     private final CouponService couponService;
 

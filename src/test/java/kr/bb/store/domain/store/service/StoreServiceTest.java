@@ -1,9 +1,9 @@
 package kr.bb.store.domain.store.service;
 
+import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
-import kr.bb.store.client.dto.FlowerDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
