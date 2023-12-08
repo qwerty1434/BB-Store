@@ -85,6 +85,7 @@ public class StoreService {
     public StoreInfoUserResponse getStoreInfoForUser(Long userId, Long storeId, String subscriptionProductId) {
         // TODO : userId가 null이면 통신하지 말기
         Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId));
+        // TODO : feign말고 내가가진 NoSQL에서 가져오기
         Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient.getStoreSubscriptions(userId, List.of(storeId));
         Boolean isLiked = storeLikes.get(storeId);
         Boolean isSubscribed = storeSubscriptions.get(storeId);
