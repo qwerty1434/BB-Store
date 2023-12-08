@@ -1,6 +1,6 @@
 package kr.bb.store.domain.cargo.controller;
 
-import kr.bb.store.client.dto.StockChangeDto;
+import bloomingblooms.domain.flower.StockChangeDto;
 import kr.bb.store.domain.cargo.service.CargoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

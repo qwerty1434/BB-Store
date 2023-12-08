@@ -1,6 +1,6 @@
 package kr.bb.store.client;
 
-import kr.bb.store.client.dto.FlowerDto;
+import bloomingblooms.domain.flower.FlowerDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
