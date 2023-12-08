@@ -365,6 +365,35 @@ class StoreServiceTest {
 
     }
 
+    @DisplayName("가게사장 아이디를 통해 가게 아이디를 가져온다")
+    @Test
+    void getStoreId() {
+        // given
+        Long userId = 1L;
+        Store store = createStoreWithManagerId(userId);
+        storeRepository.save(store);
+
+        // when
+        Long result = storeService.getStoreId(userId);
+
+        // then
+        assertThat(result).isEqualTo(store.getId());
+
+    }
+
+
+    private Store createStoreWithManagerId(Long userId) {
+        return Store.builder()
+                .storeManagerId(userId)
+                .storeCode("가게코드")
+                .storeName("가게이름")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
 
     private StoreAddress createStoresAddressWithSidoGugun(Store store, Sido sido, Gugun gugun) {
         sidoRepository.save(sido);
