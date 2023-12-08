@@ -286,6 +286,46 @@ class CouponReaderTest {
         assertThat(result).hasSize(1);
     }
 
+    @DisplayName("내가 보유한 사용할 수 있는 쿠폰 개수를 조회한다")
+    @Test
+    void readMyValidCouponCount() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store s1 = createStore(1L);
+        Store s2 = createStore(1L);
+        storeRepository.saveAll(List.of(s1,s2));
+        Coupon c1 = createCouponWithDate(s1,now,now.plusDays(5));
+        Coupon c2 = createCoupon(s1);
+
+        couponRepository.saveAll(List.of(c1,c2));
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(c1, userId));
+
+        // 이미 사용한 쿠폰
+        IssuedCoupon issuedCoupon = issuedCouponRepository.save(createIssuedCoupon(c2, userId));
+        em.flush();
+        em.clear();
+        IssuedCoupon couponsToUse = issuedCouponRepository.findById(issuedCoupon.getId()).get();
+        couponsToUse.use(LocalDate.now());
+
+        // 사용 기간이 지난 쿠폰
+        Coupon c3 = createCouponWithDate(s2,now,now);
+        couponRepository.save(c3);
+        issuedCouponRepository.save(createIssuedCoupon(c3, userId));
+
+        // 유효하지만 다운로드 받지 않은 쿠폰
+        Coupon c4 = createCouponWithDate(s1,now,now.plusDays(5));
+        couponRepository.save(c4);
+
+        // when
+        int result = couponReader.readMyValidCouponCount(userId,now.plusDays(1));
+
+        // then
+        assertThat(result).isEqualTo(1);
+    }
+
     @DisplayName("현재 다운받을 수 있는 쿠폰 목록을 반환한다")
     @Test
     void readStoresAllValidateCoupon() {

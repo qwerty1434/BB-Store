@@ -152,6 +152,22 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public Integer findMyValidCouponCount(Long userId, LocalDate now) {
+        return Math.toIntExact(queryFactory
+                .select(coupon.count())
+                .from(coupon)
+                .leftJoin(issuedCoupon)
+                .on(coupon.id.eq(issuedCoupon.id.couponId))
+                .where(
+                        issuedCoupon.id.userId.eq(userId),
+                        issuedCoupon.isUsed.isFalse(),
+                        isCouponUnexpired(now),
+                        coupon.isDeleted.isFalse()
+                )
+                .fetchFirst());
+    }
+
     private BooleanExpression isCouponUnexpired(LocalDate now) {
         return coupon.endDate.after(now).or(coupon.endDate.eq(now));
     }

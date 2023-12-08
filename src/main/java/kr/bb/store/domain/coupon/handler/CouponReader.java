@@ -42,4 +42,8 @@ public class CouponReader {
     public List<CouponDto> readMyValidCoupons(Long userId, LocalDate readDate) {
         return couponRepository.findMyValidCoupons(userId, readDate);
     }
+
+    public Integer readMyValidCouponCount(Long userId, LocalDate readDate) {
+        return couponRepository.findMyValidCouponCount(userId, readDate);
+    }
 }
