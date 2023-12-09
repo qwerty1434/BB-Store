@@ -1,7 +1,8 @@
 package kr.bb.store.domain.cargo.service;
 
+import bloomingblooms.domain.flower.FlowerDto;
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
-import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +45,10 @@ class CargoServiceTest {
     private EntityManager em;
 
     @Autowired
-    PlatformTransactionManager txManager;
+    private PlatformTransactionManager txManager;
+
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @AfterEach
     public void teardown() {

@@ -22,25 +22,20 @@ public class DeliveryPolicy extends BaseEntity {
     private Store store;
 
     @NotNull
-    private Long minOrderPrice;
-
-    @NotNull
     private Long freeDeliveryMinPrice;
 
     @NotNull
     private Long deliveryPrice;
 
     @Builder
-    public DeliveryPolicy(Store store, Long minOrderPrice, Long freeDeliveryMinPrice, Long deliveryPrice) {
+    public DeliveryPolicy(Store store, Long freeDeliveryMinPrice, Long deliveryPrice) {
         this.store = store;
-        this.minOrderPrice = minOrderPrice;
         this.freeDeliveryMinPrice = freeDeliveryMinPrice;
         this.deliveryPrice = deliveryPrice;
     }
 
 
-    public void update(Long minOrderPrice, Long deliveryPrice, Long freeDeliveryMinPrice) {
-        this.minOrderPrice = minOrderPrice;
+    public void update(Long deliveryPrice, Long freeDeliveryMinPrice) {
         this.deliveryPrice = deliveryPrice;
         this.freeDeliveryMinPrice = freeDeliveryMinPrice;
     }

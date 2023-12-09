@@ -1,5 +1,6 @@
 package kr.bb.store.domain.subscription.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import kr.bb.store.domain.subscription.entity.Subscription;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,6 +26,8 @@ class SubscriptionManagerTest {
     private SubscriptionRepository subscriptionRepository;
     @Autowired
     private SubscriptionManager subscriptionManager;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("구독을 취소한다")
     @Test
@@ -49,7 +53,7 @@ class SubscriptionManagerTest {
                 .store(store)
                 .orderSubscriptionId(1L)
                 .userId(1L)
-                .subscriptionProductId(1L)
+                .subscriptionProductId("1")
                 .subscriptionCode("Code")
                 .deliveryDate(LocalDate.now())
                 .build();

@@ -1,5 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ class QuestionReaderTest {
     private StoreRepository storeRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("질문 Id를 바탕으로 질문 상세정보를 받아온다")
     @Test
@@ -54,7 +58,7 @@ class QuestionReaderTest {
         String productName = "가게명";
 
         // when
-        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId(), nickname, productName);
+        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId());
 
         // then
         assertThat(questionDetailInfoResponse.getTitle()).isEqualTo("질문제목");
@@ -76,7 +80,7 @@ class QuestionReaderTest {
         String productName = "가게명";
 
         // when
-        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId(), nickname, productName);
+        QuestionDetailInfoResponse questionDetailInfoResponse = questionReader.readDetailInfo(question.getId());
 
         // then
         assertThat(questionDetailInfoResponse.getAnswer()).isNull();
@@ -97,7 +101,7 @@ class QuestionReaderTest {
         String productName = "가게명";
 
         // when
-        questionReader.readDetailInfo(question.getId(), nickname, productName);
+        questionReader.readDetailInfo(question.getId());
 
         em.flush();
         em.clear();
@@ -216,14 +220,14 @@ class QuestionReaderTest {
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
-        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
-        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        Question q1 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,"1",3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,"2",3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,"2",2L);
         questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
 
-        Long productId = 1L;
+        String productId = "1";
         Long userId = 2L;
         Boolean isReplied = false;
         PageRequest pageRequest = PageRequest.of(0, 10);
@@ -235,6 +239,60 @@ class QuestionReaderTest {
         assertThat(result.getTotalElements()).isEqualTo(3);
     }
 
+    @DisplayName("내가 작성하지 않은 비밀글은 제목과 내용이 비밀처리된다")
+    @Test
+    void cannotSeeOthersSecretQuesetion() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+        long writerId = 1L;
+
+        Question q1 = createQuestion(store,writerId,true);
+        questionRepository.save(q1);
+
+        long readerId = 2L;
+        String productId = "1";
+        Boolean isReplied = false;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(readerId, productId, isReplied, pageRequest);
+        QuestionInProductDto result = questionInProductDtos.getContent().get(0);
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("비밀글입니다");
+        assertThat(result.getContent()).isEqualTo("");
+
+    }
+
+    @DisplayName("비회원은 비밀글을 볼 수 없다")
+    @Test
+    void nonMembersCannotSeeSecretQuestion() {
+        // given
+        Store store = createStore(1L);
+        storeRepository.save(store);
+        long writerId = 1L;
+
+        Question q1 = createQuestion(store,writerId,true);
+        questionRepository.save(q1);
+
+        Long nonMemberId = null;
+        String productId = "1";
+        Boolean isReplied = false;
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(nonMemberId, productId, isReplied, pageRequest);
+        QuestionInProductDto result = questionInProductDtos.getContent().get(0);
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("비밀글입니다");
+        assertThat(result.getContent()).isEqualTo("");
+    }
+
+
+
+
     @DisplayName("해당 상품에서 내가 남긴 문의만 모아본다")
     @Test
     void readMyQuestionsInProduct() {
@@ -242,14 +300,14 @@ class QuestionReaderTest {
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
-        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
-        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        Question q1 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,"1",3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,"2",3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,"2",2L);
         questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
 
-        Long productId = 1L;
+        String productId = "1";
         Long userId = 2L;
         Boolean isReplied = false;
         PageRequest pageRequest = PageRequest.of(0, 10);
@@ -269,11 +327,11 @@ class QuestionReaderTest {
         Store store = createStore(1L);
         storeRepository.save(store);
 
-        Question q1 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q2 = createQuestionWithProductIdAndUserId(store,1L,2L);
-        Question q3 = createQuestionWithProductIdAndUserId(store,1L,3L);
-        Question q4 = createQuestionWithProductIdAndUserId(store,2L,3L);
-        Question q5 = createQuestionWithProductIdAndUserId(store,2L,2L);
+        Question q1 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q2 = createQuestionWithProductIdAndUserId(store,"1",2L);
+        Question q3 = createQuestionWithProductIdAndUserId(store,"1",3L);
+        Question q4 = createQuestionWithProductIdAndUserId(store,"2",3L);
+        Question q5 = createQuestionWithProductIdAndUserId(store,"2",2L);
         questionRepository.saveAll(List.of(q1,q2,q3,q4,q5));
 
         Long userId = 2L;
@@ -289,12 +347,13 @@ class QuestionReaderTest {
     }
 
 
-    private Question createQuestionWithProductIdAndUserId(Store store, Long productId, Long userId) {
+    private Question createQuestionWithProductIdAndUserId(Store store,String productId, Long userId) {
         return Question.builder()
                 .store(store)
                 .userId(userId)
                 .nickname("닉네임")
                 .productId(productId)
+                .productName("상품명")
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)
@@ -306,10 +365,23 @@ class QuestionReaderTest {
                 .store(store)
                 .userId(1L)
                 .nickname("닉네임")
-                .productId(1L)
+                .productId("1")
+                .productName("상품명")
                 .title("질문제목")
                 .content("질문내용")
                 .isSecret(true)
+                .build();
+    }
+    private Question createQuestion(Store store, Long writerId, boolean isSecret) {
+        return Question.builder()
+                .store(store)
+                .userId(writerId)
+                .nickname("닉네임")
+                .productId("1")
+                .productName("상품명")
+                .title("질문제목")
+                .content("질문내용")
+                .isSecret(isSecret)
                 .build();
     }
 

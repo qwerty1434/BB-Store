@@ -29,8 +29,6 @@ public class StoreCreateRequest {
     @NotNull(message = "bank cannot be null")
     private String bank;
 
-    @PositiveOrZero(message = "minOrderPrice cannot be negative")
-    private Long minOrderPrice;
     @PositiveOrZero(message = "deliveryPrice cannot be negative")
     private Long deliveryPrice;
     @PositiveOrZero(message = "freeDeliveryMinPrice cannot be negative")
@@ -63,7 +61,6 @@ public class StoreCreateRequest {
     }
     public DeliveryPolicyDto toDeliveryPolicyRequest() {
         return DeliveryPolicyDto.builder()
-                .minOrderPrice(minOrderPrice)
                 .deliveryPrice(deliveryPrice)
                 .freeDeliveryMinPrice(freeDeliveryMinPrice)
                 .build();

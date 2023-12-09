@@ -1,7 +1,10 @@
 package kr.bb.store.domain.question.repository;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.question.dto.*;
 import org.springframework.data.domain.Page;
@@ -12,6 +15,8 @@ import javax.persistence.EntityManager;
 
 import java.util.List;
 
+import static com.querydsl.core.types.ExpressionUtils.as;
+import static com.querydsl.jpa.JPAExpressions.select;
 import static kr.bb.store.domain.question.entity.QAnswer.answer;
 import static kr.bb.store.domain.question.entity.QQuestion.question;
 
@@ -26,6 +31,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     public Page<QuestionForOwnerDto> getQuestionsForStoreOwnerWithPaging(Long storeId, Boolean isReplied, Pageable pageable) {
         List<QuestionForOwnerDto> contents = queryFactory.select(new QQuestionForOwnerDto(
                         question.id,
+                        question.productName,
                         question.nickname,
                         question.title,
                         question.createdAt,
@@ -56,16 +62,16 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     }
 
     @Override
-    public Page<QuestionInProductDto> getQuestionsInProductWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<QuestionInProductDto> getQuestionsInProductWithPaging(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         List<QuestionInProductDto> contents = queryFactory.select(new QQuestionInProductDto(
                         question.id,
                         Expressions.asBoolean(answer.question.id.isNotNull()),
-                        question.title,
-                        question.content,
+                        makeTitle(userId),
+                        makeContent(userId),
                         question.nickname,
                         question.createdAt,
                         question.isSecret,
-                        question.userId.eq(userId),
+                        subQueryOfIsMine(userId),
                         answer.content,
                         answer.createdAt
                 ))
@@ -95,7 +101,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
     }
 
     @Override
-    public Page<MyQuestionInMypageDto> getMyQuestionsInProductWithPaging(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<MyQuestionInMypageDto> getMyQuestionsInProductWithPaging(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         List<MyQuestionInMypageDto> contents = queryFactory.select(new QMyQuestionInMypageDto(
                         question.id,
                         Expressions.asBoolean(answer.question.id.isNotNull()),
@@ -170,9 +176,35 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
 
     }
 
+
+
+    private StringExpression makeTitle(Long userId) {
+        return new CaseBuilder()
+                .when(question.isSecret.isTrue().and(isNotMyQuestion(userId)))
+                .then(Expressions.asString("비밀글입니다"))
+                .otherwise(question.title);
+    }
+
+    private StringExpression makeContent(Long userId) {
+        return new CaseBuilder()
+                .when(question.isSecret.isTrue().and(isNotMyQuestion(userId)))
+                .then(Expressions.asString(""))
+                .otherwise(question.content);
+    }
+
+    private Expression<Boolean> subQueryOfIsMine(Long userId) {
+        if(userId == null) return Expressions.asBoolean(false);
+        return as(select(question.id.count().goe(1))
+                .from(question)
+                .where(question.userId.eq(userId)), "isMine");
+    }
+
+    private BooleanExpression isNotMyQuestion(Long userId) {
+        return (userId == null) ? null : question.userId.ne(userId);
+    }
+
     private BooleanExpression checkRepliedCondition(boolean isReplied) {
         return isReplied ? answer.question.id.isNotNull() :
                 answer.question.id.isNull();
-
     }
 }

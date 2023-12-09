@@ -1,6 +1,8 @@
 package kr.bb.store.domain.coupon.handler;
 
 
+import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
@@ -11,7 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -19,13 +23,16 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Testcontainers
 @SpringBootTest
 @Transactional
-class CouponCreatorTest {
+class CouponCreatorTest extends AbstractContainer {
     @Autowired
     private CouponCreator couponCreator;
     @Autowired
     private StoreRepository storeRepository;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("쿠폰 정보를 전달받아 쿠폰을 생성한다")
     @Test

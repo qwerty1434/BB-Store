@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryPolicyDto {
-    private Long minOrderPrice;
     private Long deliveryPrice;
     private Long freeDeliveryMinPrice;
 }

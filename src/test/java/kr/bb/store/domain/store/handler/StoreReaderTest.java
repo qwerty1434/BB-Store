@@ -1,5 +1,7 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.Position;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -9,10 +11,6 @@ import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.StoreNotFoundException;
-import kr.bb.store.domain.store.controller.response.StoreDetailInfoResponse;
-import kr.bb.store.domain.store.controller.response.StoreInfoManagerResponse;
-import kr.bb.store.domain.store.controller.response.StoreInfoUserResponse;
-import kr.bb.store.domain.store.controller.response.StoreListForMapResponse;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
@@ -21,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +48,8 @@ class StoreReaderTest {
     private GugunRepository gugunRepository;
     @Autowired
     private EntityManager em;
-
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("가게 아이디를 입력받아 가게에 대한 상세정보를 반환한다")
     @Test
@@ -73,7 +73,7 @@ class StoreReaderTest {
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
-        assertThat(response.getMinOrderPrice()).isEqualTo(10_000L);
+        assertThat(response.getDeliveryPrice()).isEqualTo(5_000L);
         assertThat(response.getSido()).isEqualTo("서울");
     }
 
@@ -112,7 +112,7 @@ class StoreReaderTest {
         Pageable pageable = PageRequest.of(page,size);
 
         // when
-        Page<Store> stores = storeReader.readStoresWithPaging(pageable);
+        Page<StoreListResponse> stores = storeReader.readStoresWithPaging(pageable);
 
         // then
         assertThat(stores.getTotalPages()).isEqualTo(2);
@@ -140,9 +140,10 @@ class StoreReaderTest {
 
         Boolean isLiked = true;
         Boolean isSubscribed = true;
+        String subscriptionProductId = "구독용 상품 아이디";
 
         // when
-        StoreInfoUserResponse response = storeReader.readForUser(store.getId(),isLiked, isSubscribed);
+        StoreInfoUserResponse response = storeReader.readForUser(store.getId(),isLiked, isSubscribed, subscriptionProductId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
@@ -342,7 +343,6 @@ class StoreReaderTest {
     private DeliveryPolicy createDeliveryPolicy(Store store) {
         return DeliveryPolicy.builder()
                 .store(store)
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();

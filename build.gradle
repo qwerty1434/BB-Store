@@ -45,6 +45,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation "org.springframework.cloud:spring-cloud-starter-bus-kafka"
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -57,7 +59,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation("it.ozimov:embedded-redis:0.7.2")
 
-    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '0.1.0-alpha1'
+    // testContainers
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+    testImplementation "org.testcontainers:junit-jupiter:1.16.3"
+
+    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '25041622'
 }
 
 dependencyManagement {

@@ -1,4 +1,4 @@
-package kr.bb.store.domain.cargo.dto;
+package kr.bb.store.domain.coupon.controller.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FlowerDto {
-    private Long flowerId;
-    private String flowerName;
+public class TotalAmountRequest {
+    private Long totalAmount;
 }

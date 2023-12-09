@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -40,6 +42,8 @@ class StoreManagerTest {
     private GugunRepository gugunRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("요청받은 내용으로 가게 정보를 수정한다 - 가게명, 위도, 최소주문금액 수정")
     @Test
@@ -67,8 +71,7 @@ class StoreManagerTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(99_999L) // 수정됨
-                .deliveryPrice(5_000L)
+                .deliveryPrice(9_999L) // 수정됨
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
                 .gugun("강남구")
@@ -95,7 +98,7 @@ class StoreManagerTest {
 
         assertThat(changedStore.getStoreName()).isEqualTo("가게2");
         assertThat(changedStoreAddress.getLat()).isEqualTo(-11.1111D);
-        assertThat(changedDeliveryPolicy.getMinOrderPrice()).isEqualTo(99_999L);
+        assertThat(changedDeliveryPolicy.getDeliveryPrice()).isEqualTo(9_999L);
 
     }
 
@@ -133,7 +136,6 @@ class StoreManagerTest {
     private DeliveryPolicy createDeliveryPolicy(Store store) {
         return DeliveryPolicy.builder()
                 .store(store)
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();

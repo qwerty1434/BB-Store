@@ -23,8 +23,9 @@ public class QuestionForOwnerDto {
     private Boolean isRead;
 
     @QueryProjection
-    public QuestionForOwnerDto(Long key, String nickname, String title, LocalDateTime createdAt, Boolean isReplied, Boolean isRead) {
+    public QuestionForOwnerDto(Long key, String productName, String nickname, String title, LocalDateTime createdAt, Boolean isReplied, Boolean isRead) {
         this.key = key;
+        this.productName = productName;
         this.nickname = nickname;
         this.title = title;
         this.createdAt = createdAt.toLocalDate();

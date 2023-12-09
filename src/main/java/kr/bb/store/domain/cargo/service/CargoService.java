@@ -1,8 +1,8 @@
 package kr.bb.store.domain.cargo.service;
 
 
+import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
-import kr.bb.store.domain.cargo.dto.FlowerDto;
 import kr.bb.store.domain.cargo.dto.StockInfoDto;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
@@ -64,10 +64,10 @@ public class CargoService {
     @Transactional
     public void createBasicCargo(Store store, List<FlowerDto> flowers) {
         List<FlowerCargo> flowerCargos = flowers.stream()
-                .map(v -> FlowerCargo.builder()
-                        .id(makeKeys(store.getId(), v.getFlowerId()))
+                .map(flowerDto -> FlowerCargo.builder()
+                        .id(makeKeys(store.getId(), flowerDto.getFlowerId()))
                         .store(store)
-                        .flowerName(v.getFlowerName())
+                        .flowerName(flowerDto.getFlowerName())
                         .build()
                 )
                 .collect(Collectors.toList());

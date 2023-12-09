@@ -2,6 +2,7 @@ package kr.bb.store.domain.coupon.controller;
 
 import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
+import kr.bb.store.domain.coupon.controller.request.TotalAmountRequest;
 import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
 import kr.bb.store.domain.coupon.service.CouponService;
@@ -11,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/stores")
 public class CouponController {
     private final CouponService couponService;
 
@@ -70,16 +69,19 @@ public class CouponController {
         return ResponseEntity.ok().body(couponService.getAllStoreCouponsForUser(userId, storeId, now));
     }
 
-    @GetMapping("/{storeId}/coupons/my")
+    @PostMapping("/{storeId}/coupons/payment")
     public ResponseEntity<CouponsForUserResponse> couponsInPaymentStep(@PathVariable Long storeId,
-                                               @RequestHeader(value = "userId") Long userId) {
+                                                                       @RequestHeader(value = "userId") Long userId,
+                                                                       @RequestBody TotalAmountRequest totalAmountRequest) {
 
-        return ResponseEntity.ok().body(couponService.getAvailableCouponsInPayment(userId, storeId));
+        LocalDate now = LocalDate.now();
+        return ResponseEntity.ok().body(couponService.getAvailableCouponsInPayment(totalAmountRequest, userId, storeId, now));
     }
 
-    @GetMapping("/coupons/list")
+    @GetMapping("/coupons/my")
     public ResponseEntity<CouponsForUserResponse> myCoupons(@RequestHeader(value = "userId") Long userId) {
 
-        return ResponseEntity.ok().body(couponService.getMyValidCoupons(userId));
+        LocalDate now = LocalDate.now();
+        return ResponseEntity.ok().body(couponService.getMyValidCoupons(userId, now));
     }
 }

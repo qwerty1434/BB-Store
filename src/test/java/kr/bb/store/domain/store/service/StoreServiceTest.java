@@ -1,6 +1,9 @@
 package kr.bb.store.domain.store.service;
 
-import kr.bb.store.domain.cargo.dto.FlowerDto;
+import bloomingblooms.domain.flower.FlowerDto;
+import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.client.StoreLikeFeignClient;
+import kr.bb.store.client.StoreSubscriptionFeignClient;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -21,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +36,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.groups.Tuple.tuple;
 
 @SpringBootTest
 @Transactional
@@ -51,6 +54,12 @@ class StoreServiceTest {
     private DeliveryPolicyRepository deliveryPolicyRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
+    @MockBean
+    private StoreLikeFeignClient storeLikeFeignClient;
+    @MockBean
+    private StoreSubscriptionFeignClient storeSubscriptionFeignClient;
 
     @DisplayName("회원 번호를 전달받아 가게를 생성한다")
     @Test
@@ -128,7 +137,6 @@ class StoreServiceTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
@@ -172,7 +180,7 @@ class StoreServiceTest {
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
-        assertThat(response.getMinOrderPrice()).isEqualTo(10_000L);
+        assertThat(response.getDeliveryPrice()).isEqualTo(5000L);
         assertThat(response.getSido()).isEqualTo("서울");
     }
 
@@ -195,14 +203,15 @@ class StoreServiceTest {
 
         int page = 1;
         int size = 5;
+        long userId = 1L;
         Pageable pageable = PageRequest.of(page,size);
 
         // when
-        SimpleStorePagingResponse response = storeService.getStoresWithPaging(pageable);
+        SimpleStorePagingResponse response = storeService.getStoresWithPaging(userId, pageable);
 
         // then
         assertThat(response.getTotalCnt()).isEqualTo(7);
-        assertThat(response.getSimpleStores().get(0)).isInstanceOf(SimpleStoreResponse.class);
+        assertThat(response.getStores().get(0)).isInstanceOf(StoreListResponse.class);
     }
 
     @DisplayName("유저에게 보이는 가게정보를 반환한다")
@@ -210,7 +219,7 @@ class StoreServiceTest {
     public void getStoreInfoForUser() {
         Long userId = 1L;
 
-        Store store = createStoreEntity(userId,"가게1");
+        Store store = createStoreEntity(1L,"가게1");
         storeRepository.save(store);
 
         StoreAddress storeAddress = createStoreAddressEntity(store,0D,0D);
@@ -219,11 +228,13 @@ class StoreServiceTest {
         DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store);
         deliveryPolicyRepository.save(deliveryPolicy);
 
+        String subscriptionProductId = "1";
+
         em.flush();
         em.clear();
 
         // when
-        StoreInfoUserResponse response = storeService.getStoreInfoForUser(store.getId());
+        StoreInfoUserResponse response = storeService.getStoreInfoForUser(userId, store.getId(), subscriptionProductId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
@@ -264,7 +275,7 @@ class StoreServiceTest {
         Sido sido2 = new Sido("2", "부산");
         Gugun gugun1 = new Gugun("100",sido1,"강남구");
         Gugun gugun2 = new Gugun("200",sido1,"종로구");
-
+        Long userId = 1L;
 
         Store s1 = createStoreEntity(1L,"가게1");
         Store s2 = createStoreEntity(1L,"가게2");
@@ -283,7 +294,7 @@ class StoreServiceTest {
         em.flush();
         em.clear();
 
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getCode(), gugun1.getCode());
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(userId, sido1.getCode(), gugun1.getCode());
         assertThat(storesWithRegion.getStores()).hasSize(2)
                 .extracting("storeName")
                 .containsExactlyInAnyOrder(
@@ -296,7 +307,7 @@ class StoreServiceTest {
     @Test
     void sidoMustNotBeNullWhenGetStoresWithRegion() {
         // when // then
-        assertThatThrownBy(() -> storeService.getStoresWithRegion(null,"강남구"))
+        assertThatThrownBy(() -> storeService.getStoresWithRegion(1L, null,"강남구"))
                 .isInstanceOf(InvalidDataAccessApiUsageException.class);
 
     }
@@ -309,9 +320,10 @@ class StoreServiceTest {
         Gugun gugun1 = new Gugun("300",sido2,"해운대구");
         sidoRepository.saveAll(List.of(sido1, sido2));
         gugunRepository.save(gugun1);
+        Long userId = 1L;
 
         // when // then
-        assertThatThrownBy(() -> storeService.getStoresWithRegion(sido1.getCode(),gugun1.getCode()))
+        assertThatThrownBy(() -> storeService.getStoresWithRegion(userId, sido1.getCode(),gugun1.getCode()))
                 .isInstanceOf(InvalidParentException.class)
                 .hasMessage("선택한 시/도와 구/군이 맞지 않습니다.");
 
@@ -325,6 +337,7 @@ class StoreServiceTest {
         Gugun gugun1 = new Gugun("100",sido1,"강남구");
         Gugun gugun2 = new Gugun("200",sido1,"종로구");
         Gugun gugun3 = new Gugun("300",sido2,"해운대구");
+        Long userId = 1L;
 
         Store s1 = createStoreEntity(1L,"가게1");
         Store s2 = createStoreEntity(1L,"가게2");
@@ -343,7 +356,7 @@ class StoreServiceTest {
         em.flush();
         em.clear();
 
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sido1.getCode(), "");
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(userId, sido1.getCode(), "");
         assertThat(storesWithRegion.getStores()).hasSize(4)
                 .extracting("storeName")
                 .containsExactlyInAnyOrder(
@@ -352,6 +365,35 @@ class StoreServiceTest {
 
     }
 
+    @DisplayName("가게사장 아이디를 통해 가게 아이디를 가져온다")
+    @Test
+    void getStoreId() {
+        // given
+        Long userId = 1L;
+        Store store = createStoreWithManagerId(userId);
+        storeRepository.save(store);
+
+        // when
+        Long result = storeService.getStoreId(userId);
+
+        // then
+        assertThat(result).isEqualTo(store.getId());
+
+    }
+
+
+    private Store createStoreWithManagerId(Long userId) {
+        return Store.builder()
+                .storeManagerId(userId)
+                .storeCode("가게코드")
+                .storeName("가게이름")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
 
     private StoreAddress createStoresAddressWithSidoGugun(Store store, Sido sido, Gugun gugun) {
         sidoRepository.save(sido);
@@ -376,7 +418,6 @@ class StoreServiceTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
@@ -423,7 +464,6 @@ class StoreServiceTest {
     private DeliveryPolicy createDeliveryPolicyEntity(Store store) {
         return DeliveryPolicy.builder()
                 .store(store)
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .build();

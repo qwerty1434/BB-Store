@@ -1,7 +1,9 @@
 package kr.bb.store.domain.coupon.handler;
 
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
+import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
 import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -36,6 +39,8 @@ class CouponReaderTest {
     private IssuedCouponRepository issuedCouponRepository;
     @Autowired
     private EntityManager em;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
     @DisplayName("가게 사장에게 보여줄 쿠폰 정보를 조회한다")
     @Test
@@ -155,6 +160,8 @@ class CouponReaderTest {
         Coupon c2 = createCouponWithDate(s1,now,now.plusDays(5));
         couponRepository.saveAll(List.of(c1,c2));
 
+        Long totalAmount = Long.MAX_VALUE;
+
         Long userId = 1L;
         // 사용할 수 있는 쿠폰
         issuedCouponRepository.save(createIssuedCoupon(c1, userId));
@@ -180,12 +187,68 @@ class CouponReaderTest {
         couponRepository.save(c5);
 
         // when
-        List<CouponDto> result = couponReader.readAvailableCouponsInStore(userId, s1.getId(), LocalDate.now().plusDays(2));
+        List<CouponWithAvailabilityDto> result = couponReader.readAvailableCouponsInStore(totalAmount, userId, s1.getId(), LocalDate.now().plusDays(2));
 
         // then
         assertThat(result).hasSize(1);
 
     }
+
+    @DisplayName("주문금액이 쿠폰의 최소사용금액보다 작다면 사용불가로 표시된다")
+    @Test
+    void couponCannotUseWhenTotalAmountLowerThanCouponMinPrice() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Long minPrice = 10_000L;
+        Coupon coupon = createCouponWithMinPrice(store,minPrice);
+        couponRepository.save(coupon);
+
+        Long totalAmount = minPrice - 1;
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(coupon, userId));
+
+        // when
+        List<CouponWithAvailabilityDto> result = couponReader.readAvailableCouponsInStore(totalAmount, userId, store.getId(), LocalDate.now());
+
+        // then
+        assertThat(result)
+                .extracting("isAvailable")
+                .containsExactly(false);
+
+    }
+    @DisplayName("주문금액과 쿠폰의 최소사용금액이 동일할 때는 사용가능으로 표시된다")
+    @Test
+    void couponCanUseWhenTotalAmountIsEqualToCouponMinPrice() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store store = createStore(1L);
+        storeRepository.save(store);
+
+        Long minPrice = 10_000L;
+        Coupon coupon = createCouponWithMinPrice(store,minPrice);
+        couponRepository.save(coupon);
+
+        Long totalAmount = minPrice;
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(coupon, userId));
+
+        // when
+        List<CouponWithAvailabilityDto> result = couponReader.readAvailableCouponsInStore(totalAmount, userId, store.getId(), LocalDate.now());
+
+        // then
+        assertThat(result)
+                .extracting("isAvailable")
+                .containsExactly(true);
+
+    }
+
 
     @DisplayName("내가 보유한 사용할 수 있는 모든 쿠폰을 조회한다")
     @Test
@@ -225,6 +288,46 @@ class CouponReaderTest {
 
         // then
         assertThat(result).hasSize(1);
+    }
+
+    @DisplayName("내가 보유한 사용할 수 있는 쿠폰 개수를 조회한다")
+    @Test
+    void readMyValidCouponCount() {
+        // given
+        LocalDate now = LocalDate.now();
+        Store s1 = createStore(1L);
+        Store s2 = createStore(1L);
+        storeRepository.saveAll(List.of(s1,s2));
+        Coupon c1 = createCouponWithDate(s1,now,now.plusDays(5));
+        Coupon c2 = createCoupon(s1);
+
+        couponRepository.saveAll(List.of(c1,c2));
+
+        Long userId = 1L;
+        // 사용할 수 있는 쿠폰
+        issuedCouponRepository.save(createIssuedCoupon(c1, userId));
+
+        // 이미 사용한 쿠폰
+        IssuedCoupon issuedCoupon = issuedCouponRepository.save(createIssuedCoupon(c2, userId));
+        em.flush();
+        em.clear();
+        IssuedCoupon couponsToUse = issuedCouponRepository.findById(issuedCoupon.getId()).get();
+        couponsToUse.use(LocalDate.now());
+
+        // 사용 기간이 지난 쿠폰
+        Coupon c3 = createCouponWithDate(s2,now,now);
+        couponRepository.save(c3);
+        issuedCouponRepository.save(createIssuedCoupon(c3, userId));
+
+        // 유효하지만 다운로드 받지 않은 쿠폰
+        Coupon c4 = createCouponWithDate(s1,now,now.plusDays(5));
+        couponRepository.save(c4);
+
+        // when
+        int result = couponReader.readMyValidCouponCount(userId,now.plusDays(1));
+
+        // then
+        assertThat(result).isEqualTo(1);
     }
 
     @DisplayName("현재 다운받을 수 있는 쿠폰 목록을 반환한다")
@@ -311,6 +414,19 @@ class CouponReaderTest {
                 .minPrice(100000L)
                 .startDate(startDate)
                 .endDate(endDate)
+                .build();
+    }
+
+    private Coupon createCouponWithMinPrice(Store store, Long minPrice) {
+        return Coupon.builder()
+                .couponCode("쿠폰코드")
+                .store(store)
+                .limitCount(100)
+                .couponName("쿠폰이름")
+                .discountPrice(10000L)
+                .minPrice(minPrice)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
                 .build();
     }
 

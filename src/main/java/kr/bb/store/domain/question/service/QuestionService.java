@@ -32,10 +32,7 @@ public class QuestionService {
 
     @Transactional
     public QuestionDetailInfoResponse getQuestionInfo(Long questionId) {
-        // TODO : Feign통신으로 값 받아오기
-        String nickname = "유저명";
-        String productName = "제품명";
-        return questionReader.readDetailInfo(questionId, nickname, productName);
+        return questionReader.readDetailInfo(questionId);
     }
 
     @Transactional
@@ -45,14 +42,13 @@ public class QuestionService {
 
     public QuestionsForOwnerPagingResponse getQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {
         Page<QuestionForOwnerDto> questionForOwnerDtos = questionReader.readQuestionsForStoreOwner(storeId, isReplied, pageable);
-        // TODO : Feign통신으로 productName 받아와 값 채우기
         return QuestionsForOwnerPagingResponse.builder()
                 .data(questionForOwnerDtos.getContent())
                 .totalCnt(questionForOwnerDtos.getTotalElements())
                 .build();
     }
 
-    public QuestionsInProductPagingResponse getQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public QuestionsInProductPagingResponse getQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(userId, productId, isReplied, pageable);
         return QuestionsInProductPagingResponse.builder()
                 .data(questionInProductDtos.getContent())
@@ -60,7 +56,7 @@ public class QuestionService {
                 .build();
     }
 
-    public MyQuestionsInProductPagingResponse getMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public MyQuestionsInProductPagingResponse getMyQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         Page<MyQuestionInMypageDto> questionInProductDtos = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageable);
         return MyQuestionsInProductPagingResponse.builder()
                 .data(questionInProductDtos.getContent())

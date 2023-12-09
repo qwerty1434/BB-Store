@@ -1,7 +1,8 @@
 package kr.bb.store.domain.store.controller;
 
 
-import kr.bb.store.domain.cargo.dto.FlowerDto;
+import bloomingblooms.domain.flower.FlowerDto;
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -14,21 +15,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/stores")
 public class StoreController {
     private final StoreService storeService;
+    private final ProductFeignClient productFeignClient;
 
     @PostMapping
     public ResponseEntity<Long> createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
                                       @RequestHeader(value = "userId") Long userId) {
-        // TODO : feign통신
-        List<FlowerDto> flowers = new ArrayList<>();
+        List<FlowerDto> flowers = productFeignClient.getFlowers();
         return ResponseEntity.ok().body(storeService.createStore(userId, storeCreateRequest, flowers));
     }
 
@@ -45,13 +43,16 @@ public class StoreController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<SimpleStorePagingResponse> getStores(Pageable pageable) {
-        return ResponseEntity.ok().body(storeService.getStoresWithPaging(pageable));
+    public ResponseEntity<SimpleStorePagingResponse> getStores(@RequestHeader(value = "userId") Long userId,
+                                                               Pageable pageable) {
+        return ResponseEntity.ok().body(storeService.getStoresWithPaging(userId, pageable));
     }
 
     @GetMapping("/{storeId}/user")
-    public ResponseEntity<StoreInfoUserResponse> getStoreInfoForUser(@PathVariable Long storeId){
-        return ResponseEntity.ok().body(storeService.getStoreInfoForUser(storeId));
+    public ResponseEntity<StoreInfoUserResponse> getStoreInfoForUser(@RequestHeader(value = "userId") Long userId,
+                                                                     @PathVariable Long storeId){
+        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId);
+        return ResponseEntity.ok().body(storeService.getStoreInfoForUser(userId, storeId, subscriptionProductId));
     }
 
     @GetMapping("/{storeId}/manager")
@@ -61,13 +62,15 @@ public class StoreController {
 
     @GetMapping("/map/location")
     public ResponseEntity<StoreListForMapResponse> getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
+                                                                   @RequestHeader(value = "userId") Long userId,
                                                                    @RequestParam Integer level) {
-        return ResponseEntity.ok().body(storeService.getNearbyStores(lat,lon,level));
+        return ResponseEntity.ok().body(storeService.getNearbyStores(userId, lat, lon, level));
     }
 
     @GetMapping("/map/region")
-    public ResponseEntity<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun) {
-        return ResponseEntity.ok().body(storeService.getStoresWithRegion(sido,gugun));
+    public ResponseEntity<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun,
+                                                                       @RequestHeader(value = "userId") Long userId) {
+        return ResponseEntity.ok().body(storeService.getStoresWithRegion(userId, sido, gugun));
     }
 
     @GetMapping("/address/sido")

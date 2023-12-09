@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.service.StoreService;
 import org.junit.jupiter.api.DisplayName;
@@ -18,21 +19,21 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class StoreControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @MockBean
     private StoreService storeService;
+    @MockBean
+    private ProductFeignClient productFeignClient;
 
-    @DisplayName("주문생성 시 요청값은 모두 null이 아니여야 한다")
+    @DisplayName("가게생성 시 요청값은 모두 null이 아니여야 한다")
     @Test
     void storeCreateRequestPropertiesCannotBeNull() throws Exception {
         // given
         StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
 
         // when // then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/stores")
+        mockMvc.perform(MockMvcRequestBuilders.post("/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(storeCreateRequest))
                 .header("userId",1L)
@@ -41,7 +42,7 @@ class StoreControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    @DisplayName("주문생성 시 요청값은 모두 null이 아니여야 한다")
+    @DisplayName("가게생성 시 요청값은 모두 null이 아니여야 한다")
     @Test
     void storeCreateRequestPropertiesCannotBeNull2() throws Exception {
         // given
@@ -52,7 +53,6 @@ class StoreControllerTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")
@@ -65,7 +65,7 @@ class StoreControllerTest {
                 .build();
 
         // when // then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/stores")
+        mockMvc.perform(MockMvcRequestBuilders.post("/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(storeCreateRequest))
         )
@@ -84,7 +84,6 @@ class StoreControllerTest {
                 .phoneNumber("가게 전화번호")
                 .accountNumber("가게 계좌정보")
                 .bank("가게 계좌 은행정보")
-                .minOrderPrice(10_000L)
                 .deliveryPrice(5_000L)
                 .freeDeliveryMinPrice(10_000L)
                 .sido("서울")

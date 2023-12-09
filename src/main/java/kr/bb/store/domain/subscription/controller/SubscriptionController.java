@@ -9,10 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/stores")
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 

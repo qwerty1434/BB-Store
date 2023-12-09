@@ -19,7 +19,7 @@ public class QuestionReader {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
-    public QuestionDetailInfoResponse readDetailInfo(Long questionId, String nickname, String productName) {
+    public QuestionDetailInfoResponse readDetailInfo(Long questionId) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(QuestionNotFoundException::new);
         question.check();
@@ -27,26 +27,18 @@ public class QuestionReader {
         Answer answer = answerRepository.findById(questionId)
                 .orElse(null);
 
-        return QuestionDetailInfoResponse.builder()
-                .title(question.getTitle())
-                .nickname(nickname)
-                .createdAt(question.getCreatedAt())
-                .productName(productName)
-                .content(question.getContent())
-                .isReplied(answer != null)
-                .answer(answer == null ? null : AnswerDto.fromEntity(answer))
-                .build();
+        return QuestionDetailInfoResponse.of(question,answer);
     }
 
     public Page<QuestionForOwnerDto> readQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getQuestionsForStoreOwnerWithPaging(storeId, isReplied, pageable);
     }
 
-    public Page<QuestionInProductDto> readQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<QuestionInProductDto> readQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 
-    public Page<MyQuestionInMypageDto> readMyQuestionsInProduct(Long userId, Long productId, Boolean isReplied, Pageable pageable) {
+    public Page<MyQuestionInMypageDto> readMyQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getMyQuestionsInProductWithPaging(userId, productId, isReplied, pageable);
     }
 

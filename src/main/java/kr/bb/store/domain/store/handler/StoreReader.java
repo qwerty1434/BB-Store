@@ -42,8 +42,6 @@ public class StoreReader {
                 .orElseThrow(DeliveryPolicyNotFoundException::new);
     }
 
-
-
     public StoreDetailInfoResponse readDetailInfo(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         DeliveryPolicy deliveryPolicy = deliveryPolicyRepository.findByStoreId(storeId)
@@ -54,41 +52,23 @@ public class StoreReader {
         return StoreDetailInfoResponse.of(store,deliveryPolicy,storeAddress);
     }
 
-    public Page<Store> readStoresWithPaging(Pageable pageable) {
+    public Page<StoreListResponse> readStoresWithPaging(Pageable pageable) {
         return storeRepository.getStoresWithPaging(pageable);
     }
 
-    public StoreInfoUserResponse readForUser(Long storeId, Boolean isLiked, Boolean isSubscribed) {
+    public StoreInfoUserResponse readForUser(Long storeId, Boolean isLiked, Boolean isSubscribed,
+                                             String subscriptionProductId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         StoreAddress storeAddress = storeAddressRepository.findByStoreId(storeId)
                 .orElseThrow(StoreAddressNotFoundException::new);
-        return StoreInfoUserResponse.builder()
-                .storeName(store.getStoreName())
-                .storeThumbnailImage(store.getStoreThumbnailImage())
-                .address(storeAddress.getAddress())
-                .detailAddress(storeAddress.getDetailAddress())
-                .averageRating(store.getAverageRating())
-                .detailInfo(store.getDetailInfo())
-                .phoneNumber(store.getPhoneNumber())
-                .isLiked(isLiked)
-                .isSubscribed(isSubscribed)
-                .build();
+        return StoreInfoUserResponse.of(store, storeAddress, isLiked, isSubscribed, subscriptionProductId);
     }
 
     public StoreInfoManagerResponse readForManager(Long storeId) {
         Store store = storeRepository.findById(storeId).orElseThrow(StoreNotFoundException::new);
         StoreAddress storeAddress = storeAddressRepository.findByStoreId(storeId)
                 .orElseThrow(StoreAddressNotFoundException::new);
-        return StoreInfoManagerResponse.builder()
-                .storeName(store.getStoreName())
-                .storeThumbnailImage(store.getStoreThumbnailImage())
-                .phoneNumber(store.getPhoneNumber())
-                .accountNumber(store.getAccountNumber())
-                .bank(store.getBank())
-                .detailInfo(store.getDetailInfo())
-                .address(storeAddress.getAddress())
-                .addressDetail(storeAddress.getDetailAddress())
-                .build();
+        return StoreInfoManagerResponse.of(store, storeAddress);
     }
 
     public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {

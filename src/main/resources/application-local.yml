@@ -1,0 +1,16 @@
+server:
+  port: 8700
+spring:
+  application:
+    name: store-service
+  config:
+    activate:
+      on-profile: local
+    import: optional:configserver:http://localhost:8888
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "refresh"
+          - "bus-refresh"
