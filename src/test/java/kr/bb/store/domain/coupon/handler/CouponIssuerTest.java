@@ -2,6 +2,7 @@ package kr.bb.store.domain.coupon.handler;
 
 
 import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.exception.AlreadyIssuedCouponException;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -25,9 +27,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Testcontainers
 @SpringBootTest
 @Transactional
-class CouponIssuerTest {
+class CouponIssuerTest extends AbstractContainer {
     @Autowired
     private CouponIssuer couponIssuer;
     @Autowired

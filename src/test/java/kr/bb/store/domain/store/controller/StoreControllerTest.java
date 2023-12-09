@@ -26,14 +26,14 @@ class StoreControllerTest {
     @MockBean
     private ProductFeignClient productFeignClient;
 
-    @DisplayName("주문생성 시 요청값은 모두 null이 아니여야 한다")
+    @DisplayName("가게생성 시 요청값은 모두 null이 아니여야 한다")
     @Test
     void storeCreateRequestPropertiesCannotBeNull() throws Exception {
         // given
         StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
 
         // when // then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/stores")
+        mockMvc.perform(MockMvcRequestBuilders.post("/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(storeCreateRequest))
                 .header("userId",1L)
@@ -42,7 +42,7 @@ class StoreControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    @DisplayName("주문생성 시 요청값은 모두 null이 아니여야 한다")
+    @DisplayName("가게생성 시 요청값은 모두 null이 아니여야 한다")
     @Test
     void storeCreateRequestPropertiesCannotBeNull2() throws Exception {
         // given
@@ -65,7 +65,7 @@ class StoreControllerTest {
                 .build();
 
         // when // then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/stores")
+        mockMvc.perform(MockMvcRequestBuilders.post("/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(storeCreateRequest))
         )

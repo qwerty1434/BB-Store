@@ -2,6 +2,7 @@ package kr.bb.store.domain.coupon.service;
 
 
 import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -25,8 +27,9 @@ import java.util.stream.LongStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Testcontainers
 @SpringBootTest
-class CouponServiceTest {
+class CouponServiceTest extends AbstractContainer {
     @Autowired
     private CouponService couponService;
     @Autowired
