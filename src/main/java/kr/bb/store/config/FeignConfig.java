@@ -1,9 +1,9 @@
 package kr.bb.store.config;
 
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 @EnableFeignClients(basePackages = "kr.bb.store")
-@Component
+@Configuration
 public class FeignConfig {
 }
