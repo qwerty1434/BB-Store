@@ -1,4 +1,4 @@
-package kr.bb.store.exception.advice;
+package kr.bb.store.exception;
 
 public class CustomException extends RuntimeException {
     public CustomException() {
