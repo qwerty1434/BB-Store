@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
+import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.domain.cargo.service.CargoService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
@@ -124,6 +125,13 @@ public class StoreService {
     public Long getStoreId(Long userId) {
         return storeReader.getStoreByUserId(userId).getId();
     }
+
+    public StoreInfoDto getStoreNameAndAddress(Long storeId) {
+        Store store = storeReader.read(storeId);
+        StoreAddress storeAddress = storeReader.readAddress(storeId);
+        return StoreInfoDto.of(store, storeAddress);
+    }
+
 
     public List<SidoDto> getSido() {
         return sidoReader.readAll()

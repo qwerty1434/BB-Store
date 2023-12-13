@@ -90,6 +90,16 @@ public class StoreReader {
                 .orElseThrow(StoreNotFoundException::new);
     }
 
+    public Store read(Long storeId) {
+        return storeRepository.findById(storeId)
+                .orElseThrow(StoreNotFoundException::new);
+    }
+
+    public StoreAddress readAddress(Long storeId) {
+        return storeAddressRepository.findByStoreId(storeId)
+                .orElseThrow(StoreNotFoundException::new);
+    }
+
     private Double levelToMeter(int level) {
         switch (level) {
             case 1 :

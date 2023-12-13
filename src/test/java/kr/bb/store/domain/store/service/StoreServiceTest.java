@@ -4,6 +4,7 @@ import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
+import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -381,12 +382,45 @@ class StoreServiceTest {
 
     }
 
+    @DisplayName("가게 이름과 주소를 반환한다")
+    @Test
+    void getStoreNameAndAddress() {
+        // given
+        String storeName = "우리가게";
+        Store store = createStoreWithStoreName(storeName);
+        storeRepository.save(store);
+
+        StoreAddress storeAddress = createStoreAddressEntity(store,"도로명 주소", "상세주소");
+        storeAddressRepository.save(storeAddress);
+
+        // when
+        StoreInfoDto result = storeService.getStoreNameAndAddress(store.getId());
+
+        // then
+        assertThat(result.getStoreName()).isEqualTo(storeName);
+        assertThat(result.getStoreAddress()).isEqualTo(storeAddress.getAddress() + " " + storeAddress.getDetailAddress());
+
+    }
+
+
 
     private Store createStoreWithManagerId(Long userId) {
         return Store.builder()
                 .storeManagerId(userId)
                 .storeCode("가게코드")
                 .storeName("가게이름")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
+    private Store createStoreWithStoreName(String storeName) {
+        return Store.builder()
+                .storeManagerId(1L)
+                .storeCode("가게코드")
+                .storeName(storeName)
                 .detailInfo("가게 상세정보")
                 .storeThumbnailImage("가게 썸네일")
                 .phoneNumber("가게 전화번호")
@@ -445,6 +479,23 @@ class StoreServiceTest {
                 .zipCode("001112")
                 .lat(lat)
                 .lon(lon)
+                .build();
+    }
+    private StoreAddress createStoreAddressEntity(Store store, String address, String detailAddress) {
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+
+        return StoreAddress.builder()
+                .store(store)
+                .sido(sido)
+                .gugun(gugun)
+                .address(address)
+                .detailAddress(detailAddress)
+                .zipCode("001112")
+                .lat(0d)
+                .lon(0d)
                 .build();
     }
 
