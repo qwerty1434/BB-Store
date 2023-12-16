@@ -17,6 +17,7 @@ import kr.bb.store.domain.store.repository.StoreRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -50,6 +51,9 @@ class StoreReaderTest {
     private EntityManager em;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("가게 아이디를 입력받아 가게에 대한 상세정보를 반환한다")
     @Test

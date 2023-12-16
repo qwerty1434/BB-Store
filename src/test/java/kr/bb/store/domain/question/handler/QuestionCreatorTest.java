@@ -8,6 +8,7 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,6 +31,9 @@ class QuestionCreatorTest {
     private EntityManager em;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("질문 정보를 전달받아 질문을 생성한다")
     @Test

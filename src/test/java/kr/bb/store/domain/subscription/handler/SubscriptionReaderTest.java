@@ -8,6 +8,7 @@ import kr.bb.store.domain.subscription.exception.SubscriptionNotFoundException;
 import kr.bb.store.domain.subscription.repository.SubscriptionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,6 +35,9 @@ class SubscriptionReaderTest {
     private EntityManager em;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("주문 구독 아이디로 구독 정보를 읽어온다")
     @Test

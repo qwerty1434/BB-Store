@@ -10,6 +10,7 @@ import kr.bb.store.domain.subscription.repository.SubscriptionRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,6 +31,9 @@ class SubscriptionCreatorTest {
     private SubscriptionRepository subscriptionRepository;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("구독정보를 생성한다")
     @Test

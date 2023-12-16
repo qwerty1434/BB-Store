@@ -6,6 +6,7 @@ import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.service.StoreService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +26,9 @@ class StoreControllerTest {
     private StoreService storeService;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("가게생성 시 요청값은 모두 null이 아니여야 한다")
     @Test

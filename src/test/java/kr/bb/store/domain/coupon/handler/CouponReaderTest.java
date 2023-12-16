@@ -15,6 +15,7 @@ import kr.bb.store.domain.store.repository.StoreRepository;
 import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,6 +42,9 @@ class CouponReaderTest {
     private EntityManager em;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("가게 사장에게 보여줄 쿠폰 정보를 조회한다")
     @Test

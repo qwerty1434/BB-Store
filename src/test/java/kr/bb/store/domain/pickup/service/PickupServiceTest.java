@@ -9,6 +9,7 @@ import kr.bb.store.domain.store.repository.StoreRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +30,9 @@ class PickupServiceTest {
     private PickupReservationRepository pickupReservationRepository;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("특정 가게의 달력에 표시될 픽업예약 및 정기구독 정보를 가져온다")
     @Test

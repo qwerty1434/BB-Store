@@ -7,6 +7,7 @@ import kr.bb.store.domain.subscription.controller.request.SubscriptionCreateRequ
 import kr.bb.store.domain.subscription.entity.Subscription;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +26,8 @@ class SubscriptionServiceTest {
     private StoreRepository storeRepository;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
 
     @DisplayName("구독생성 정보를 받아 구독을 생성한다")
     @Test

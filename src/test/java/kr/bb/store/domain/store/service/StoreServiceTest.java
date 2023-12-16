@@ -23,6 +23,7 @@ import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -61,6 +62,8 @@ class StoreServiceTest {
     private StoreLikeFeignClient storeLikeFeignClient;
     @MockBean
     private StoreSubscriptionFeignClient storeSubscriptionFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
 
     @DisplayName("회원 번호를 전달받아 가게를 생성한다")
     @Test
