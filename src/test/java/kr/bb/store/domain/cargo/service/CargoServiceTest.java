@@ -2,14 +2,15 @@ package kr.bb.store.domain.cargo.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
+import kr.bb.store.domain.cargo.exception.StockCannotBeNegativeException;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -27,10 +29,12 @@ import java.util.concurrent.*;
 import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 
+@Testcontainers
 @SpringBootTest
-class CargoServiceTest {
+class CargoServiceTest extends AbstractContainer {
 
     @Autowired
     private CargoService cargoService;
@@ -118,11 +122,11 @@ class CargoServiceTest {
 
     }
 
-    @DisplayName("재고 수정이 동시에 들어올 경우 가장 처음 수정만 유효하고, 뒤이은 수정은 실패한다(낙관락)")
+    @DisplayName("여러 쓰레드에서 동시에 재고 수정을 요청해도 정상적으로 동작한다")
     @Test
-    void OptimisticLockWithVersion() throws InterruptedException, ExecutionException {
+    void RedissonLockTest() throws InterruptedException, ExecutionException {
         // given
-        final int concurrentRequestCount = 3;
+        final int concurrentRequestCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(concurrentRequestCount);
         final Long flowerId = 1L;
@@ -132,7 +136,7 @@ class CargoServiceTest {
             Store store = createStore();
             storeRepository.save(store);
             FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(), flowerId);
-            FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
+            FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 0L, "장미", store);
             flowerCargoRepository.save(flowerCargo);
             txManager.commit(status);
             return store.getId();
@@ -140,11 +144,10 @@ class CargoServiceTest {
 
         final Long storeId = storeCreate.get();
 
-
         LongStream.rangeClosed(1L, concurrentRequestCount)
                 .forEach( idx -> executorService.submit(() -> {
                     try {
-                        cargoService.plusStockCount(storeId,flowerId,idx);
+                        cargoService.plusStockCount(storeId,flowerId,1L);
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();
@@ -155,7 +158,8 @@ class CargoServiceTest {
         FlowerCargoId flowerCargoId = createFlowerCargoId(storeId, flowerId);
         FlowerCargo result = flowerCargoRepository.findById(flowerCargoId).get();
 
-        Assertions.assertThat(result.getVersion()).isNotEqualTo(0);
+        assertThat(result.getStock()).isEqualTo(concurrentRequestCount);
+
     }
 
     
@@ -194,15 +198,10 @@ class CargoServiceTest {
         FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
         flowerCargoRepository.save(flowerCargo);
 
-        // when
-        cargoService.plusStockCount(store.getId(), 1L, -10000L);
-
-        em.flush();
-        em.clear();
-
-        FlowerCargo flowerCargoFromDB = flowerCargoRepository.findById(flowerCargoId).get();
-        // then
-        assertThat(flowerCargoFromDB.getStock()).isEqualTo(0L);
+        // when // then
+        assertThatThrownBy(() -> cargoService.plusStockCount(store.getId(), 1L, -10000L))
+                .isInstanceOf(StockCannotBeNegativeException.class)
+                .hasMessage("재고는 음수가 될 수 없습니다.");
 
     }
     @DisplayName("재고는 음수가 될 수 없다")
@@ -220,16 +219,10 @@ class CargoServiceTest {
 
         StockModifyDto s1 = createStockModifyDto(1L, -3L);
 
-        // when
-        cargoService.modifyAllStocks(store.getId(), List.of(s1));
-
-        em.flush();
-        em.clear();
-
-        FlowerCargo flowerCargoFromDB = flowerCargoRepository.findById(flowerCargoId).get();
-
-        // then
-        assertThat(flowerCargoFromDB.getStock()).isEqualTo(0L);
+        // when // then
+        assertThatThrownBy(() -> cargoService.modifyAllStocks(store.getId(), List.of(s1)))
+                .isInstanceOf(StockCannotBeNegativeException.class)
+                .hasMessage("재고는 음수가 될 수 없습니다.");
 
     }
 

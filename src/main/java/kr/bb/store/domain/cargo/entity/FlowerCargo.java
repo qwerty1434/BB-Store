@@ -17,9 +17,6 @@ public class FlowerCargo extends BaseEntity {
     @EmbeddedId
     private FlowerCargoId id;
 
-    @Version
-    private Integer version;
-
     @MapsId("storeId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="store_id")
@@ -30,11 +27,4 @@ public class FlowerCargo extends BaseEntity {
 
     private String flowerName;
 
-    public void modifyStock(Long stock) {
-        this.stock = (stock < 0) ? 0L : stock;
-    }
-
-    public void updateStock(Long stock) {
-        this.stock = (this.stock + stock < 0) ? 0L : this.stock + stock;
-    }
 }

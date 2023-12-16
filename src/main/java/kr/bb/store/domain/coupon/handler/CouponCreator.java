@@ -30,6 +30,7 @@ public class CouponCreator {
                 .build();
 
         String key = coupon.getCouponCode();
+        // TODO : setCountWithExpiration으로 바꾸고 트랜잭션으로 묶기
         couponRedisRepository.setCount(key);
         couponRedisRepository.setExpirationDate(key, coupon.getEndDate());
 

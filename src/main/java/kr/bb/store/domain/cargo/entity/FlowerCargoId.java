@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -19,11 +17,6 @@ public class FlowerCargoId implements Serializable{
     private Long storeId;
 
     private Long flowerId;
-
-
-
-
-
 
     @Override
     public boolean equals(Object o) {
