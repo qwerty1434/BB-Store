@@ -3,7 +3,7 @@ package kr.bb.store.domain.store.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
-import kr.bb.store.domain.store.service.StoreService;
+import kr.bb.store.domain.store.facade.StoreFacade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
@@ -23,7 +23,7 @@ class StoreControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private StoreService storeService;
+    private StoreFacade storeFacade;
     @MockBean
     private ProductFeignClient productFeignClient;
     @MockBean

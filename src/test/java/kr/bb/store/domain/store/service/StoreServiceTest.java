@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,12 +57,6 @@ class StoreServiceTest {
     private DeliveryPolicyRepository deliveryPolicyRepository;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private StoreLikeFeignClient storeLikeFeignClient;
-    @MockBean
-    private StoreSubscriptionFeignClient storeSubscriptionFeignClient;
     @MockBean
     private RedissonClient redissonClient;
 
@@ -94,7 +89,6 @@ class StoreServiceTest {
     void cannotCreateStoreAddressWithoutSido() {
         // given
         StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
-        Store store = createStoreEntity(1L,"가게1");
         List<FlowerDto> flowers = Collections.emptyList();
 
         // when // then
@@ -207,15 +201,15 @@ class StoreServiceTest {
 
         int page = 1;
         int size = 5;
-        long userId = 1L;
+
         Pageable pageable = PageRequest.of(page,size);
 
         // when
-        SimpleStorePagingResponse response = storeService.getStoresWithPaging(userId, pageable);
+        Page<StoreListResponse> response = storeService.getStoresWithPaging(pageable);
 
         // then
-        assertThat(response.getTotalCnt()).isEqualTo(7);
-        assertThat(response.getStores().get(0)).isInstanceOf(StoreListResponse.class);
+        assertThat(response.getTotalElements()).isEqualTo(7);
+        assertThat(response.getContent().get(0)).isInstanceOf(StoreListResponse.class);
     }
 
     @DisplayName("유저에게 보이는 가게정보를 반환한다")
@@ -238,7 +232,7 @@ class StoreServiceTest {
         em.clear();
 
         // when
-        StoreInfoUserResponse response = storeService.getStoreInfoForUser(userId, store.getId(), subscriptionProductId);
+        StoreInfoUserResponse response = storeService.getStoreInfoForUser(store.getId(), false, false, subscriptionProductId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");

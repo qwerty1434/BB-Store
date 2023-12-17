@@ -98,7 +98,7 @@ class StoreFacadeTest {
         Long userId = 1L;
         PageRequest page = PageRequest.of(0, 5);
         BDDMockito.given(storeLikeFeignClient.getStoreLikes(any(), any()))
-                .willReturn(Map.of(1L,true,2L,true, 3L, false));
+                .willReturn(Map.of(store1.getId(),true,store2.getId(),true, store3.getId(), false));
 
         // when
         List<StoreListResponse> result = storeFacade.getStoresWithLikes(userId, page).getStores();
@@ -150,7 +150,7 @@ class StoreFacadeTest {
         storeAddressRepository.save(sa1);
 
         BDDMockito.given(storeLikeFeignClient.getStoreLikes(any(), any()))
-                .willReturn(Map.of(1L,true));
+                .willReturn(Map.of(s1.getId(),true));
 
 
         // when
