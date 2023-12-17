@@ -28,90 +28,38 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CargoService {
-
     private final FlowerCargoRepository flowerCargoRepository;
-    private final RedissonClient redissonClient;
 
     @Transactional
-    public void modifyAllStocks(Long storeId, List<StockModifyDto> stockModifyDtos) {
-        stockModifyDtos.forEach(stockModifyDto -> {
-            FlowerCargoId flowerCargoId = makeKeys(storeId, stockModifyDto.getFlowerId());
-            RLock lock = redissonClient.getLock(makeRedissonKey(storeId, stockModifyDto.getFlowerId()));
-            try {
-                boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
-                if(!available) {
-                    throw new StockChangeFailedException();
-                }
-
-                if(stockModifyDto.getStock() < 0) {
-                    throw new StockCannotBeNegativeException();
-                }
-
-                flowerCargoRepository.modifyStock(flowerCargoId.getStoreId(), flowerCargoId.getFlowerId(), stockModifyDto.getStock());
-            } catch (InterruptedException e){
-                throw new LockInterruptedException();
-            } finally {
-                if(lock.isLocked() && lock.isHeldByCurrentThread()) {
-                    lock.unlock();
-                }
-            }
-        });
+    public void modifyAllStocks(StockModifyDto stockModifyDto, FlowerCargoId flowerCargoId) {
+        if(stockModifyDto.getStock() < 0) {
+            throw new StockCannotBeNegativeException();
+        }
+        flowerCargoRepository.modifyStock(flowerCargoId.getStoreId(), flowerCargoId.getFlowerId(), stockModifyDto.getStock());
     }
 
     @Transactional
-    public void plusStockCount(Long storeId, Long flowerId, Long stock) {
-        FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
-        RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
-        try {
-            boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
-            if(!available) {
-                throw new StockChangeFailedException();
-            }
+    public void plusStockCount(FlowerCargoId flowerCargoId, Long stock) {
+        FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
+                .orElseThrow(FlowerCargoNotFoundException::new);
 
-            FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
-                    .orElseThrow(FlowerCargoNotFoundException::new);
-
-            if(flowerCargo.getStock() < -stock) {
-                throw new StockCannotBeNegativeException();
-            }
-
-            flowerCargoRepository.plusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
-
-        } catch (InterruptedException e){
-            throw new LockInterruptedException();
-        } finally {
-            if(lock.isLocked() && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
+        if(flowerCargo.getStock() < -stock) {
+            throw new StockCannotBeNegativeException();
         }
-
+        flowerCargoRepository.plusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
 
     }
 
     @Transactional
-    public void minusStockCount(Long storeId, Long flowerId, Long stock) {
-        FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
-        RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
-        try {
-            boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
-            if(!available) {
-                throw new StockChangeFailedException();
-            }
+    public void minusStockCount(FlowerCargoId flowerCargoId, Long stock) {
+        FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
+                .orElseThrow(FlowerCargoNotFoundException::new);
 
-            FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
-                    .orElseThrow(FlowerCargoNotFoundException::new);
-            if(flowerCargo.getStock() < stock) {
-                throw new StockCannotBeNegativeException();
-            }
-
-            flowerCargoRepository.minusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
-        } catch (InterruptedException e){
-            throw new LockInterruptedException();
-        } finally {
-            if(lock.isLocked() && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
+        if(flowerCargo.getStock() < stock) {
+            throw new StockCannotBeNegativeException();
         }
+        flowerCargoRepository.minusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
+
     }
 
     @Transactional(readOnly = true)
