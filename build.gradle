@@ -58,6 +58,7 @@ dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation("it.ozimov:embedded-redis:0.7.2")
+    implementation 'org.redisson:redisson-spring-boot-starter:3.17.0'
 
     // testContainers
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"

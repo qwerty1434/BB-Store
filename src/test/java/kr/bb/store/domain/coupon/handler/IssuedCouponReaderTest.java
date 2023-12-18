@@ -11,6 +11,7 @@ import kr.bb.store.domain.store.repository.StoreRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,6 +33,9 @@ class IssuedCouponReaderTest {
     private IssuedCouponRepository issuedCouponRepository;
     @MockBean
     private ProductFeignClient productFeignClient;
+    @MockBean
+    private RedissonClient redissonClient;
+
 
     @DisplayName("유저Id와 쿠폰Id로 해당 유저의 쿠폰 발급 여부를 조사한다")
     @Test

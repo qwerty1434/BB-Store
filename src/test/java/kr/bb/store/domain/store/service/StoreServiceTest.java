@@ -4,6 +4,7 @@ import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
+import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -22,10 +23,12 @@ import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,11 +58,7 @@ class StoreServiceTest {
     @Autowired
     private EntityManager em;
     @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private StoreLikeFeignClient storeLikeFeignClient;
-    @MockBean
-    private StoreSubscriptionFeignClient storeSubscriptionFeignClient;
+    private RedissonClient redissonClient;
 
     @DisplayName("회원 번호를 전달받아 가게를 생성한다")
     @Test
@@ -90,7 +89,6 @@ class StoreServiceTest {
     void cannotCreateStoreAddressWithoutSido() {
         // given
         StoreCreateRequest storeCreateRequest = createStoreCreateRequest();
-        Store store = createStoreEntity(1L,"가게1");
         List<FlowerDto> flowers = Collections.emptyList();
 
         // when // then
@@ -203,15 +201,15 @@ class StoreServiceTest {
 
         int page = 1;
         int size = 5;
-        long userId = 1L;
+
         Pageable pageable = PageRequest.of(page,size);
 
         // when
-        SimpleStorePagingResponse response = storeService.getStoresWithPaging(userId, pageable);
+        Page<StoreListResponse> response = storeService.getStoresWithPaging(pageable);
 
         // then
-        assertThat(response.getTotalCnt()).isEqualTo(7);
-        assertThat(response.getStores().get(0)).isInstanceOf(StoreListResponse.class);
+        assertThat(response.getTotalElements()).isEqualTo(7);
+        assertThat(response.getContent().get(0)).isInstanceOf(StoreListResponse.class);
     }
 
     @DisplayName("유저에게 보이는 가게정보를 반환한다")
@@ -234,7 +232,7 @@ class StoreServiceTest {
         em.clear();
 
         // when
-        StoreInfoUserResponse response = storeService.getStoreInfoForUser(userId, store.getId(), subscriptionProductId);
+        StoreInfoUserResponse response = storeService.getStoreInfoForUser(store.getId(), false, false, subscriptionProductId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
@@ -381,12 +379,45 @@ class StoreServiceTest {
 
     }
 
+    @DisplayName("가게 이름과 주소를 반환한다")
+    @Test
+    void getStoreNameAndAddress() {
+        // given
+        String storeName = "우리가게";
+        Store store = createStoreWithStoreName(storeName);
+        storeRepository.save(store);
+
+        StoreAddress storeAddress = createStoreAddressEntity(store,"도로명 주소", "상세주소");
+        storeAddressRepository.save(storeAddress);
+
+        // when
+        StoreInfoDto result = storeService.getStoreNameAndAddress(store.getId());
+
+        // then
+        assertThat(result.getStoreName()).isEqualTo(storeName);
+        assertThat(result.getStoreAddress()).isEqualTo(storeAddress.getAddress() + " " + storeAddress.getDetailAddress());
+
+    }
+
+
 
     private Store createStoreWithManagerId(Long userId) {
         return Store.builder()
                 .storeManagerId(userId)
                 .storeCode("가게코드")
                 .storeName("가게이름")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
+    private Store createStoreWithStoreName(String storeName) {
+        return Store.builder()
+                .storeManagerId(1L)
+                .storeCode("가게코드")
+                .storeName(storeName)
                 .detailInfo("가게 상세정보")
                 .storeThumbnailImage("가게 썸네일")
                 .phoneNumber("가게 전화번호")
@@ -445,6 +476,23 @@ class StoreServiceTest {
                 .zipCode("001112")
                 .lat(lat)
                 .lon(lon)
+                .build();
+    }
+    private StoreAddress createStoreAddressEntity(Store store, String address, String detailAddress) {
+        Sido sido = new Sido("011", "서울");
+        sidoRepository.save(sido);
+        Gugun gugun = new Gugun("110011",sido,"강남구");
+        gugunRepository.save(gugun);
+
+        return StoreAddress.builder()
+                .store(store)
+                .sido(sido)
+                .gugun(gugun)
+                .address(address)
+                .detailAddress(detailAddress)
+                .zipCode("001112")
+                .lat(0d)
+                .lon(0d)
                 .build();
     }
 

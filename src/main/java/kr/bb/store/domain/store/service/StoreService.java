@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
+import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.domain.cargo.service.CargoService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
@@ -36,8 +37,6 @@ public class StoreService {
     private final SidoReader sidoReader;
     private final GugunReader gugunReader;
     private final CargoService cargoService;
-    private final StoreLikeFeignClient storeLikeFeignClient;
-    private final StoreSubscriptionFeignClient storeSubscriptionFeignClient;
 
 
     @Transactional
@@ -63,32 +62,12 @@ public class StoreService {
         return storeReader.readDetailInfo(storeId);
     }
 
-    public SimpleStorePagingResponse getStoresWithPaging(Long userId, Pageable pageable) {
-        Page<StoreListResponse> storePages = storeReader.readStoresWithPaging(pageable);
-        List<Long> storeIds = storePages.getContent()
-                .stream()
-                .map(StoreListResponse::getStoreId)
-                .collect(Collectors.toList());
 
-        // TODO : userId가 null이면 통신하지 말기
-        Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
-
-        storePages.getContent()
-                .forEach(store -> store.setIsLiked(storeLikes.get(store.getStoreId())));
-
-        return SimpleStorePagingResponse.builder()
-                .stores(storePages.getContent())
-                .totalCnt(storePages.getTotalElements())
-                .build();
+    public Page<StoreListResponse> getStoresWithPaging(Pageable pageable) {
+        return  storeReader.readStoresWithPaging(pageable);
     }
 
-    public StoreInfoUserResponse getStoreInfoForUser(Long userId, Long storeId, String subscriptionProductId) {
-        // TODO : userId가 null이면 통신하지 말기
-        Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId));
-        // TODO : feign말고 내가가진 NoSQL에서 가져오기
-        Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient.getStoreSubscriptions(userId, List.of(storeId));
-        Boolean isLiked = storeLikes.get(storeId);
-        Boolean isSubscribed = storeSubscriptions.get(storeId);
+    public StoreInfoUserResponse getStoreInfoForUser(Long storeId, Boolean isLiked, Boolean isSubscribed, String subscriptionProductId) {
         return storeReader.readForUser(storeId, isLiked, isSubscribed, subscriptionProductId);
     }
 
@@ -96,34 +75,25 @@ public class StoreService {
         return storeReader.readForManager(storeId);
     }
 
-    public StoreListForMapResponse getNearbyStores(Long userId, Double lat, Double lon, Integer level) {
-        StoreListForMapResponse nearbyStores = storeReader.getNearbyStores(lat, lon, level);
-
-        List<Long> storeIds = nearbyStores.getStoreIds();
-        // TODO : userId가 null이면 통신하지 말기
-        Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
-
-        nearbyStores.setLikes(storeLikes);
-
-        return nearbyStores;
+    public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
+        return storeReader.getNearbyStores(lat, lon, level);
     }
     public StoreListForMapResponse getStoresWithRegion(Long userId, String sidoCode, String gugunCode) {
         Sido sido = sidoReader.readSido(sidoCode);
         Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
-        StoreListForMapResponse storesWithRegion = storeReader.getStoresWithRegion(sido, gugun);
-
-        List<Long> storeIds = storesWithRegion.getStoreIds();
-        // TODO : userId가 null이면 통신하지 말기
-        Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
-
-        storesWithRegion.setLikes(storeLikes);
-
-        return storesWithRegion;
+        return storeReader.getStoresWithRegion(sido, gugun);
     }
 
     public Long getStoreId(Long userId) {
         return storeReader.getStoreByUserId(userId).getId();
     }
+
+    public StoreInfoDto getStoreNameAndAddress(Long storeId) {
+        Store store = storeReader.read(storeId);
+        StoreAddress storeAddress = storeReader.readAddress(storeId);
+        return StoreInfoDto.of(store, storeAddress);
+    }
+
 
     public List<SidoDto> getSido() {
         return sidoReader.readAll()

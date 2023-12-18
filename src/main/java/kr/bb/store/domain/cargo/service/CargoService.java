@@ -8,45 +8,58 @@ import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.exception.FlowerCargoNotFoundException;
+import kr.bb.store.domain.cargo.exception.LockInterruptedException;
+import kr.bb.store.domain.cargo.exception.StockCannotBeNegativeException;
+import kr.bb.store.domain.cargo.exception.StockChangeFailedException;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.entity.Store;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class CargoService {
-
     private final FlowerCargoRepository flowerCargoRepository;
 
     @Transactional
-    public void modifyAllStocks(Long storeId, List<StockModifyDto> stockModifyDtos) {
-        stockModifyDtos.forEach(stockModifyDto -> {
-            FlowerCargoId flowerCargoId = makeKeys(storeId, stockModifyDto.getFlowerId());
-            FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
-                    .orElseThrow(FlowerCargoNotFoundException::new);
-            flowerCargo.modifyStock(stockModifyDto.getStock());
-        });
+    public void modifyAllStocks(StockModifyDto stockModifyDto, FlowerCargoId flowerCargoId) {
+        if(stockModifyDto.getStock() < 0) {
+            throw new StockCannotBeNegativeException();
+        }
+        flowerCargoRepository.modifyStock(flowerCargoId.getStoreId(), flowerCargoId.getFlowerId(), stockModifyDto.getStock());
     }
 
     @Transactional
-    public void plusStockCount(Long storeId, Long flowerId, Long stock) {
-        FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
+    public void plusStockCount(FlowerCargoId flowerCargoId, Long stock) {
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
                 .orElseThrow(FlowerCargoNotFoundException::new);
-        flowerCargo.updateStock(stock);
+
+        if(flowerCargo.getStock() < -stock) {
+            throw new StockCannotBeNegativeException();
+        }
+        flowerCargoRepository.plusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
+
     }
 
     @Transactional
-    public void minusStockCount(Long storeId, Long flowerId, Long stock) {
-        FlowerCargoId flowerCargoId = makeKeys(storeId,flowerId);
+    public void minusStockCount(FlowerCargoId flowerCargoId, Long stock) {
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
                 .orElseThrow(FlowerCargoNotFoundException::new);
-        flowerCargo.updateStock(-1 * stock);
+
+        if(flowerCargo.getStock() < stock) {
+            throw new StockCannotBeNegativeException();
+        }
+        flowerCargoRepository.minusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
+
     }
 
     @Transactional(readOnly = true)
@@ -80,5 +93,9 @@ public class CargoService {
                 .storeId(storeId)
                 .flowerId(flowerId)
                 .build();
+    }
+
+    private String makeRedissonKey(Long storeId, Long flowerId) {
+        return "s" + storeId + "f" + flowerId;
     }
 }
