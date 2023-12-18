@@ -51,8 +51,7 @@ public class StoreFacade {
 
         if(isNotGuest(userId)) {
             Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
-            storePages.getContent()
-                    .forEach(store -> store.setIsLiked(storeLikes.get(store.getStoreId())));
+            storePages.getContent().forEach(store -> store.setIsLiked(storeLikes.get(store.getStoreId())));
         }
 
         return SimpleStorePagingResponse.builder()
@@ -117,7 +116,6 @@ public class StoreFacade {
     public List<GugunDto> getGugun(String sidoCode) {
         return storeService.getGugun(sidoCode);
     }
-
 
     private boolean isNotGuest(Long userId) {
         return userId != null;
