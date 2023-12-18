@@ -69,9 +69,7 @@ public class CargoService {
                 .map(StockInfoDto::fromEntity)
                 .collect(Collectors.toList());
 
-        return RemainingStocksResponse.builder()
-                .stockInfoDtos(stockInfoDtos)
-                .build();
+        return RemainingStocksResponse.from(stockInfoDtos);
     }
 
     @Transactional

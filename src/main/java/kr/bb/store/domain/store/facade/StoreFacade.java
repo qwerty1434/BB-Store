@@ -91,7 +91,7 @@ public class StoreFacade {
     }
 
     public StoreListForMapResponse getStoresWithRegion(Long userId, String sidoCode, String gugunCode) {
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(userId, sidoCode, gugunCode);
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sidoCode, gugunCode);
 
         if(isNotGuest(userId)) {
             List<Long> storeIds = storesWithRegion.getStoreIds();

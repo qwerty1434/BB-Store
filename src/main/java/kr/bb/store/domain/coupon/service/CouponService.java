@@ -5,6 +5,10 @@ import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.controller.request.TotalAmountRequest;
 import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
+import kr.bb.store.domain.coupon.dto.CouponDto;
+import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
+import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
+import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
@@ -62,28 +66,26 @@ public class CouponService {
     }
 
     public CouponsForOwnerResponse getAllStoreCoupons(Long storeId) {
-        return CouponsForOwnerResponse.builder()
-                .data(couponReader.readCouponsForOwner(storeId))
-                .build();
+        List<CouponForOwnerDto> couponForOwnerDtos = couponReader.readCouponsForOwner(storeId);
+        return CouponsForOwnerResponse.from(couponForOwnerDtos);
     }
 
     public CouponsForUserResponse getAllStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
-        return CouponsForUserResponse.builder()
-                .data(couponReader.readStoreCouponsForUser(userId, storeId, now))
-                .build();
+        List<CouponWithIssueStatusDto> couponWithIssueStatusDtos =
+                couponReader.readStoreCouponsForUser(userId, storeId, now);
+        return CouponsForUserResponse.from(couponWithIssueStatusDtos);
     }
 
     public CouponsForUserResponse getAvailableCouponsInPayment(TotalAmountRequest totalAmountRequest,
                                                                Long userId, Long storeId, LocalDate now) {
-        return CouponsForUserResponse.builder()
-                .data(couponReader.readAvailableCouponsInStore(totalAmountRequest.getTotalAmount(), userId, storeId, now))
-                .build();
+        List<CouponWithAvailabilityDto> couponWithAvailabilityDtos =
+                couponReader.readAvailableCouponsInStore(totalAmountRequest.getTotalAmount(), userId, storeId, now);
+        return CouponsForUserResponse.from(couponWithAvailabilityDtos);
     }
 
     public CouponsForUserResponse getMyValidCoupons(Long userId, LocalDate now) {
-        return CouponsForUserResponse.builder()
-                .data(couponReader.readMyValidCoupons(userId, now))
-                .build();
+        List<CouponDto> couponDtos = couponReader.readMyValidCoupons(userId, now);
+        return CouponsForUserResponse.from(couponDtos);
     }
 
     public void useCoupon(Long couponId, Long userId, LocalDate useDate) {

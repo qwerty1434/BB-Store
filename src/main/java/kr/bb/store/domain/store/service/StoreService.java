@@ -78,7 +78,7 @@ public class StoreService {
     public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
         return storeReader.getNearbyStores(lat, lon, level);
     }
-    public StoreListForMapResponse getStoresWithRegion(Long userId, String sidoCode, String gugunCode) {
+    public StoreListForMapResponse getStoresWithRegion(String sidoCode, String gugunCode) {
         Sido sido = sidoReader.readSido(sidoCode);
         Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
         return storeReader.getStoresWithRegion(sido, gugun);

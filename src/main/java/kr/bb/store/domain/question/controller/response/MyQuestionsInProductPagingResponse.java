@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,4 +16,11 @@ import java.util.List;
 public class MyQuestionsInProductPagingResponse {
     private List<MyQuestionInMypageDto> data;
     private Long totalCnt;
+
+    public static MyQuestionsInProductPagingResponse from(Page<MyQuestionInMypageDto> questionInProductDtos) {
+        return MyQuestionsInProductPagingResponse.builder()
+                .data(questionInProductDtos.getContent())
+                .totalCnt(questionInProductDtos.getTotalElements())
+                .build();
+    }
 }

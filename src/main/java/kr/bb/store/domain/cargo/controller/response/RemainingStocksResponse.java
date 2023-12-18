@@ -14,4 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 public class RemainingStocksResponse {
     List<StockInfoDto> stockInfoDtos;
+
+    public static RemainingStocksResponse from(List<StockInfoDto> stockInfoDtos) {
+        return RemainingStocksResponse.builder()
+                .stockInfoDtos(stockInfoDtos)
+                .build();
+    }
 }
