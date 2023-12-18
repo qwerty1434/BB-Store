@@ -26,6 +26,6 @@ public class CouponFeignController {
     public ResponseEntity<Integer> availableCouponCountOfUser(@RequestHeader(value = "userId") Long userId) {
         LocalDate now = LocalDate.now();
 
-        return ResponseEntity.ok().body(couponService.getAvailableCouponCount(userId, now));
+        return ResponseEntity.ok().body(couponService.getMyAvailableCouponCount(userId, now));
     }
 }

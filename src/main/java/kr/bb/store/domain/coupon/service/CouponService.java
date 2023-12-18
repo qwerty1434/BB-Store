@@ -93,7 +93,7 @@ public class CouponService {
         couponManager.use(issuedCoupon, useDate);
     }
 
-    public Integer getAvailableCouponCount(Long userId, LocalDate now) {
+    public Integer getMyAvailableCouponCount(Long userId, LocalDate now) {
         return couponReader.readMyValidCouponCount(userId, now);
     }
 
