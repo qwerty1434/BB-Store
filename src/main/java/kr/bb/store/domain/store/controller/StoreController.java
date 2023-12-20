@@ -35,7 +35,7 @@ public class StoreController {
 
     @GetMapping("/{storeId}")
     public ResponseEntity<StoreDetailInfoResponse> getStoreInfo(@PathVariable Long storeId) {
-        return ResponseEntity.ok().body(storeFacade.getStoreInfo(storeId));
+        return ResponseEntity.ok().body(storeFacade.getStoreDetailInfo(storeId));
     }
 
     @GetMapping("/list")

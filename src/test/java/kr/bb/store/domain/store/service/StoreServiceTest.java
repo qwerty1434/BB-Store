@@ -1,10 +1,7 @@
 package kr.bb.store.domain.store.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
-import kr.bb.store.client.ProductFeignClient;
-import kr.bb.store.client.StoreLikeFeignClient;
-import kr.bb.store.client.StoreSubscriptionFeignClient;
-import kr.bb.store.client.dto.StoreInfoDto;
+import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -174,7 +171,7 @@ class StoreServiceTest {
         em.clear();
 
         // when
-        StoreDetailInfoResponse response = storeService.getStoreInfo(storeId);
+        StoreDetailInfoResponse response = storeService.getStoreDetailInfo(storeId);
 
         // then
         assertThat(response.getStoreName()).isEqualTo("가게1");
@@ -388,7 +385,7 @@ class StoreServiceTest {
         storeAddressRepository.save(storeAddress);
 
         // when
-        StoreInfoDto result = storeService.getStoreNameAndAddress(store.getId());
+        StoreNameAndAddressDto result = storeService.getStoreNameAndAddress(store.getId());
 
         // then
         assertThat(result.getStoreName()).isEqualTo(storeName);

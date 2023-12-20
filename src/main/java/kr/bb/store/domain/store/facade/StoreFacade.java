@@ -1,10 +1,11 @@
 package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.store.StoreInfoDto;
+import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
-import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -36,10 +37,6 @@ public class StoreFacade {
 
     public void editStoreInfo(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
         storeService.editStoreInfo(storeId, storeInfoEditRequest);
-    }
-
-    public StoreDetailInfoResponse getStoreInfo(Long storeId) {
-        return storeService.getStoreInfo(storeId);
     }
 
     public SimpleStorePagingResponse getStoresWithLikes(Long userId, Pageable pageable) {
@@ -106,8 +103,26 @@ public class StoreFacade {
         return storeService.getStoreId(userId);
     }
 
-    public StoreInfoDto getStoreNameAndAddress(Long storeId) {
-        return storeService.getStoreNameAndAddress(storeId);
+    public String getStoreName(Long storeId) {
+        return storeService.getStoreName(storeId);
+    }
+
+    public StoreNameAndAddressDto getStoreNameAndAddress(Long storeId) {
+        return storeService.getStoreNameAndAddress(storeId).toCommonEntity();
+    }
+
+    public StoreDetailInfoResponse getStoreDetailInfo(Long storeId) {
+        return storeService.getStoreDetailInfo(storeId);
+    }
+
+    public StoreInfoDto getStoreInfo(Long userId) {
+        return storeService.getStoreInfo(userId).toCommonEntity();
+    }
+
+    public List<StoreInfoDto> getAllStoreInfos() {
+        return storeService.getAllStoreInfos().stream()
+                .map(kr.bb.store.client.dto.StoreInfoDto::toCommonEntity)
+                .collect(Collectors.toList());
     }
 
     public List<SidoDto> getSido() {
@@ -121,6 +136,5 @@ public class StoreFacade {
     private boolean isNotGuest(Long userId) {
         return userId != null;
     }
-
 
 }

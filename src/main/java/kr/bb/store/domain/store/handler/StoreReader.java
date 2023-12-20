@@ -1,5 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
+import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -93,6 +95,19 @@ public class StoreReader {
     public Store read(Long storeId) {
         return storeRepository.findById(storeId)
                 .orElseThrow(StoreNotFoundException::new);
+    }
+
+    public StoreInfoDto readInfo(Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(StoreNotFoundException::new);
+        return StoreInfoDto.fromEntity(store);
+    }
+
+    public List<StoreInfoDto> readInfos() {
+        List<Store> stores = storeRepository.findAll();
+        return stores.stream()
+                .map(StoreInfoDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public StoreAddress readAddress(Long storeId) {

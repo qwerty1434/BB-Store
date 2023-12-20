@@ -3,13 +3,12 @@ package kr.bb.store.domain.store.repository;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kr.bb.store.domain.store.controller.response.QStoreForMapResponse;
 import kr.bb.store.domain.store.controller.response.QStoreListResponse;
+import kr.bb.store.domain.store.controller.response.StoreForMapResponse;
 import kr.bb.store.domain.store.controller.response.StoreListResponse;
-import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
-import kr.bb.store.domain.store.controller.response.QStoreForMapResponse;
-import kr.bb.store.domain.store.controller.response.StoreForMapResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -102,7 +101,6 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 )
                 .fetch();
     }
-
 
     private OrderSpecifier<Double> nearbyStoreOrderer(double centerLat, double centerLon) {
         return storeAddress.lat.abs().subtract(centerLat)
