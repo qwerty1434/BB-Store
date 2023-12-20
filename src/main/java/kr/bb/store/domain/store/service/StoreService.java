@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -85,7 +86,8 @@ public class StoreService {
     }
 
     public Long getStoreId(Long userId) {
-        return storeReader.getStoreByUserId(userId).getId();
+        Optional<Store> storeByUserId = storeReader.getStoreByUserId(userId);
+        return storeByUserId.map(Store::getId).orElse(null);
     }
 
     public StoreInfoDto getStoreNameAndAddress(Long storeId) {
