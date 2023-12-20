@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(("stores/coupons"))
+@RequestMapping(("/client/stores/coupons"))
 public class CouponFeignController {
     private final CouponService couponService;
 

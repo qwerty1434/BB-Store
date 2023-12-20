@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stores/flowers/stocks")
+@RequestMapping("/client/stores/flowers/stocks")
 public class CargoFeignController {
     private final CargoFacade cargoFacade;
     @PutMapping("/add")
