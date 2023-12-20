@@ -59,15 +59,4 @@ public class RedisOperation {
         });
     }
 
-    public Long increaseCount(String key) {
-        Long increment = redisTemplate.opsForValue().increment(key);
-        return increment;
-    }
-
-    public Long decreaseCount(String key) {
-        return redisTemplate.opsForValue().decrement(key);
-    }
-
-
-
 }

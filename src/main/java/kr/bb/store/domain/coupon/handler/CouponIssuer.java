@@ -26,16 +26,15 @@ public class CouponIssuer {
     public IssuedCoupon issueCoupon(Coupon coupon, Long userId, LocalDate issueDate) {
         if(coupon.getIsDeleted()) throw new DeletedCouponException();
         if(coupon.isExpired(issueDate)) throw new ExpiredCouponException();
+
         String redisKey = RedisUtils.makeRedisKey(coupon);
         String redisValue = userId.toString();
-
         if(isDuplicated(redisKey, redisValue)) throw new AlreadyIssuedCouponException();
 
         List<Long> result = (List) redisOperation.countAndSet(redisKey, redisValue);
 
         Integer limitCnt = coupon.getLimitCount();
         Long issueCount = result.get(0);
-
         if(isExhausted(limitCnt,issueCount)) {
             redisOperation.remove(redisKey, redisValue);
             throw new CouponOutOfStockException();
@@ -56,22 +55,18 @@ public class CouponIssuer {
                 }))
                 .filter(coupon -> {
                     String redisKey = RedisUtils.makeRedisKey(coupon);
+
                     List<Long> result = (List) redisOperation.countAndSet(redisKey, redisValue);
 
                     Integer limitCnt = coupon.getLimitCount();
                     Long issueCount = result.get(0);
-
                     if(isExhausted(limitCnt,issueCount)) {
                         redisOperation.remove(redisKey, redisValue);
                         return false;
                     }
                     return true;
                 })
-                .forEach(coupon -> {
-                    System.out.println(coupon.getCouponName()+"!!!");
-                    issuedCouponRepository.save(makeIssuedCoupon(coupon,userId));
-                        }
-                );
+                .forEach(coupon -> issuedCouponRepository.save(makeIssuedCoupon(coupon,userId)));
     }
 
     private IssuedCoupon makeIssuedCoupon(Coupon coupon, Long userId) {
