@@ -13,6 +13,8 @@ import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.handler.*;
+import kr.bb.store.domain.coupon.util.RedisUtils;
+import kr.bb.store.domain.coupon.util.RedisOperation;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
 import lombok.RequiredArgsConstructor;
@@ -32,18 +34,25 @@ public class CouponService {
     private final IssuedCouponReader issuedCouponReader;
     private final CouponIssuer couponIssuer;
     private final StoreReader storeReader;
+    private final RedisOperation redisOperation;
 
     @Transactional
     public void createCoupon(Long storeId, CouponCreateRequest couponCreateRequest) {
         Store store = storeReader.findStoreById(storeId);
-        couponCreator.create(store, couponCreateRequest.toDto());
+        Coupon coupon = couponCreator.create(store, couponCreateRequest.toDto());
+
+        String redisKey = RedisUtils.makeRedisKey(coupon);
+        redisOperation.addAndSetExpr(redisKey, coupon.getEndDate().plusDays(1));
     }
 
     @Transactional
     public void editCoupon(Long storeId, Long couponId, CouponEditRequest couponEditRequest) {
         Coupon coupon = couponReader.read(couponId);
         validateCouponAuthorization(coupon,storeId);
-        couponManager.edit(coupon,couponEditRequest.toDto());
+        couponManager.edit(coupon, couponEditRequest.toDto());
+
+        String redisKey = RedisUtils.makeRedisKey(coupon);
+        redisOperation.setExpr(redisKey, couponEditRequest.getEndDate());
     }
 
     @Transactional

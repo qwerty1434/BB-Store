@@ -8,6 +8,8 @@ import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
+import kr.bb.store.domain.coupon.util.RedisUtils;
+import kr.bb.store.domain.coupon.util.RedisOperation;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -41,6 +43,8 @@ class CouponServiceTest extends AbstractContainer {
     private EntityManager em;
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
+    @Autowired
+    private RedisOperation redisOperation;
     @MockBean
     private ProductFeignClient productFeignClient;
     @MockBean
@@ -158,7 +162,12 @@ class CouponServiceTest extends AbstractContainer {
             storeRepository.save(store);
 
             Coupon coupon = couponCreator(store, limitCount);
-            return couponRepository.save(coupon).getId();
+            couponRepository.save(coupon).getId();
+
+            String redisKey = RedisUtils.makeRedisKey(coupon);
+            redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
+
+            return coupon.getId();
 
         });
 
