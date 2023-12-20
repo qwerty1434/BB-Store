@@ -30,7 +30,7 @@ public class StoreFacade {
 
 
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
-        List<FlowerDto> flowers = productFeignClient.getFlowers();
+        List<FlowerDto> flowers = productFeignClient.getFlowers().getData();
         return storeService.createStore(userId, storeCreateRequest, flowers);
     }
 
@@ -50,7 +50,7 @@ public class StoreFacade {
                 .collect(Collectors.toList());
 
         if(isNotGuest(userId)) {
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             storePages.getContent().forEach(store -> store.setIsLiked(storeLikes.get(store.getStoreId())));
         }
 
@@ -61,10 +61,11 @@ public class StoreFacade {
     }
 
     public StoreInfoUserResponse getStoreInfoForUser(Long userId, Long storeId) {
-        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId);
+        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId).getData();
         if(isNotGuest(userId)) {
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId));
-            Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient.getStoreSubscriptions(userId, List.of(storeId));
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId)).getData();
+            Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient
+                    .getStoreSubscriptions(userId, List.of(storeId)).getData();
             Boolean isLiked = storeLikes.get(storeId);
             Boolean isSubscribed = storeSubscriptions.get(storeId);
             return storeService.getStoreInfoForUser(storeId, isLiked, isSubscribed, subscriptionProductId);
@@ -82,7 +83,7 @@ public class StoreFacade {
 
         if(isNotGuest(userId)) {
             List<Long> storeIds = nearbyStores.getStoreIds();
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             nearbyStores.setLikes(storeLikes);
         }
 
@@ -94,7 +95,7 @@ public class StoreFacade {
 
         if(isNotGuest(userId)) {
             List<Long> storeIds = storesWithRegion.getStoreIds();
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             storesWithRegion.setLikes(storeLikes);
         }
 

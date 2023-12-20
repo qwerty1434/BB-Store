@@ -64,6 +64,10 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
     testImplementation "org.testcontainers:junit-jupiter:1.16.3"
 
+    // resilience4j
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
     implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '202312180340'
 }
 

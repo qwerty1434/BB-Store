@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.response.CommonResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
@@ -74,8 +75,9 @@ class StoreFacadeTest {
                         .flowerId(1L)
                         .flowerName("장미꽃")
                         .build();
+        CommonResponse<List<FlowerDto>> data = CommonResponse.<List<FlowerDto>>builder().data(List.of(flowerDto)).build();
         BDDMockito.given(productFeignClient.getFlowers())
-                .willReturn(List.of(flowerDto));
+                .willReturn(data);
 
         // when
         Long storeId = storeFacade.createStore(userId, storeCreateRequest);
@@ -100,9 +102,9 @@ class StoreFacadeTest {
         storeRepository.saveAll(List.of(store1,store2,store3));
         Long userId = 1L;
         PageRequest page = PageRequest.of(0, 5);
+        Map<Long, Boolean> data = Map.of(store1.getId(),true,store2.getId(),true, store3.getId(), false);
         BDDMockito.given(storeLikeFeignClient.getStoreLikes(any(), any()))
-                .willReturn(Map.of(store1.getId(),true,store2.getId(),true, store3.getId(), false));
-
+                .willReturn(CommonResponse.<Map<Long,Boolean>>builder().data(data).build());
         // when
         List<StoreListResponse> result = storeFacade.getStoresWithLikes(userId, page).getStores();
 
@@ -125,11 +127,13 @@ class StoreFacadeTest {
 
         Long userId = 1L;
         BDDMockito.given(productFeignClient.getSubscriptionProductId(any()))
-                .willReturn("구독상품 아이디");
+                .willReturn(CommonResponse.<String>builder().data("구독상품 아이디").build());
+        Map<Long, Boolean> likeData = Map.of(store.getId(), true);
         BDDMockito.given(storeLikeFeignClient.getStoreLikes(any(), any()))
-                .willReturn(Map.of(store.getId(),true));
+                .willReturn(CommonResponse.<Map<Long,Boolean>>builder().data(likeData).build());
+        Map<Long, Boolean> subData = Map.of(store.getId(), false);
         BDDMockito.given(storeSubscriptionFeignClient.getStoreSubscriptions(any(), any()))
-                .willReturn(Map.of(store.getId(),false));
+                .willReturn(CommonResponse.<Map<Long,Boolean>>builder().data(subData).build());
 
         // when
         StoreInfoUserResponse storeInfoForUser = storeFacade.getStoreInfoForUser(userId, store.getId());
@@ -152,9 +156,9 @@ class StoreFacadeTest {
         StoreAddress sa1 = createStoresAddressWithSidoGugun(s1, sido1, gugun1);
         storeAddressRepository.save(sa1);
 
+        Map<Long, Boolean> data = Map.of(s1.getId(), true);
         BDDMockito.given(storeLikeFeignClient.getStoreLikes(any(), any()))
-                .willReturn(Map.of(s1.getId(),true));
-
+                .willReturn(CommonResponse.<Map<Long,Boolean>>builder().data(data).build());
 
         // when
         List<StoreForMapResponse> stores = storeFacade.getStoresWithRegion(userId, sido1.getCode(), gugun1.getCode()).getStores();
