@@ -4,6 +4,7 @@ import bloomingblooms.response.CommonResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
@@ -18,12 +19,12 @@ public interface StoreSubscriptionFeignClient {
             name = "getStoreSubscriptions",
             fallbackMethod = "getStoreSubscriptionsFallback"
     )
-    @PostMapping
-    CommonResponse<Map<Long,Boolean>> getStoreSubscriptions(@RequestHeader(value = "userId") Long userId,
-                                                            List<Long> storeIds);
+    @PostMapping("/client/order-query/subs/lists")
+    CommonResponse<Map<Long,Boolean>> getStoreSubscriptions(
+            @RequestHeader(value = "userId") Long userId, @RequestBody List<Long> storeIds);
 
-    default CommonResponse<Map<Long,Boolean>> getStoreSubscriptionsFallback(@RequestHeader(value = "userId") Long userId,
-                                                                    List<Long> storeIds, Exception e) {
+    default CommonResponse<Map<Long,Boolean>> getStoreSubscriptionsFallback(
+            @RequestHeader(value = "userId") Long userId, List<Long> storeIds, Exception e) {
         log.error(e.toString());
         log.warn("{}'s Request of '{}' failed. request will return fallback data",
                 "StoreSubscriptionFeignClient", "getStoreSubscriptions");
