@@ -74,6 +74,20 @@ public class CouponService {
         couponIssuer.issuePossibleCoupons(coupons, userId, now);
     }
 
+    @Transactional
+    public void useCoupon(Long couponId, Long userId, LocalDate useDate) {
+        IssuedCoupon issuedCoupon = issuedCouponReader.read(couponId,userId);
+        couponManager.use(issuedCoupon, useDate);
+    }
+
+    @Transactional
+    public void useAllCoupons(List<Long> couponIds, Long userId, LocalDate useDate) {
+        couponIds.forEach(couponId -> {
+            IssuedCoupon issuedCoupon = issuedCouponReader.read(couponId,userId);
+            couponManager.use(issuedCoupon, useDate);
+        });
+    }
+
     public CouponsForOwnerResponse getAllStoreCoupons(Long storeId) {
         List<CouponForOwnerDto> couponForOwnerDtos = couponReader.readCouponsForOwner(storeId);
         return CouponsForOwnerResponse.from(couponForOwnerDtos);
@@ -95,11 +109,6 @@ public class CouponService {
     public CouponsForUserResponse getMyValidCoupons(Long userId, LocalDate now) {
         List<CouponDto> couponDtos = couponReader.readMyValidCoupons(userId, now);
         return CouponsForUserResponse.from(couponDtos);
-    }
-
-    public void useCoupon(Long couponId, Long userId, LocalDate useDate) {
-        IssuedCoupon issuedCoupon = issuedCouponReader.read(couponId,userId);
-        couponManager.use(issuedCoupon, useDate);
     }
 
     public Integer getMyAvailableCouponCount(Long userId, LocalDate now) {
