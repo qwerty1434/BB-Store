@@ -2,7 +2,6 @@ package kr.bb.store.domain.coupon.handler;
 
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.handler.dto.CouponDto;
-import kr.bb.store.domain.coupon.repository.CouponRedisRepository;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.store.entity.Store;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import java.util.UUID;
 @Component
 public class CouponCreator {
     private final CouponRepository couponRepository;
-    private final CouponRedisRepository couponRedisRepository;
 
     public Coupon create(Store store, CouponDto couponDto) {
 
@@ -29,12 +27,8 @@ public class CouponCreator {
                 .endDate(couponDto.getEndDate())
                 .build();
 
-        String key = coupon.getCouponCode();
-        // TODO : setCountWithExpiration으로 바꾸고 트랜잭션으로 묶기
-        couponRedisRepository.setCount(key);
-        couponRedisRepository.setExpirationDate(key, coupon.getEndDate());
-
         return couponRepository.save(coupon);
+
     }
 
 }

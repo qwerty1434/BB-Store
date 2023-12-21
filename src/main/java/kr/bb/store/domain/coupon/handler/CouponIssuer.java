@@ -1,6 +1,5 @@
 package kr.bb.store.domain.coupon.handler;
 
-import kr.bb.store.domain.common.entity.BaseEntity;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.entity.IssuedCouponId;
@@ -8,8 +7,9 @@ import kr.bb.store.domain.coupon.exception.AlreadyIssuedCouponException;
 import kr.bb.store.domain.coupon.exception.CouponOutOfStockException;
 import kr.bb.store.domain.coupon.exception.DeletedCouponException;
 import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
-import kr.bb.store.domain.coupon.repository.CouponRedisRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
+import kr.bb.store.domain.coupon.util.RedisUtils;
+import kr.bb.store.domain.coupon.util.RedisOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,19 +21,22 @@ import java.util.function.Predicate;
 @Component
 public class CouponIssuer {
     private final IssuedCouponRepository issuedCouponRepository;
-    private final CouponRedisRepository couponRedisRepository;
+    private final RedisOperation redisOperation;
 
     public IssuedCoupon issueCoupon(Coupon coupon, Long userId, LocalDate issueDate) {
         if(coupon.getIsDeleted()) throw new DeletedCouponException();
         if(coupon.isExpired(issueDate)) throw new ExpiredCouponException();
-        // TODO : Persistable을 이용한 코드로 수정
-        if(isDuplicated(coupon, userId)) throw new AlreadyIssuedCouponException();
 
-        String key = coupon.getCouponCode();
+        String redisKey = RedisUtils.makeRedisKey(coupon);
+        String redisValue = userId.toString();
+        if(isDuplicated(redisKey, redisValue)) throw new AlreadyIssuedCouponException();
+
+        List<Long> result = (List) redisOperation.countAndSet(redisKey, redisValue);
+
         Integer limitCnt = coupon.getLimitCount();
-        Long issueCount = couponRedisRepository.increaseCount(key);
+        Long issueCount = result.get(0);
         if(isExhausted(limitCnt,issueCount)) {
-            couponRedisRepository.decreaseCount(key);
+            redisOperation.remove(redisKey, redisValue);
             throw new CouponOutOfStockException();
         }
 
@@ -41,17 +44,24 @@ public class CouponIssuer {
     }
 
     public void issuePossibleCoupons(List<Coupon> coupons, Long userId, LocalDate issueDate) {
+        final String redisValue = userId.toString();
 
         coupons.stream()
                 .filter(Predicate.not(Coupon::getIsDeleted))
                 .filter(Predicate.not(coupon -> coupon.isExpired(issueDate)))
-                .filter(Predicate.not(coupon -> isDuplicated(coupon,userId)))
+                .filter(Predicate.not(coupon -> {
+                    String redisKey = RedisUtils.makeRedisKey(coupon);
+                    return isDuplicated(redisKey,redisValue);
+                }))
                 .filter(coupon -> {
-                    String key = coupon.getCouponCode();
+                    String redisKey = RedisUtils.makeRedisKey(coupon);
+
+                    List<Long> result = (List) redisOperation.countAndSet(redisKey, redisValue);
+
                     Integer limitCnt = coupon.getLimitCount();
-                    Long issueCount = couponRedisRepository.increaseCount(key);
-                    if(isExhausted(limitCnt, issueCount)) {
-                        couponRedisRepository.decreaseCount(key);
+                    Long issueCount = result.get(0);
+                    if(isExhausted(limitCnt,issueCount)) {
+                        redisOperation.remove(redisKey, redisValue);
                         return false;
                     }
                     return true;
@@ -73,13 +83,17 @@ public class CouponIssuer {
                 .build();
     }
 
+    /*
+    모든 쿠폰은 생성시 expirationDate 설정을 위해 DUMMY_DATA를 넣어 redis에 등록됩니다.
+    하나의 데이터가 더 들어있기 때문에 이를 고려해 '<=' 가 아닌 '<'로 개수를 비교해야
+    쿠폰에 등록한 limitCount만큼 발급이 가능합니다.
+     */
     private boolean isExhausted(Integer limitCount, Long issueCount) {
         return limitCount < issueCount;
     }
 
-    private boolean isDuplicated(Coupon coupon, Long userId) {
-        IssuedCouponId id = makeIssuedCouponId(coupon.getId(), userId);
-        return issuedCouponRepository.findById(id).isPresent();
+    private boolean isDuplicated(String redisKey, String value) {
+        return redisOperation.contains(redisKey, value);
     }
 
 }

@@ -10,6 +10,8 @@ import kr.bb.store.domain.coupon.exception.CouponOutOfStockException;
 import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
+import kr.bb.store.domain.coupon.util.RedisUtils;
+import kr.bb.store.domain.coupon.util.RedisOperation;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers
 @SpringBootTest
 @Transactional
-class CouponIssuerTest extends AbstractContainer {
+class CouponIssuerTest extends AbstractContainer{
     @Autowired
     private CouponIssuer couponIssuer;
     @Autowired
@@ -40,13 +42,15 @@ class CouponIssuerTest extends AbstractContainer {
     @Autowired
     private CouponRepository couponRepository;
     @Autowired
+    private RedisOperation redisOperation;
+    @Autowired
     private EntityManager em;
     @MockBean
     private ProductFeignClient productFeignClient;
 
     @DisplayName("사용자에게 쿠폰을 발급해 준다")
     @Test
-    public void issueCoupon() {
+    public void issueCoupon(){
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -94,7 +98,7 @@ class CouponIssuerTest extends AbstractContainer {
 
     @DisplayName("유저는 동일한 쿠폰을 여러개 발급받을 수 없다")
     @Test
-    public void func() {
+    public void cannotIssueDuplicateCoupon() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -128,6 +132,9 @@ class CouponIssuerTest extends AbstractContainer {
 
         couponRepository.save(coupon);
 
+        String redisKey = RedisUtils.makeRedisKey(coupon);
+        redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
+
         Long userId = 1L;
         LocalDate issueDate = LocalDate.now();
 
@@ -146,24 +153,25 @@ class CouponIssuerTest extends AbstractContainer {
         storeRepository.save(store);
 
         Coupon normalCoupon = createCoupon(store, 100);
-        Coupon possessedCoupon = createCoupon(store,100);
-        Coupon exhaustedCoupon = createCoupon(store, 0);
-        List<Coupon> coupons = List.of(normalCoupon,possessedCoupon,exhaustedCoupon);
 
+        Coupon possessedCoupon = createCoupon(store,100);
+
+        Coupon exhaustedCoupon = createCoupon(store, 0);
+
+        List<Coupon> coupons = List.of(normalCoupon,possessedCoupon,exhaustedCoupon);
         couponRepository.saveAll(coupons);
 
         Long userId = 1L;
         LocalDate issueDate = LocalDate.now();
 
+        String redisKey = RedisUtils.makeRedisKey(exhaustedCoupon);
+        redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
+
         IssuedCoupon usedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, issueDate);
         usedCoupon.use(LocalDate.now());
-        em.flush();
-        em.clear();
 
         // when
         couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
-        em.flush();
-        em.clear();
 
         List<IssuedCoupon> usableCouponsOfUser = issuedCouponRepository.findUsableCouponsByUserId(userId);
 

@@ -42,26 +42,17 @@ public class QuestionService {
 
     public QuestionsForOwnerPagingResponse getQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {
         Page<QuestionForOwnerDto> questionForOwnerDtos = questionReader.readQuestionsForStoreOwner(storeId, isReplied, pageable);
-        return QuestionsForOwnerPagingResponse.builder()
-                .data(questionForOwnerDtos.getContent())
-                .totalCnt(questionForOwnerDtos.getTotalElements())
-                .build();
+        return QuestionsForOwnerPagingResponse.from(questionForOwnerDtos);
     }
 
     public QuestionsInProductPagingResponse getQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         Page<QuestionInProductDto> questionInProductDtos = questionReader.readQuestionsInProduct(userId, productId, isReplied, pageable);
-        return QuestionsInProductPagingResponse.builder()
-                .data(questionInProductDtos.getContent())
-                .totalCnt(questionInProductDtos.getTotalElements())
-                .build();
+        return QuestionsInProductPagingResponse.from(questionInProductDtos);
     }
 
     public MyQuestionsInProductPagingResponse getMyQuestionsInProduct(Long userId, String productId, Boolean isReplied, Pageable pageable) {
         Page<MyQuestionInMypageDto> questionInProductDtos = questionReader.readMyQuestionsInProduct(userId, productId, isReplied, pageable);
-        return MyQuestionsInProductPagingResponse.builder()
-                .data(questionInProductDtos.getContent())
-                .totalCnt(questionInProductDtos.getTotalElements())
-                .build();
+        return MyQuestionsInProductPagingResponse.from(questionInProductDtos);
     }
 
     public MyQuestionsInMypagePagingResponse getMyQuestions(Long userId, Boolean isReplied, Pageable pageable) {

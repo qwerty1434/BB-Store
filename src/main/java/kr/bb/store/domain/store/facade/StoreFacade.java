@@ -1,10 +1,11 @@
 package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.store.StoreInfoDto;
+import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
-import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -30,16 +31,12 @@ public class StoreFacade {
 
 
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
-        List<FlowerDto> flowers = productFeignClient.getFlowers();
+        List<FlowerDto> flowers = productFeignClient.getFlowers().getData();
         return storeService.createStore(userId, storeCreateRequest, flowers);
     }
 
     public void editStoreInfo(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
         storeService.editStoreInfo(storeId, storeInfoEditRequest);
-    }
-
-    public StoreDetailInfoResponse getStoreInfo(Long storeId) {
-        return storeService.getStoreInfo(storeId);
     }
 
     public SimpleStorePagingResponse getStoresWithLikes(Long userId, Pageable pageable) {
@@ -50,9 +47,8 @@ public class StoreFacade {
                 .collect(Collectors.toList());
 
         if(isNotGuest(userId)) {
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
-            storePages.getContent()
-                    .forEach(store -> store.setIsLiked(storeLikes.get(store.getStoreId())));
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
+            storePages.getContent().forEach(store -> store.setIsLiked(storeLikes.get(store.getStoreId())));
         }
 
         return SimpleStorePagingResponse.builder()
@@ -62,10 +58,11 @@ public class StoreFacade {
     }
 
     public StoreInfoUserResponse getStoreInfoForUser(Long userId, Long storeId) {
-        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId);
+        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId).getData();
         if(isNotGuest(userId)) {
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId));
-            Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient.getStoreSubscriptions(userId, List.of(storeId));
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId)).getData();
+            Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient
+                    .getStoreSubscriptions(userId, List.of(storeId)).getData();
             Boolean isLiked = storeLikes.get(storeId);
             Boolean isSubscribed = storeSubscriptions.get(storeId);
             return storeService.getStoreInfoForUser(storeId, isLiked, isSubscribed, subscriptionProductId);
@@ -83,7 +80,7 @@ public class StoreFacade {
 
         if(isNotGuest(userId)) {
             List<Long> storeIds = nearbyStores.getStoreIds();
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             nearbyStores.setLikes(storeLikes);
         }
 
@@ -91,11 +88,11 @@ public class StoreFacade {
     }
 
     public StoreListForMapResponse getStoresWithRegion(Long userId, String sidoCode, String gugunCode) {
-        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(userId, sidoCode, gugunCode);
+        StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sidoCode, gugunCode);
 
         if(isNotGuest(userId)) {
             List<Long> storeIds = storesWithRegion.getStoreIds();
-            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds);
+            Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             storesWithRegion.setLikes(storeLikes);
         }
 
@@ -106,8 +103,26 @@ public class StoreFacade {
         return storeService.getStoreId(userId);
     }
 
-    public StoreInfoDto getStoreNameAndAddress(Long storeId) {
-        return storeService.getStoreNameAndAddress(storeId);
+    public String getStoreName(Long storeId) {
+        return storeService.getStoreName(storeId);
+    }
+
+    public StoreNameAndAddressDto getStoreNameAndAddress(Long storeId) {
+        return storeService.getStoreNameAndAddress(storeId).toCommonEntity();
+    }
+
+    public StoreDetailInfoResponse getStoreDetailInfo(Long storeId) {
+        return storeService.getStoreDetailInfo(storeId);
+    }
+
+    public StoreInfoDto getStoreInfo(Long userId) {
+        return storeService.getStoreInfo(userId).toCommonEntity();
+    }
+
+    public List<StoreInfoDto> getAllStoreInfos() {
+        return storeService.getAllStoreInfos().stream()
+                .map(kr.bb.store.client.dto.StoreInfoDto::toCommonEntity)
+                .collect(Collectors.toList());
     }
 
     public List<SidoDto> getSido() {
@@ -118,10 +133,8 @@ public class StoreFacade {
         return storeService.getGugun(sidoCode);
     }
 
-
     private boolean isNotGuest(Long userId) {
         return userId != null;
     }
-
 
 }

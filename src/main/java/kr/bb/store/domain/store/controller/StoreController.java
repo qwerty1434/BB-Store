@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.controller;
 
 
+import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -9,7 +10,6 @@ import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.facade.StoreFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,60 +21,59 @@ public class StoreController {
     private final StoreFacade storeFacade;
 
     @PostMapping
-    public ResponseEntity<Long> createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
-                                      @RequestHeader(value = "userId") Long userId) {
-        return ResponseEntity.ok().body(storeFacade.createStore(userId, storeCreateRequest));
+    public CommonResponse<Long> createStore(@Valid @RequestBody StoreCreateRequest storeCreateRequest,
+                                            @RequestHeader(value = "userId") Long userId) {
+        return CommonResponse.success(storeFacade.createStore(userId, storeCreateRequest));
     }
 
     @PutMapping("/{storeId}")
-    public ResponseEntity<Void> editStoreInfo(@PathVariable Long storeId,
+    public void editStoreInfo(@PathVariable Long storeId,
                                         @Valid @RequestBody StoreInfoEditRequest storeInfoEditRequest) {
         storeFacade.editStoreInfo(storeId, storeInfoEditRequest);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{storeId}")
-    public ResponseEntity<StoreDetailInfoResponse> getStoreInfo(@PathVariable Long storeId) {
-        return ResponseEntity.ok().body(storeFacade.getStoreInfo(storeId));
+    public CommonResponse<StoreDetailInfoResponse> getStoreInfo(@PathVariable Long storeId) {
+        return CommonResponse.success(storeFacade.getStoreDetailInfo(storeId));
     }
 
     @GetMapping("/list")
-    public ResponseEntity<SimpleStorePagingResponse> getStores(@RequestHeader(value = "userId") Long userId,
+    public CommonResponse<SimpleStorePagingResponse> getStores(@RequestHeader(value = "userId") Long userId,
                                                                Pageable pageable) {
-        return ResponseEntity.ok().body(storeFacade.getStoresWithLikes(userId, pageable));
+        return CommonResponse.success(storeFacade.getStoresWithLikes(userId, pageable));
     }
 
     @GetMapping("/{storeId}/user")
-    public ResponseEntity<StoreInfoUserResponse> getStoreInfoForUser(@RequestHeader(value = "userId") Long userId,
+    public CommonResponse<StoreInfoUserResponse> getStoreInfoForUser(@RequestHeader(value = "userId") Long userId,
                                                                      @PathVariable Long storeId){
-        return ResponseEntity.ok().body(storeFacade.getStoreInfoForUser(userId, storeId));
+        return CommonResponse.success(storeFacade.getStoreInfoForUser(userId, storeId));
     }
 
     @GetMapping("/{storeId}/manager")
-    public ResponseEntity<StoreInfoManagerResponse> getStoreInfoForManager(@PathVariable Long storeId){
-        return ResponseEntity.ok().body(storeFacade.getStoreInfoForManager(storeId));
+    public CommonResponse<StoreInfoManagerResponse> getStoreInfoForManager(@PathVariable Long storeId){
+        return CommonResponse.success(storeFacade.getStoreInfoForManager(storeId));
     }
 
     @GetMapping("/map/location")
-    public ResponseEntity<StoreListForMapResponse> getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
+    public CommonResponse<StoreListForMapResponse> getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
                                                                    @RequestHeader(value = "userId") Long userId,
                                                                    @RequestParam Integer level) {
-        return ResponseEntity.ok().body(storeFacade.getNearbyStores(userId, lat, lon, level));
+        return CommonResponse.success(storeFacade.getNearbyStores(userId, lat, lon, level));
     }
 
     @GetMapping("/map/region")
-    public ResponseEntity<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun,
+    public CommonResponse<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun,
                                                                        @RequestHeader(value = "userId") Long userId) {
-        return ResponseEntity.ok().body(storeFacade.getStoresWithRegion(userId, sido, gugun));
+        return CommonResponse.success(storeFacade.getStoresWithRegion(userId, sido, gugun));
     }
 
     @GetMapping("/address/sido")
-    public ResponseEntity<List<SidoDto>> getSido() {
-        return ResponseEntity.ok().body(storeFacade.getSido());
+    public CommonResponse<List<SidoDto>> getSido() {
+        return CommonResponse.success(storeFacade.getSido());
     }
 
     @GetMapping("/address/gugun")
-    public ResponseEntity<List<GugunDto>> getGugun(@RequestParam String sido) {
-        return ResponseEntity.ok().body(storeFacade.getGugun(sido));
+    public CommonResponse<List<GugunDto>> getGugun(@RequestParam String sido) {
+        return CommonResponse.success(storeFacade.getGugun(sido));
     }
 }

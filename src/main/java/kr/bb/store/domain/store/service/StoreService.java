@@ -1,9 +1,8 @@
 package kr.bb.store.domain.store.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
-import kr.bb.store.client.StoreLikeFeignClient;
-import kr.bb.store.client.StoreSubscriptionFeignClient;
 import kr.bb.store.client.dto.StoreInfoDto;
+import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.cargo.service.CargoService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
@@ -23,10 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -59,10 +56,9 @@ public class StoreService {
         storeManager.edit(store, storeAddress, deliveryPolicy, sido, gugun, storeInfoEditRequest);
     }
 
-    public StoreDetailInfoResponse getStoreInfo(Long storeId) {
+    public StoreDetailInfoResponse getStoreDetailInfo(Long storeId) {
         return storeReader.readDetailInfo(storeId);
     }
-
 
     public Page<StoreListResponse> getStoresWithPaging(Pageable pageable) {
         return  storeReader.readStoresWithPaging(pageable);
@@ -79,7 +75,7 @@ public class StoreService {
     public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
         return storeReader.getNearbyStores(lat, lon, level);
     }
-    public StoreListForMapResponse getStoresWithRegion(Long userId, String sidoCode, String gugunCode) {
+    public StoreListForMapResponse getStoresWithRegion(String sidoCode, String gugunCode) {
         Sido sido = sidoReader.readSido(sidoCode);
         Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
         return storeReader.getStoresWithRegion(sido, gugun);
@@ -90,12 +86,24 @@ public class StoreService {
         return storeByUserId.map(Store::getId).orElse(null);
     }
 
-    public StoreInfoDto getStoreNameAndAddress(Long storeId) {
+    public String getStoreName(Long storeId) {
         Store store = storeReader.read(storeId);
-        StoreAddress storeAddress = storeReader.readAddress(storeId);
-        return StoreInfoDto.of(store, storeAddress);
+        return store.getStoreName();
     }
 
+    public StoreNameAndAddressDto getStoreNameAndAddress(Long storeId) {
+        Store store = storeReader.read(storeId);
+        StoreAddress storeAddress = storeReader.readAddress(storeId);
+        return StoreNameAndAddressDto.of(store, storeAddress);
+    }
+
+    public StoreInfoDto getStoreInfo(Long storeId) {
+        return storeReader.readInfo(storeId);
+    }
+
+    public List<StoreInfoDto> getAllStoreInfos() {
+        return storeReader.readInfos();
+    }
 
     public List<SidoDto> getSido() {
         return sidoReader.readAll()
@@ -110,4 +118,5 @@ public class StoreService {
                 .map(GugunDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
 }

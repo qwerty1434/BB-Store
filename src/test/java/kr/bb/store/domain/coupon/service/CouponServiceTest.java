@@ -5,9 +5,13 @@ import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
+import kr.bb.store.domain.coupon.entity.IssuedCoupon;
+import kr.bb.store.domain.coupon.entity.IssuedCouponId;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
+import kr.bb.store.domain.coupon.util.RedisUtils;
+import kr.bb.store.domain.coupon.util.RedisOperation;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.stream.LongStream;
@@ -41,6 +46,8 @@ class CouponServiceTest extends AbstractContainer {
     private EntityManager em;
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
+    @Autowired
+    private RedisOperation redisOperation;
     @MockBean
     private ProductFeignClient productFeignClient;
     @MockBean
@@ -48,7 +55,7 @@ class CouponServiceTest extends AbstractContainer {
 
 
     @AfterEach
-    public void teardown() {
+    void teardown() {
         issuedCouponRepository.deleteAllInBatch();
         couponRepository.deleteAllInBatch();
         storeRepository.deleteAllInBatch();
@@ -56,7 +63,7 @@ class CouponServiceTest extends AbstractContainer {
 
     @DisplayName("요청받은 내용으로 쿠폰 정보를 수정한다")
     @Test
-    public void editCoupon() {
+    void editCoupon() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -83,7 +90,7 @@ class CouponServiceTest extends AbstractContainer {
 
     @DisplayName("가게Id정보가 일치하지 않으면 쿠폰을 수정할 수 없다")
     @Test
-    public void cannotEditCouponWhenStoreIdMismatches() {
+    void cannotEditCouponWhenStoreIdMismatches() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -98,7 +105,7 @@ class CouponServiceTest extends AbstractContainer {
                 .endDate(LocalDate.now())
                 .build();
 
-        Long wrongStoreId = 5L;
+        Long wrongStoreId = 999L;
 
         // when // then
         assertThatThrownBy(() -> couponService.editCoupon(wrongStoreId, coupon.getId(), couponRequest))
@@ -110,7 +117,7 @@ class CouponServiceTest extends AbstractContainer {
 
     @DisplayName("쿠폰을 삭제한다")
     @Test
-    public void softDeleteCoupon() {
+    void softDeleteCoupon() {
         // given
         Store store = createStore();
         storeRepository.save(store);
@@ -128,19 +135,54 @@ class CouponServiceTest extends AbstractContainer {
 
     @DisplayName("가게Id정보가 일치하지 않으면 쿠폰을 삭제할 수 없다")
     @Test
-    public void cannotDeleteCouponWhenStoreIdMismatches() {
+    void cannotDeleteCouponWhenStoreIdMismatches() {
         // given
         Store store = createStore();
         storeRepository.save(store);
         Coupon coupon = couponCreator(store);
         couponRepository.save(coupon);
 
-        Long wrongStoreId = 5L;
+        Long wrongStoreId = 999L;
 
         // when // then
         assertThatThrownBy(() -> couponService.softDeleteCoupon(wrongStoreId, coupon.getId()))
                 .isInstanceOf(UnAuthorizedCouponException.class)
                 .hasMessage("해당 쿠폰에 대한 권한이 없습니다.");
+
+    }
+
+    @DisplayName("동시에 들어온 쿠폰을 모두 사용한다")
+    @Test
+    void useAllCoupons() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+
+        Coupon c1 = couponCreator(store);
+        Coupon c2 = couponCreator(store);
+        Coupon c3 = couponCreator(store);
+        couponRepository.saveAll(List.of(c1,c2,c3));
+
+        Long userId = 1L;
+        LocalDate useDate = LocalDate.now();
+
+        IssuedCoupon ic1 = createIssuedCoupon(c1,userId);
+        IssuedCoupon ic2 = createIssuedCoupon(c2,userId);
+        IssuedCoupon ic3 = createIssuedCoupon(c3,userId);
+        issuedCouponRepository.saveAll(List.of(ic1, ic2, ic3));
+
+        List<Long> couponIds = List.of(c1.getId(), c2.getId(), c3.getId());
+        List<IssuedCouponId> issuedCouponIds = List.of(ic1.getId(), ic2.getId(), ic3.getId());
+
+        // when
+        couponService.useAllCoupons(couponIds, userId, useDate);
+
+        List<IssuedCoupon> result = issuedCouponRepository.findAllById(issuedCouponIds);
+
+        // then
+        assertThat(result).hasSize(3)
+                .extracting("isUsed")
+                .contains(true);
 
     }
 
@@ -158,7 +200,12 @@ class CouponServiceTest extends AbstractContainer {
             storeRepository.save(store);
 
             Coupon coupon = couponCreator(store, limitCount);
-            return couponRepository.save(coupon).getId();
+            couponRepository.save(coupon).getId();
+
+            String redisKey = RedisUtils.makeRedisKey(coupon);
+            redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
+
+            return coupon.getId();
 
         });
 
@@ -184,6 +231,20 @@ class CouponServiceTest extends AbstractContainer {
         // then
         assertThat(issuedCouponCount).isEqualTo(limitCount);
 
+    }
+
+    private IssuedCoupon createIssuedCoupon(Coupon coupon, Long userId) {
+        return IssuedCoupon.builder()
+                .id(createIssuedCouponId(coupon.getId(),userId))
+                .coupon(coupon)
+                .build();
+    }
+
+    private IssuedCouponId createIssuedCouponId(Long couponId, Long userId) {
+        return IssuedCouponId.builder()
+                .couponId(couponId)
+                .userId(userId)
+                .build();
     }
 
     private Store createStore() {

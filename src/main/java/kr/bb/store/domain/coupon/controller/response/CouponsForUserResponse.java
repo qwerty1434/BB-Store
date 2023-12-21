@@ -14,4 +14,10 @@ import java.util.List;
 @AllArgsConstructor
 public class CouponsForUserResponse {
     private List<? extends CouponDto> data;
+
+    public static CouponsForUserResponse from(List<? extends CouponDto> couponDtos) {
+        return CouponsForUserResponse.builder()
+                .data(couponDtos)
+                .build();
+    }
 }
