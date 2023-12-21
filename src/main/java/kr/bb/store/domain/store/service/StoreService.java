@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -81,7 +82,8 @@ public class StoreService {
     }
 
     public Long getStoreId(Long userId) {
-        return storeReader.getStoreByUserId(userId).getId();
+        Optional<Store> storeByUserId = storeReader.getStoreByUserId(userId);
+        return storeByUserId.map(Store::getId).orElse(null);
     }
 
     public String getStoreName(Long storeId) {
