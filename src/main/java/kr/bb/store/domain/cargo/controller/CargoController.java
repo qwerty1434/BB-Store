@@ -20,8 +20,4 @@ public class CargoController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("{storeId}/flowers/stocks")
-//    public ResponseEntity<RemainingStocksResponse> getAllStocks(@PathVariable Long storeId) {
-//        return ResponseEntity.ok().body(cargoService.getAllStocks(storeId));
-//    }
 }
