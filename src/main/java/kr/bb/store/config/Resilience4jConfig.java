@@ -9,7 +9,12 @@ import org.springframework.context.annotation.Configuration;
 public class Resilience4jConfig {
     @Bean
     public CircuitBreakerConfig circuitBreakerConfig() {
-        return CircuitBreakerConfig.ofDefaults();
+        // TODO : 부하테스트 하면서 설정값 최적화하기
+        // circuit for server test
+        return CircuitBreakerConfig.custom()
+                .slidingWindowSize(2)
+                .failureRateThreshold(10)
+                .build();
     }
 
     @Bean

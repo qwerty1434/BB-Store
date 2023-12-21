@@ -18,7 +18,7 @@ public interface ProductFeignClient {
             name = "getFlowers",
             fallbackMethod = "getFlowersFallback"
     )
-    @GetMapping
+    @GetMapping("client/flowers")
     CommonResponse<List<FlowerDto>> getFlowers();
 
     default CommonResponse<List<FlowerDto>> getFlowersFallback(Exception e) {
@@ -34,8 +34,8 @@ public interface ProductFeignClient {
             name = "getSubscriptionProductId",
             fallbackMethod = "getSubscriptionProductIdFallback"
     )
-    @GetMapping
-    CommonResponse<String> getSubscriptionProductId(@RequestParam(name="storeId") Long storeId);
+    @GetMapping("client/store")
+    CommonResponse<String> getSubscriptionProductId(@RequestParam(name="store-id") Long storeId);
 
     default CommonResponse<String> getSubscriptionProductIdFallback(Exception e) {
         log.error(e.toString());

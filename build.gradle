@@ -68,7 +68,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 
-    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '202312201005'
+    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '202312201208'
 }
 
 dependencyManagement {
@@ -143,6 +143,7 @@ jacocoTestCoverageVerification {
                                     "**/*Request.class",
                                     "**/*Response.class",
                                     "**/*Id.class",
+                                    "**/*Facade.class",
                                     "**/*Application*"
                             ]+Qdomains)
                         })
@@ -178,6 +179,7 @@ jacocoTestReport {
                             "**/*Request.class",
                             "**/*Response.class",
                             "**/*Id.class",
+                            "**/*Facade.class",
                             "**/*Application*"
                     ]+Qdomains)
                 })

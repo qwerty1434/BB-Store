@@ -16,13 +16,13 @@ public interface StoreSubscriptionFeignClient {
 
     @CircuitBreaker(
             name = "getStoreSubscriptions",
-            fallbackMethod = "getStoreLikesFallback"
+            fallbackMethod = "getStoreSubscriptionsFallback"
     )
     @PostMapping
     CommonResponse<Map<Long,Boolean>> getStoreSubscriptions(@RequestHeader(value = "userId") Long userId,
                                                             List<Long> storeIds);
 
-    default CommonResponse<Map<Long,Boolean>> getStoreLikesFallback(@RequestHeader(value = "userId") Long userId,
+    default CommonResponse<Map<Long,Boolean>> getStoreSubscriptionsFallback(@RequestHeader(value = "userId") Long userId,
                                                                     List<Long> storeIds, Exception e) {
         log.error(e.toString());
         log.warn("{}'s Request of '{}' failed. request will return fallback data",
