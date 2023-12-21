@@ -1,11 +1,13 @@
 package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
+import kr.bb.store.domain.coupon.service.CouponService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StoreFacade {
     private final StoreService storeService;
+    private final CouponService couponService;
     private final ProductFeignClient productFeignClient;
     private final StoreLikeFeignClient storeLikeFeignClient;
     private final StoreSubscriptionFeignClient storeSubscriptionFeignClient;
@@ -123,6 +126,11 @@ public class StoreFacade {
         return storeService.getAllStoreInfos().stream()
                 .map(kr.bb.store.client.dto.StoreInfoDto::toCommonEntity)
                 .collect(Collectors.toList());
+    }
+
+    public void validateForOrder(List<ValidatePriceDto> validatePriceDtos) {
+        couponService.validateCouponPrice(validatePriceDtos);
+        storeService.validateDeliveryPrice(validatePriceDtos);
     }
 
     public List<SidoDto> getSido() {

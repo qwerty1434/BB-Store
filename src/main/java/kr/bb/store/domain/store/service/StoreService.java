@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.cargo.service.CargoService;
@@ -14,6 +15,7 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
+import kr.bb.store.domain.store.exception.InvalidDeliveryPriceException;
 import kr.bb.store.domain.store.handler.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -103,6 +105,17 @@ public class StoreService {
 
     public List<StoreInfoDto> getAllStoreInfos() {
         return storeReader.readInfos();
+    }
+
+    public void validateDeliveryPrice(List<ValidatePriceDto> validatePriceDtos) {
+        validatePriceDtos.forEach(dto -> {
+            DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(dto.getStoreId());
+            Long receivedPaymentPrice = dto.getActualAmount();
+            Long receivedDeliveryPrice = dto.getDeliveryCost();
+            if(!deliveryPolicy.isRightDeliveryPrice(receivedPaymentPrice, receivedDeliveryPrice)) {
+                throw new InvalidDeliveryPriceException();
+            }
+        });
     }
 
     public List<SidoDto> getSido() {

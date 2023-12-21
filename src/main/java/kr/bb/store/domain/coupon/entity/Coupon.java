@@ -75,6 +75,9 @@ public class Coupon extends BaseEntity {
         return false;
     }
 
+    public boolean isRightPrice(Long receivedDiscountPrice) {
+        return discountPrice == receivedDiscountPrice;
+    }
 
     private void dateValidationCheck(LocalDate startDate, LocalDate endDate) {
         if(startDate.isBefore(LocalDate.now())) throw new InvalidCouponStartDateException();

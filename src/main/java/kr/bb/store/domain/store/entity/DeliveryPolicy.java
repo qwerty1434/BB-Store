@@ -34,9 +34,14 @@ public class DeliveryPolicy extends BaseEntity {
         this.deliveryPrice = deliveryPrice;
     }
 
-
     public void update(Long deliveryPrice, Long freeDeliveryMinPrice) {
         this.deliveryPrice = deliveryPrice;
         this.freeDeliveryMinPrice = freeDeliveryMinPrice;
+    }
+
+    public boolean isRightDeliveryPrice(Long receivedPaymentPrice, Long receivedDeliveryPrice) {
+        return (freeDeliveryMinPrice <= receivedPaymentPrice && receivedDeliveryPrice == 0) ||
+                (freeDeliveryMinPrice > receivedPaymentPrice && receivedDeliveryPrice == deliveryPrice);
+
     }
 }
