@@ -5,6 +5,7 @@ import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
 import kr.bb.store.domain.store.dto.GugunDto;
 import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.facade.StoreFacade;
@@ -66,6 +67,11 @@ public class StoreController {
             @RequestParam String sido, @RequestParam String gugun,
             @RequestHeader(value = "userId", required = false) Long userId) {
         return CommonResponse.success(storeFacade.getStoresWithRegion(userId, sido, gugun));
+    }
+
+    @GetMapping("/{storeId}/delivery-policy")
+    public CommonResponse<DeliveryPolicyDto> getDeliveryPolicy(@PathVariable Long storeId) {
+        return CommonResponse.success(storeFacade.getDeliveryPolicy(storeId));
     }
 
     @GetMapping("/address/sido")

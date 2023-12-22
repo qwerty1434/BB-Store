@@ -1,4 +1,4 @@
-package kr.bb.store.domain.store.dto;
+package kr.bb.store.domain.store.controller.response;
 
 import kr.bb.store.domain.store.entity.Store;
 import lombok.AllArgsConstructor;

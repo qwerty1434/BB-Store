@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.controller.request;
 
-import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
+import kr.bb.store.domain.store.dto.DeliveryPolicyRequestDto;
 import kr.bb.store.domain.store.dto.StoreAddressDto;
 import kr.bb.store.domain.store.dto.StoreDto;
 import lombok.AllArgsConstructor;
@@ -59,8 +59,8 @@ public class StoreCreateRequest {
                 .bank(bank)
                 .build();
     }
-    public DeliveryPolicyDto toDeliveryPolicyRequest() {
-        return DeliveryPolicyDto.builder()
+    public DeliveryPolicyRequestDto toDeliveryPolicyRequest() {
+        return DeliveryPolicyRequestDto.builder()
                 .deliveryPrice(deliveryPrice)
                 .freeDeliveryMinPrice(freeDeliveryMinPrice)
                 .build();
