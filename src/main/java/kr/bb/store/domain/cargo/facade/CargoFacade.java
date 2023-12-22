@@ -1,5 +1,6 @@
 package kr.bb.store.domain.cargo.facade;
 
+import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.exception.LockInterruptedException;
@@ -81,6 +82,9 @@ public class CargoFacade {
         }
     }
 
+    public RemainingStocksResponse getAllStocks(Long storeId) {
+        return cargoService.getAllStocks(storeId);
+    }
 
     private FlowerCargoId makeKeys(Long storeId, Long flowerId) {
         return FlowerCargoId.builder()
