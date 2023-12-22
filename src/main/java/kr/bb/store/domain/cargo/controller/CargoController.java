@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 public class CargoController {
     private final CargoFacade cargoFacade;
 
-    @PutMapping("/{storeId}/flowers/stock")
+    @PutMapping("/{storeId}/flowers/stocks")
     public void modifyAllStocks(@PathVariable Long storeId,
                                 @RequestBody StockModifyRequest stockModifyRequest) {
         cargoFacade.modifyAllStocksWithLock(storeId,stockModifyRequest.getStockModifyDtos());
     }
 
-    @GetMapping("/{storeId}/flowers/stock")
+    @GetMapping("/{storeId}/flowers/stocks")
     public CommonResponse<RemainingStocksResponse> getAllStocks(@PathVariable Long storeId){
         return CommonResponse.success(cargoFacade.getAllStocks(storeId));
     }
