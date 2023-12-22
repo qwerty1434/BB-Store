@@ -15,7 +15,7 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
-import kr.bb.store.domain.store.exception.InvalidDeliveryPriceException;
+import kr.bb.store.domain.store.exception.DeliveryInconsistencyException;
 import kr.bb.store.domain.store.handler.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -113,7 +113,7 @@ public class StoreService {
             Long receivedPaymentPrice = dto.getActualAmount();
             Long receivedDeliveryPrice = dto.getDeliveryCost();
             if(!deliveryPolicy.isRightDeliveryPrice(receivedPaymentPrice, receivedDeliveryPrice)) {
-                throw new InvalidDeliveryPriceException();
+                throw new DeliveryInconsistencyException();
             }
         });
     }

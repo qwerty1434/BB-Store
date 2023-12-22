@@ -12,7 +12,7 @@ import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
 import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
-import kr.bb.store.domain.coupon.exception.InvalidDiscountPriceException;
+import kr.bb.store.domain.coupon.exception.CouponInconsistencyException;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.handler.*;
 import kr.bb.store.domain.coupon.util.RedisUtils;
@@ -120,9 +120,10 @@ public class CouponService {
     public void validateCouponPrice(List<ValidatePriceDto> validatePriceDtos) {
         validatePriceDtos.forEach(dto -> {
             Coupon coupon = couponReader.read(dto.getCouponId());
+            Long receivedPaymentPrice = dto.getActualAmount();
             Long receivedDiscountPrice = dto.getCouponAmount();
-            if(!coupon.isRightPrice(receivedDiscountPrice)) {
-                throw new InvalidDiscountPriceException();
+            if(!coupon.isRightPrice(receivedPaymentPrice, receivedDiscountPrice)) {
+                throw new CouponInconsistencyException();
             }
         });
     }

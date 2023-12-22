@@ -1,12 +1,14 @@
 package kr.bb.store.domain.coupon.service;
 
 
+import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.entity.IssuedCouponId;
+import kr.bb.store.domain.coupon.exception.CouponInconsistencyException;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
@@ -233,6 +235,59 @@ class CouponServiceTest extends AbstractContainer {
 
     }
 
+    @DisplayName("요청받은 쿠폰가격이 원본 쿠폰가격과 다르면 쿠폰을 사용할 수 없다")
+    @Test
+    void validateCouponPrice() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+        Long discountPrice = 10_000L;
+        Long minPrice = 100_000L;
+
+        Coupon coupon = createCouponWithPrice(store, discountPrice, minPrice);
+        couponRepository.save(coupon);
+
+        ValidatePriceDto validatePriceDto = ValidatePriceDto.builder()
+                .couponId(coupon.getId())
+                .storeId(store.getId())
+                .actualAmount(100_000L)
+                .couponAmount(100_000L)
+                .build();
+        List<ValidatePriceDto> data = List.of(validatePriceDto);
+
+        // when // then
+        assertThatThrownBy(() -> couponService.validateCouponPrice(data))
+                .isInstanceOf(CouponInconsistencyException.class)
+                .hasMessage("해당 요청은 실제 쿠폰 정보와 일치하지 않습니다.");
+
+    }
+
+    @DisplayName("최소이용금액을 만족하지 못한 쿠폰의 사용 요청은 거부된다")
+    @Test
+    void validateCouponPrice2() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+        Long discountPrice = 10_000L;
+        Long minPrice = 100_000L;
+
+        Coupon coupon = createCouponWithPrice(store, discountPrice, minPrice);
+        couponRepository.save(coupon);
+
+        ValidatePriceDto validatePriceDto = ValidatePriceDto.builder()
+                .couponId(coupon.getId())
+                .storeId(store.getId())
+                .actualAmount(10_000L)
+                .couponAmount(10_000L)
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> couponService.validateCouponPrice(List.of(validatePriceDto)))
+                .isInstanceOf(CouponInconsistencyException.class)
+                .hasMessage("해당 요청은 실제 쿠폰 정보와 일치하지 않습니다.");
+
+    }
+
     private IssuedCoupon createIssuedCoupon(Coupon coupon, Long userId) {
         return IssuedCoupon.builder()
                 .id(createIssuedCouponId(coupon.getId(),userId))
@@ -272,6 +327,7 @@ class CouponServiceTest extends AbstractContainer {
                 .endDate(LocalDate.now())
                 .build();
     }
+
     private Coupon couponCreator(Store store, int limitCount) {
         return Coupon.builder()
                 .couponCode(UUID.randomUUID().toString())
@@ -285,5 +341,18 @@ class CouponServiceTest extends AbstractContainer {
                 .build();
     }
 
+    private Coupon createCouponWithPrice(Store store, Long discountPrice, Long minPrice) {
+        return Coupon.builder()
+                .couponCode(UUID.randomUUID().toString())
+                .store(store)
+                .limitCount(100)
+                .couponName("쿠폰이름")
+                .discountPrice(discountPrice)
+                .minPrice(minPrice)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
+                .build();
+
+    }
 
 }
