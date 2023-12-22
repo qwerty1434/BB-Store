@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
@@ -12,6 +13,7 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
+import kr.bb.store.domain.store.exception.DeliveryInconsistencyException;
 import kr.bb.store.domain.store.exception.address.GugunNotFoundException;
 import kr.bb.store.domain.store.exception.address.InvalidParentException;
 import kr.bb.store.domain.store.exception.address.SidoNotFoundException;
@@ -393,6 +395,55 @@ class StoreServiceTest {
 
     }
 
+    @DisplayName("최소 주문 금액을 만족하면 배달비는 무료다")
+    @Test
+    void validateDeliveryPrice() {
+        // given
+        Store store = createStoreEntity();
+        storeRepository.save(store);
+
+        Long deliveryPrice =  10_000L;
+        Long freeDeliveryMinPrice =  100_000L;
+        DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store, deliveryPrice, freeDeliveryMinPrice);
+        deliveryPolicyRepository.save(deliveryPolicy);
+
+        ValidatePriceDto validatePriceDto = ValidatePriceDto.builder()
+                .storeId(store.getId())
+                .actualAmount(100_001L)
+                .deliveryCost(10_000L)
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> storeService.validateDeliveryPrice(List.of(validatePriceDto)))
+                .isInstanceOf(DeliveryInconsistencyException.class)
+                .hasMessage("해당 요청은 실제 배송 정보와 일치하지 않습니다.");
+
+    }
+
+    @DisplayName("최소 주문 금액을 만족하지 못했으면 배달비를 지불해야 한다")
+    @Test
+    void validateDeliveryPrice2() {
+        // given
+        Store store = createStoreEntity();
+        storeRepository.save(store);
+
+        Long deliveryPrice =  10_000L;
+        Long freeDeliveryMinPrice =  100_000L;
+        DeliveryPolicy deliveryPolicy = createDeliveryPolicyEntity(store, deliveryPrice, freeDeliveryMinPrice);
+        deliveryPolicyRepository.save(deliveryPolicy);
+
+        ValidatePriceDto validatePriceDto = ValidatePriceDto.builder()
+                .storeId(store.getId())
+                .actualAmount(99_999L)
+                .deliveryCost(0L)
+                .build();
+
+        // when // then
+        assertThatThrownBy(() -> storeService.validateDeliveryPrice(List.of(validatePriceDto)))
+                .isInstanceOf(DeliveryInconsistencyException.class)
+                .hasMessage("해당 요청은 실제 배송 정보와 일치하지 않습니다.");
+
+    }
 
 
     private Store createStoreWithManagerId(Long userId) {
@@ -510,5 +561,26 @@ class StoreServiceTest {
                 .freeDeliveryMinPrice(10_000L)
                 .build();
     }
+    private DeliveryPolicy createDeliveryPolicyEntity(Store store, Long deliveryPrice, Long freeDeliveryMinPrice) {
+        return DeliveryPolicy.builder()
+                .store(store)
+                .deliveryPrice(deliveryPrice)
+                .freeDeliveryMinPrice(freeDeliveryMinPrice)
+                .build();
+    }
+
+    private Store createStoreEntity() {
+        return Store.builder()
+                .storeManagerId(1L)
+                .storeCode("가게코드")
+                .storeName("가게")
+                .detailInfo("가게 상세정보")
+                .storeThumbnailImage("가게 썸네일")
+                .phoneNumber("가게 전화번호")
+                .accountNumber("가게 계좌정보")
+                .bank("가게 계좌 은행정보")
+                .build();
+    }
+
 
 }

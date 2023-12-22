@@ -53,7 +53,7 @@ public class CouponController {
 
     @GetMapping("/{storeId}/coupons/product")
     public CommonResponse<CouponsForUserResponse> storeCouponsForUser(@PathVariable Long storeId,
-                                                                      @RequestHeader(value = "userId") Long userId) {
+                                                                      @RequestHeader(value = "userId", required = false) Long userId) {
 
         LocalDate now = LocalDate.now();
         return CommonResponse.success(couponService.getAllStoreCouponsForUser(userId, storeId, now));

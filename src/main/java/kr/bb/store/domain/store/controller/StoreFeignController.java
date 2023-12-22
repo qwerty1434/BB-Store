@@ -1,7 +1,9 @@
 package kr.bb.store.domain.store.controller;
 
+import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
+import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
 import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.store.facade.StoreFacade;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,16 @@ public class StoreFeignController {
     @GetMapping
     public CommonResponse<List<StoreInfoDto>> getStoreInfos() {
         return CommonResponse.success(storeFacade.getAllStoreInfos());
+    }
+
+    @PostMapping("/coupons/validate-purchase")
+    public void validateForOrder(List<ValidatePriceDto> validatePriceDtos) {
+        storeFacade.validateForOrder(validatePriceDtos);
+    }
+
+    @PostMapping("/simple-info")
+    public CommonResponse<List<LikedStoreInfoResponse>> getStoreSimpleInfos(@RequestBody List<Long> storeIds) {
+        return CommonResponse.success(storeFacade.simpleInfos(storeIds));
     }
 
 }

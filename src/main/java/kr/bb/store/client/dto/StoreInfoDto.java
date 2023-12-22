@@ -1,6 +1,5 @@
 package kr.bb.store.client.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
 import kr.bb.store.domain.store.entity.Store;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +35,7 @@ public class StoreInfoDto {
                 .build();
     }
 
-    public bloomingblooms.domain.store.StoreInfoDto toCommonEntity() {
+    public bloomingblooms.domain.store.StoreInfoDto toCommonDto() {
         return bloomingblooms.domain.store.StoreInfoDto.builder()
                 .storeId(storeId)
                 .storeCode(storeCode)

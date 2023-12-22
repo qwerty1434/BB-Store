@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.cargo.service.CargoService;
@@ -8,12 +9,14 @@ import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.GugunDto;
+import kr.bb.store.domain.store.dto.LikedStoreInfoResponse;
 import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
+import kr.bb.store.domain.store.exception.DeliveryInconsistencyException;
 import kr.bb.store.domain.store.handler.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -105,6 +108,24 @@ public class StoreService {
         return storeReader.readInfos();
     }
 
+    public void validateDeliveryPrice(List<ValidatePriceDto> validatePriceDtos) {
+        validatePriceDtos.forEach(dto -> {
+            DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(dto.getStoreId());
+            Long receivedPaymentPrice = dto.getActualAmount();
+            Long receivedDeliveryPrice = dto.getDeliveryCost();
+            if(!deliveryPolicy.isRightDeliveryPrice(receivedPaymentPrice, receivedDeliveryPrice)) {
+                throw new DeliveryInconsistencyException();
+            }
+        });
+    }
+
+    public List<LikedStoreInfoResponse> simpleInfos(List<Long> storeIds) {
+        return storeReader.findStoresByIds(storeIds).stream()
+                .map(LikedStoreInfoResponse::fromEntity)
+                .collect(Collectors.toList());
+
+    }
+
     public List<SidoDto> getSido() {
         return sidoReader.readAll()
                 .stream()
@@ -118,5 +139,4 @@ public class StoreService {
                 .map(GugunDto::fromEntity)
                 .collect(Collectors.toList());
     }
-
 }

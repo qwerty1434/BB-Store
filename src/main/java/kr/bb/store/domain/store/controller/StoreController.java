@@ -38,14 +38,14 @@ public class StoreController {
     }
 
     @GetMapping("/list")
-    public CommonResponse<SimpleStorePagingResponse> getStores(@RequestHeader(value = "userId") Long userId,
-                                                               Pageable pageable) {
+    public CommonResponse<SimpleStorePagingResponse> getStores(
+            @RequestHeader(value = "userId", required = false) Long userId, Pageable pageable) {
         return CommonResponse.success(storeFacade.getStoresWithLikes(userId, pageable));
     }
 
     @GetMapping("/{storeId}/user")
-    public CommonResponse<StoreInfoUserResponse> getStoreInfoForUser(@RequestHeader(value = "userId") Long userId,
-                                                                     @PathVariable Long storeId){
+    public CommonResponse<StoreInfoUserResponse> getStoreInfoForUser(
+            @RequestHeader(value = "userId", required = false) Long userId, @PathVariable Long storeId){
         return CommonResponse.success(storeFacade.getStoreInfoForUser(userId, storeId));
     }
 
@@ -55,15 +55,16 @@ public class StoreController {
     }
 
     @GetMapping("/map/location")
-    public CommonResponse<StoreListForMapResponse> getNearbyStores(@RequestParam Double lat, @RequestParam Double lon,
-                                                                   @RequestHeader(value = "userId") Long userId,
-                                                                   @RequestParam Integer level) {
+    public CommonResponse<StoreListForMapResponse> getNearbyStores(
+            @RequestParam Double lat, @RequestParam Double lon,
+            @RequestHeader(value = "userId", required = false) Long userId,@RequestParam Integer level) {
         return CommonResponse.success(storeFacade.getNearbyStores(userId, lat, lon, level));
     }
 
     @GetMapping("/map/region")
-    public CommonResponse<StoreListForMapResponse> getStoresWithRegion(@RequestParam String sido, @RequestParam String gugun,
-                                                                       @RequestHeader(value = "userId") Long userId) {
+    public CommonResponse<StoreListForMapResponse> getStoresWithRegion(
+            @RequestParam String sido, @RequestParam String gugun,
+            @RequestHeader(value = "userId", required = false) Long userId) {
         return CommonResponse.success(storeFacade.getStoresWithRegion(userId, sido, gugun));
     }
 

@@ -35,6 +35,10 @@ public class StoreReader {
         return storeRepository.findById(storeId).orElseThrow(StoreAddressNotFoundException::new);
     }
 
+    public List<Store> findStoresByIds(List<Long> storeIds) {
+        return storeRepository.findAllById(storeIds);
+    }
+
     public StoreAddress findStoreAddressByStoreId(Long storeId) {
         return storeAddressRepository.findByStoreId(storeId)
                 .orElseThrow(StoreAddressNotFoundException::new);

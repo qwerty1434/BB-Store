@@ -22,3 +22,7 @@ spring:
       host: localhost
       port: 6379
       password:
+endpoint:
+  product-service: localhost:8800
+  storeLike-service: localhost:8500
+  storeSubscription-service: localhost:9900
