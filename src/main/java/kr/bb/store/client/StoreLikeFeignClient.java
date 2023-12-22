@@ -19,7 +19,7 @@ public interface StoreLikeFeignClient {
             name = "getStoreLikes",
             fallbackMethod = "getStoreLikesFallback"
     )
-    @PostMapping
+    @PostMapping("/client/likes/stores")
     CommonResponse<Map<Long,Boolean>> getStoreLikes(
             @RequestHeader(value = "userId") Long userId, @RequestBody List<Long> storeIds);
 
