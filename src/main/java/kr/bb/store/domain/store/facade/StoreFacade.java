@@ -4,6 +4,7 @@ import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
+import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
@@ -111,7 +112,7 @@ public class StoreFacade {
     }
 
     public StoreNameAndAddressDto getStoreNameAndAddress(Long storeId) {
-        return storeService.getStoreNameAndAddress(storeId).toCommonEntity();
+        return storeService.getStoreNameAndAddress(storeId).toCommonDto();
     }
 
     public StoreDetailInfoResponse getStoreDetailInfo(Long storeId) {
@@ -119,18 +120,25 @@ public class StoreFacade {
     }
 
     public StoreInfoDto getStoreInfo(Long userId) {
-        return storeService.getStoreInfo(userId).toCommonEntity();
+        return storeService.getStoreInfo(userId).toCommonDto();
     }
 
     public List<StoreInfoDto> getAllStoreInfos() {
         return storeService.getAllStoreInfos().stream()
-                .map(kr.bb.store.client.dto.StoreInfoDto::toCommonEntity)
+                .map(kr.bb.store.client.dto.StoreInfoDto::toCommonDto)
                 .collect(Collectors.toList());
     }
 
     public void validateForOrder(List<ValidatePriceDto> validatePriceDtos) {
         couponService.validateCouponPrice(validatePriceDtos);
         storeService.validateDeliveryPrice(validatePriceDtos);
+    }
+
+    public List<LikedStoreInfoResponse> simpleInfos(List<Long> storeIds){
+        return storeService.simpleInfos(storeIds).stream()
+                .map(kr.bb.store.domain.store.dto.LikedStoreInfoResponse::toCommonDto)
+                .collect(Collectors.toList());
+
     }
 
     public List<SidoDto> getSido() {

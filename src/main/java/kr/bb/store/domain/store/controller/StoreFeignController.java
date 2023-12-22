@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.controller;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
+import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
 import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.store.facade.StoreFacade;
 import lombok.RequiredArgsConstructor;
@@ -47,5 +48,9 @@ public class StoreFeignController {
         storeFacade.validateForOrder(validatePriceDtos);
     }
 
+    @PostMapping("/simple-info")
+    public CommonResponse<List<LikedStoreInfoResponse>> getStoreSimpleInfos(@RequestBody List<Long> storeIds) {
+        return CommonResponse.success(storeFacade.simpleInfos(storeIds));
+    }
 
 }

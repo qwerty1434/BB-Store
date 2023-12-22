@@ -9,6 +9,7 @@ import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.GugunDto;
+import kr.bb.store.domain.store.dto.LikedStoreInfoResponse;
 import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -118,6 +119,13 @@ public class StoreService {
         });
     }
 
+    public List<LikedStoreInfoResponse> simpleInfos(List<Long> storeIds) {
+        return storeReader.findStoresByIds(storeIds).stream()
+                .map(LikedStoreInfoResponse::fromEntity)
+                .collect(Collectors.toList());
+
+    }
+
     public List<SidoDto> getSido() {
         return sidoReader.readAll()
                 .stream()
@@ -131,5 +139,4 @@ public class StoreService {
                 .map(GugunDto::fromEntity)
                 .collect(Collectors.toList());
     }
-
 }

@@ -22,7 +22,7 @@ public class StoreNameAndAddressDto {
                 .build();
     }
 
-    public bloomingblooms.domain.store.StoreNameAndAddressDto toCommonEntity() {
+    public bloomingblooms.domain.store.StoreNameAndAddressDto toCommonDto() {
         return bloomingblooms.domain.store.StoreNameAndAddressDto.builder()
                 .storeName(storeName)
                 .storeAddress(storeAddress)
