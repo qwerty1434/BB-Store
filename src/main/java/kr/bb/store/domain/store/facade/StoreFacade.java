@@ -12,6 +12,7 @@ import kr.bb.store.domain.coupon.service.CouponService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
 import kr.bb.store.domain.store.dto.GugunDto;
 import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.service.StoreService;
@@ -136,9 +137,13 @@ public class StoreFacade {
 
     public List<LikedStoreInfoResponse> simpleInfos(List<Long> storeIds){
         return storeService.simpleInfos(storeIds).stream()
-                .map(kr.bb.store.domain.store.dto.LikedStoreInfoResponse::toCommonDto)
+                .map(kr.bb.store.domain.store.controller.response.LikedStoreInfoResponse::toCommonDto)
                 .collect(Collectors.toList());
 
+    }
+
+    public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
+        return storeService.getDeliveryPolicy(storeId);
     }
 
     public List<SidoDto> getSido() {

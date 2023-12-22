@@ -1,7 +1,7 @@
 package kr.bb.store.domain.store.handler;
 
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
-import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
+import kr.bb.store.domain.store.dto.DeliveryPolicyRequestDto;
 import kr.bb.store.domain.store.dto.StoreAddressDto;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -50,11 +50,11 @@ public class StoreCreator {
         return storeRepository.save(store);
     }
 
-    private DeliveryPolicy createDeliveryPolicy(Store store, DeliveryPolicyDto deliveryPolicyDto) {
+    private DeliveryPolicy createDeliveryPolicy(Store store, DeliveryPolicyRequestDto deliveryPolicyRequestDto) {
         DeliveryPolicy deliveryPolicy = DeliveryPolicy.builder()
                 .store(store)
-                .freeDeliveryMinPrice(deliveryPolicyDto.getFreeDeliveryMinPrice())
-                .deliveryPrice(deliveryPolicyDto.getDeliveryPrice())
+                .freeDeliveryMinPrice(deliveryPolicyRequestDto.getFreeDeliveryMinPrice())
+                .deliveryPrice(deliveryPolicyRequestDto.getDeliveryPrice())
                 .build();
         return deliveryPolicyRepository.save(deliveryPolicy);
     }

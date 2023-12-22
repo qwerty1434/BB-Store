@@ -22,6 +22,7 @@ public interface ProductFeignClient {
     CommonResponse<List<FlowerDto>> getFlowers();
 
     default CommonResponse<List<FlowerDto>> getFlowersFallback(Exception e) {
+        // TODO : fallback제거 - 꽃 정보 없이 가게는 생성되면 안됨
         log.error(e.toString());
         log.warn("{}'s Request of '{}' failed. request will return fallback data", "ProductFeignClient", "getFlowers");
         return CommonResponse.<List<FlowerDto>>builder()

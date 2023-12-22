@@ -8,8 +8,9 @@ import kr.bb.store.domain.cargo.service.CargoService;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
 import kr.bb.store.domain.store.dto.GugunDto;
-import kr.bb.store.domain.store.dto.LikedStoreInfoResponse;
+import kr.bb.store.domain.store.controller.response.LikedStoreInfoResponse;
 import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -124,6 +125,11 @@ public class StoreService {
                 .map(LikedStoreInfoResponse::fromEntity)
                 .collect(Collectors.toList());
 
+    }
+
+    public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
+        DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(storeId);
+        return DeliveryPolicyDto.fromEntity(deliveryPolicy);
     }
 
     public List<SidoDto> getSido() {
