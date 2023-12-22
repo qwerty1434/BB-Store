@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@FeignClient(name = "storeSubscription-service")
+@FeignClient(name = "storeSubscription-service", url = "${endpoint.storeSubscription-service}")
 public interface StoreSubscriptionFeignClient {
     org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(StoreSubscriptionFeignClient.class);
 
