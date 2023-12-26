@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.controller;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
+import bloomingblooms.domain.store.StorePolicy;
 import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
 import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.store.facade.StoreFacade;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -51,6 +53,11 @@ public class StoreFeignController {
     @PostMapping("/simple-info")
     public CommonResponse<List<LikedStoreInfoResponse>> getStoreSimpleInfos(@RequestBody List<Long> storeIds) {
         return CommonResponse.success(storeFacade.simpleInfos(storeIds));
+    }
+
+    @PostMapping("/policy")
+    public CommonResponse<Map<Long, StorePolicy>> getDeliveryPolicyOfStores(@RequestBody List<Long> storeIds) {
+        return CommonResponse.success(storeFacade.getDeliveryPolicies(storeIds));
     }
 
 }

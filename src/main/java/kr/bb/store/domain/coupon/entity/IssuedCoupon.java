@@ -34,4 +34,8 @@ public class IssuedCoupon extends BaseEntity {
         if(coupon.isExpired(now)) throw new ExpiredCouponException();
         isUsed = true;
     }
+
+    public void unUse() {
+        isUsed = false;
+    }
 }

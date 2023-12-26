@@ -27,8 +27,13 @@ public class CouponManager {
         issuedCoupon.use(useDate);
     }
 
+    public void unUse(IssuedCoupon issuedCoupon) {
+        issuedCoupon.unUse();
+    }
+
     public void softDelete(Coupon coupon) {
         coupon.softDelete();
     }
+
 
 }

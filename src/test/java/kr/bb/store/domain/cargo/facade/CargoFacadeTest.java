@@ -1,5 +1,7 @@
 package kr.bb.store.domain.cargo.facade;
 
+import bloomingblooms.domain.flower.StockChangeDto;
+import bloomingblooms.domain.flower.StockDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
@@ -117,7 +119,17 @@ class CargoFacadeTest extends AbstractContainer {
         LongStream.rangeClosed(1L, concurrentRequestCount)
                 .forEach( idx -> executorService.submit(() -> {
                     try {
-                        cargoFacade.plusStockCountWithLock(storeId,flowerId,1L);
+                        StockDto stockDto = StockDto.builder()
+                                .flowerId(flowerId)
+                                .stock(1L)
+                                .build();
+                        StockChangeDto stockChangeDto = StockChangeDto
+                                .builder()
+                                .storeId(storeId)
+                                .stockDtos(List.of(stockDto))
+                                .build();
+
+                        cargoFacade.plusStockCountsWithLock(stockChangeDto);
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();
@@ -159,7 +171,17 @@ class CargoFacadeTest extends AbstractContainer {
         LongStream.rangeClosed(1L, concurrentRequestCount)
                 .forEach( idx -> executorService.submit(() -> {
                     try {
-                        cargoFacade.minusStockCountWithLock(storeId,flowerId,1L);
+                        StockDto stockDto = StockDto.builder()
+                                .flowerId(flowerId)
+                                .stock(1L)
+                                .build();
+                        StockChangeDto stockChangeDto = StockChangeDto
+                                .builder()
+                                .storeId(storeId)
+                                .stockDtos(List.of(stockDto))
+                                .build();
+
+                        cargoFacade.minusStockCountsWithLock(stockChangeDto);
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();

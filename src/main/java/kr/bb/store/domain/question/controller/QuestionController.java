@@ -27,33 +27,33 @@ public class QuestionController {
     }
 
     @PostMapping("/questions/{questionId}/answers")
-    public void createAnswer(@PathVariable Long questionId,
-                             @RequestBody AnswerCreateRequest answerCreateRequest) {
+    public void createAnswer(@PathVariable Long questionId, @RequestBody AnswerCreateRequest answerCreateRequest) {
         questionFacade.createAnswer(questionId, answerCreateRequest.getContent());
     }
 
     @GetMapping("/{storeId}/questions")
     public CommonResponse<QuestionsForOwnerPagingResponse> storeQuestions(@PathVariable Long storeId,
-            @RequestParam(required = false) Boolean isReplied, Pageable pageable) {
+            @RequestParam(name = "is-replied", required = false) Boolean isReplied, Pageable pageable) {
         return CommonResponse.success(questionFacade.getQuestionsForStoreOwner(storeId,isReplied,pageable));
     }
 
     @GetMapping("/questions/product/{productId}")
     public CommonResponse<QuestionsInProductPagingResponse> productQuestions(
-            @PathVariable String productId,@RequestParam(required = false) Boolean isReplied,
+            @PathVariable String productId,@RequestParam(name = "is-replied", required = false) Boolean isReplied,
             Pageable pageable, @RequestHeader(value = "userId", required = false) Long userId) {
         return CommonResponse.success(questionFacade.getQuestionsInProduct(userId, productId, isReplied, pageable));
     }
 
     @GetMapping("/questions/product/{productId}/my")
     public CommonResponse<MyQuestionsInProductPagingResponse> myQuestionsInProduct(
-            @PathVariable String productId, @RequestParam(required = false) Boolean isReplied,
+            @PathVariable String productId, @RequestParam(name = "is-replied", required = false) Boolean isReplied,
             Pageable pageable, @RequestHeader(value = "userId") Long userId) {
         return CommonResponse.success(questionFacade.getMyQuestionsInProduct(userId, productId, isReplied, pageable));
     }
 
     @GetMapping("/questions/my-page")
-    public CommonResponse<MyQuestionsInMypagePagingResponse> myQuestions(@RequestParam(required = false) Boolean isReplied,
+    public CommonResponse<MyQuestionsInMypagePagingResponse> myQuestions(
+            @RequestParam(name = "is-replied", required = false) Boolean isReplied,
             Pageable pageable, @RequestHeader(value = "userId") Long userId) {
         return CommonResponse.success(questionFacade.getMyQuestions(userId, isReplied, pageable));
     }
