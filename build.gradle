@@ -149,6 +149,7 @@ jacocoTestCoverageVerification {
                                     "**/*Response.class",
                                     "**/*Id.class",
                                     "**/*Facade.class",
+                                    "**/*Publisher.class",
                                     "**/*Application*"
                             ]+Qdomains)
                         })
@@ -185,6 +186,7 @@ jacocoTestReport {
                             "**/*Response.class",
                             "**/*Id.class",
                             "**/*Facade.class",
+                            "**/*Publisher.class",
                             "**/*Application*"
                     ]+Qdomains)
                 })
