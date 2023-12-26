@@ -8,6 +8,7 @@ import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import kr.bb.store.message.OutOfStockSQSPublisher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,10 @@ class CargoFacadeTest extends AbstractContainer {
     private PlatformTransactionManager txManager;
 
     @MockBean
-    private ProductFeignClient productFeignㄱClient;
+    private ProductFeignClient productFeignClient;
+
+    @MockBean
+    private OutOfStockSQSPublisher outOfStockSQSPublisher;
 
 
     @DisplayName("꽃 아이디와 수량을 입력받아 재고를 변경한다")

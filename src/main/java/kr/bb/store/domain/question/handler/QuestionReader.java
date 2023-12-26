@@ -45,4 +45,9 @@ public class QuestionReader {
     public Page<MyQuestionInMypageDto> readQuestionsForMypage(Long userId, Boolean isReplied, Pageable pageable) {
         return questionRepository.getMyQuestionsWithPaging(userId, isReplied, pageable);
     }
+
+    public Question read(Long questionId) {
+        return questionRepository.findById(questionId)
+                .orElseThrow(QuestionNotFoundException::new);
+    }
 }
