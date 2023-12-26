@@ -90,6 +90,14 @@ public class CouponService {
         });
     }
 
+    @Transactional
+    public void unUseAllCoupons(List<Long> couponIds, Long userId) {
+        couponIds.forEach(couponId -> {
+            IssuedCoupon issuedCoupon = issuedCouponReader.read(couponId,userId);
+            couponManager.unUse(issuedCoupon);
+        });
+    }
+
     public CouponsForOwnerResponse getAllStoreCoupons(Long storeId) {
         List<CouponForOwnerDto> couponForOwnerDtos = couponReader.readCouponsForOwner(storeId);
         return CouponsForOwnerResponse.from(couponForOwnerDtos);

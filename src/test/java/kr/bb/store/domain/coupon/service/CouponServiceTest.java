@@ -188,6 +188,39 @@ class CouponServiceTest extends AbstractContainer {
 
     }
 
+    @DisplayName("쿠폰 사용을 무효화한다")
+    @Test
+    void unUseAllCoupons() {
+        // given
+        Store store = createStore();
+        storeRepository.save(store);
+
+        Coupon c1 = couponCreator(store);
+        Coupon c2 = couponCreator(store);
+        Coupon c3 = couponCreator(store);
+        couponRepository.saveAll(List.of(c1,c2,c3));
+
+        Long userId = 1L;
+
+        IssuedCoupon ic1 = createIssuedCoupon(c1,userId);
+        IssuedCoupon ic3 = createIssuedCoupon(c3,userId);
+        issuedCouponRepository.saveAll(List.of(ic1, ic3));
+
+        List<Long> couponIds = List.of(c1.getId(), c3.getId());
+        List<IssuedCouponId> issuedCouponIds = List.of(ic1.getId(), ic3.getId());
+
+        // when
+        couponService.unUseAllCoupons(couponIds, userId);
+
+        List<IssuedCoupon> result = issuedCouponRepository.findAllById(issuedCouponIds);
+
+        // then
+        assertThat(result).hasSize(2)
+                .extracting("isUsed")
+                .contains(false);
+
+    }
+
     @DisplayName("멀티쓰레드 환경에서도 동시에 쿠폰 발급을 요청해도 정해진 수량만큼의 발급이 보장된다")
     @Test
     void issueCouponInMultiThread() throws InterruptedException, ExecutionException {

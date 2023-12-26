@@ -27,6 +27,12 @@ public class CouponFacade {
             Long userId = processOrderDto.getUserId();
             String phoneNumber = userClient.getPhoneNumber(userId).getData();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
+            throw e;
         }
+    }
+
+    @KafkaListener(topics = "stock-decrease-rollback", groupId = "rollback-coupon")
+    public void rollbackCoupons(ProcessOrderDto processOrderDto) {
+        couponService.unUseAllCoupons(processOrderDto.getCouponIds(), processOrderDto.getUserId());
     }
 }
