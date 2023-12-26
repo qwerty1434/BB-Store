@@ -62,4 +62,8 @@ public class QuestionService {
                 .totalCnt(myQuestionInMypageDtos.getTotalElements())
                 .build();
     }
+
+    public Question getQuestionById(Long questionId) {
+        return questionReader.read(questionId);
+    }
 }

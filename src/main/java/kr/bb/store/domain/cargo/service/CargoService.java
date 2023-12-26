@@ -29,17 +29,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CargoService {
     private final FlowerCargoRepository flowerCargoRepository;
+    private static final Long EMPTY_COUNT = 0L;
 
     @Transactional
     public void modifyAllStocks(StockModifyDto stockModifyDto, FlowerCargoId flowerCargoId) {
-        if(stockModifyDto.getStock() < 0) {
+        if(stockModifyDto.getStock() < EMPTY_COUNT) {
             throw new StockCannotBeNegativeException();
         }
         flowerCargoRepository.modifyStock(flowerCargoId.getStoreId(), flowerCargoId.getFlowerId(), stockModifyDto.getStock());
     }
 
     @Transactional
-    public void plusStockCount(FlowerCargoId flowerCargoId, Long stock) {
+    public Long plusStockCount(FlowerCargoId flowerCargoId, Long stock) {
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
                 .orElseThrow(FlowerCargoNotFoundException::new);
 
@@ -48,10 +49,11 @@ public class CargoService {
         }
         flowerCargoRepository.plusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
 
+        return flowerCargo.getStock() + stock;
     }
 
     @Transactional
-    public void minusStockCount(FlowerCargoId flowerCargoId, Long stock) {
+    public Long minusStockCount(FlowerCargoId flowerCargoId, Long stock) {
         FlowerCargo flowerCargo = flowerCargoRepository.findById(flowerCargoId)
                 .orElseThrow(FlowerCargoNotFoundException::new);
 
@@ -60,6 +62,7 @@ public class CargoService {
         }
         flowerCargoRepository.minusStock(flowerCargoId.getStoreId(),flowerCargoId.getFlowerId(),stock);
 
+        return flowerCargo.getStock() - stock;
     }
 
     @Transactional(readOnly = true)
