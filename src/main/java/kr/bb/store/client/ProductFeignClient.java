@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collections;
 import java.util.List;
 
-@FeignClient(name = "product-service", url = "endpoint.product-service")
+@FeignClient(name = "product-service", url = "${endpoint.product-service}")
 public interface ProductFeignClient {
     org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ProductFeignClient.class);
 
