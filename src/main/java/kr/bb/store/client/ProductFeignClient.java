@@ -18,7 +18,7 @@ public interface ProductFeignClient {
             name = "getFlowers",
             fallbackMethod = "getFlowersFallback"
     )
-    @GetMapping("client/flowers")
+    @GetMapping("/client/flowers")
     CommonResponse<List<FlowerDto>> getFlowers();
 
     default CommonResponse<List<FlowerDto>> getFlowersFallback(Exception e) {
