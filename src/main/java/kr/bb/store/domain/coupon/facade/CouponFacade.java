@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class CouponFacade {
     private final CouponService couponService;
-    private final UserClient userClient;
     private final OrderStatusSQSPublisher orderStatusSQSPublisher;
     private final KafkaProcessor<ProcessOrderDto> stockDecreaseKafkaProducer;
 
@@ -28,7 +27,7 @@ public class CouponFacade {
             stockDecreaseKafkaProducer.send("stock-decrease", processOrderDto);
         } catch (Exception e) {
             Long userId = processOrderDto.getUserId();
-            String phoneNumber = userClient.getPhoneNumber(userId).getData();
+            String phoneNumber = processOrderDto.getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
         }

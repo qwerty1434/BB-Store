@@ -30,8 +30,8 @@ public class QuestionFacade {
     }
 
     public void createAnswer(Long questionId, String content) {
-        questionService.createAnswer(questionId, content);
         Question question = questionService.getQuestionById(questionId);
+        questionService.createAnswer(question, content);
         Long userId = question.getUserId();
         String phoneNumber = userClient.getPhoneNumber(userId).getData();
         answerSQSPublisher.publish(userId, phoneNumber);

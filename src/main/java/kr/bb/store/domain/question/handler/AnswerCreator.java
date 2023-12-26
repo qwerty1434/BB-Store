@@ -11,13 +11,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class AnswerCreator {
-    private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
 
-    public Answer create(Long questionId, String content) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(QuestionNotFoundException::new);
-
+    public Answer create(Question question, String content) {
         Answer answer = Answer.builder()
                 .question(question)
                 .content(content)

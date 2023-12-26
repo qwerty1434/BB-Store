@@ -7,6 +7,7 @@ import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
+import kr.bb.store.domain.question.exception.QuestionNotFoundException;
 import kr.bb.store.domain.question.handler.AnswerCreator;
 import kr.bb.store.domain.question.handler.QuestionCreator;
 import kr.bb.store.domain.question.handler.QuestionReader;
@@ -36,8 +37,8 @@ public class QuestionService {
     }
 
     @Transactional
-    public Answer createAnswer(Long questionId, String content) {
-        return answerCreator.create(questionId, content);
+    public Answer createAnswer(Question question, String content) {
+        return answerCreator.create(question, content);
     }
 
     public QuestionsForOwnerPagingResponse getQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {

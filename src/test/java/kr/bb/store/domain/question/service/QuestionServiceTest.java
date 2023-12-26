@@ -96,7 +96,7 @@ class QuestionServiceTest {
         String content = "답변글";
 
         // when
-        Answer answer = questionService.createAnswer(question.getId(),content);
+        Answer answer = questionService.createAnswer(question,content);
         answerRepository.save(answer);
 
         // then
