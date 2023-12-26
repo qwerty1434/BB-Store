@@ -2,6 +2,7 @@ package kr.bb.store.domain.store.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
+import bloomingblooms.domain.store.StorePolicy;
 import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.cargo.service.CargoService;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -130,6 +132,19 @@ public class StoreService {
     public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
         DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(storeId);
         return DeliveryPolicyDto.fromEntity(deliveryPolicy);
+    }
+
+    public Map<Long, StorePolicy> getDeliveryPolicies(List<Long> storeIds) {
+        return storeIds.stream().collect(Collectors.toMap(storeId -> storeId,
+                storeId -> {
+                    DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(storeId);
+                    return StorePolicy.builder()
+                            .storeName(deliveryPolicy.getStore().getStoreName())
+                            .deliveryCost(deliveryPolicy.getDeliveryPrice())
+                            .freeDeliveryMinCost(deliveryPolicy.getFreeDeliveryMinPrice())
+                            .build();
+                }
+        ));
     }
 
     public List<SidoDto> getSido() {

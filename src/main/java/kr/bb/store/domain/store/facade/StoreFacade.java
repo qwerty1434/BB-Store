@@ -4,6 +4,7 @@ import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
+import bloomingblooms.domain.store.StorePolicy;
 import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
@@ -144,6 +145,10 @@ public class StoreFacade {
 
     public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
         return storeService.getDeliveryPolicy(storeId);
+    }
+
+    public Map<Long, StorePolicy> getDeliveryPolicies(List<Long> storeIds) {
+        return storeService.getDeliveryPolicies(storeIds);
     }
 
     public List<SidoDto> getSido() {
