@@ -2,7 +2,7 @@ package kr.bb.store.domain.cargo.facade;
 
 import bloomingblooms.domain.flower.StockChangeDto;
 import bloomingblooms.domain.notification.NotificationKind;
-import kr.bb.store.client.UserClient;
+import kr.bb.store.client.UserFeignClient;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
@@ -26,7 +26,7 @@ public class CargoFacade {
     private final RedissonClient redissonClient;
     private final OutOfStockSQSPublisher outOfStockSQSPublisher;
     private final OrderStatusSQSPublisher orderStatusSQSPublisher;
-    private final UserClient userClient;
+    private final UserFeignClient userFeignClient;
     private static final Long STOCK_ALERT_COUNT = 50L;
 
     public void modifyAllStocksWithLock(Long storeId, List<StockModifyDto> stockModifyDtos) {
@@ -65,7 +65,8 @@ public class CargoFacade {
         } catch (InterruptedException e){
             throw new LockInterruptedException();
         } catch (Exception e) {
-            String phoneNumber = userClient.getPhoneNumber(userId).getData();
+            // TODO : 여기서 feign요청하는게 아니라 넘겨주는 데이터에서 phoneNumber 받기
+            String phoneNumber = userFeignClient.getPhoneNumber(userId).getData();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
         } finally {
@@ -92,7 +93,8 @@ public class CargoFacade {
         } catch (InterruptedException e){
             throw new LockInterruptedException();
         } catch (Exception e) {
-            String phoneNumber = userClient.getPhoneNumber(userId).getData();
+            // TODO : 여기서 feign요청하는게 아니라 넘겨주는 데이터에서 phoneNumber 받기
+            String phoneNumber = userFeignClient.getPhoneNumber(userId).getData();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
         } finally {
