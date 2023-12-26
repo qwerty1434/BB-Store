@@ -64,7 +64,8 @@ public class StoreFacade {
     }
 
     public StoreInfoUserResponse getStoreInfoForUser(Long userId, Long storeId) {
-        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId).getData();
+        String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId).getData()
+                .getSubscriptionProductId();
         if(isNotGuest(userId)) {
             Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId)).getData();
             Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient
