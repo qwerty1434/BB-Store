@@ -1,12 +1,15 @@
 package kr.bb.store.domain.cargo.facade;
 
 import bloomingblooms.domain.flower.StockChangeDto;
+import bloomingblooms.domain.notification.NotificationKind;
+import kr.bb.store.client.UserClient;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.exception.LockInterruptedException;
 import kr.bb.store.domain.cargo.exception.StockChangeFailedException;
 import kr.bb.store.domain.cargo.service.CargoService;
+import kr.bb.store.message.OrderStatusSQSPublisher;
 import kr.bb.store.message.OutOfStockSQSPublisher;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
@@ -22,6 +25,8 @@ public class CargoFacade {
     private final CargoService cargoService;
     private final RedissonClient redissonClient;
     private final OutOfStockSQSPublisher outOfStockSQSPublisher;
+    private final OrderStatusSQSPublisher orderStatusSQSPublisher;
+    private final UserClient userClient;
     private static final Long STOCK_ALERT_COUNT = 50L;
 
     public void modifyAllStocksWithLock(Long storeId, List<StockModifyDto> stockModifyDtos) {
@@ -43,7 +48,7 @@ public class CargoFacade {
         }
     }
 
-    public void plusStockCountsWithLock(StockChangeDto stockChangeDto) {
+    public void plusStockCountsWithLock(Long userId, StockChangeDto stockChangeDto) {
         Long storeId = stockChangeDto.getStoreId();
         RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
         try {
@@ -59,6 +64,10 @@ public class CargoFacade {
 
         } catch (InterruptedException e){
             throw new LockInterruptedException();
+        } catch (Exception e) {
+            String phoneNumber = userClient.getPhoneNumber(userId).getData();
+            orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
+            throw e;
         } finally {
             if(lock.isLocked() && lock.isHeldByCurrentThread()) {
                 lock.unlock();
@@ -66,7 +75,7 @@ public class CargoFacade {
         }
     }
 
-    public void minusStockCountsWithLock(StockChangeDto stockChangeDto) {
+    public void minusStockCountsWithLock(Long userId, StockChangeDto stockChangeDto) {
         Long storeId = stockChangeDto.getStoreId();
         RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
         try {
@@ -82,6 +91,10 @@ public class CargoFacade {
 
         } catch (InterruptedException e){
             throw new LockInterruptedException();
+        } catch (Exception e) {
+            String phoneNumber = userClient.getPhoneNumber(userId).getData();
+            orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
+            throw e;
         } finally {
             if(lock.isLocked() && lock.isHeldByCurrentThread()) {
                 lock.unlock();

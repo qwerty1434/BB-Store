@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 public class CargoFeignController {
     private final CargoFacade cargoFacade;
     @PutMapping("/add")
-    public void addStock(@RequestBody StockChangeDto stockChangeDto) {
-        cargoFacade.plusStockCountsWithLock(stockChangeDto);
+    public void addStock(@RequestHeader(value = "userId") Long userId, @RequestBody StockChangeDto stockChangeDto) {
+        cargoFacade.plusStockCountsWithLock(userId, stockChangeDto);
     }
 
     @PutMapping("/substract")
-    public void subtractStock(@RequestBody StockChangeDto stockChangeDto) {
-        cargoFacade.minusStockCountsWithLock(stockChangeDto);
+    public void subtractStock(@RequestHeader(value = "userId") Long userId, @RequestBody StockChangeDto stockChangeDto) {
+        cargoFacade.minusStockCountsWithLock(userId, stockChangeDto);
     }
 }
