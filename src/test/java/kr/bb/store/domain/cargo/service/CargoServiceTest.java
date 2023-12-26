@@ -1,6 +1,7 @@
 package kr.bb.store.domain.cargo.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.flower.StockDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.AbstractContainer;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
@@ -70,10 +71,10 @@ class CargoServiceTest extends AbstractContainer {
 
         Long modifyStock = 3L;
 
-        StockModifyDto s1 = createStockModifyDto(1L, modifyStock);
+        StockModifyDto s1 = createStockModifyDto(2L, modifyStock);
 
         // when
-        cargoService.modifyAllStocks(s1, flowerCargoId1);
+        cargoService.modifyAllStocks(store.getId(), List.of(s1));
 
         em.flush();
         em.clear();
@@ -95,9 +96,12 @@ class CargoServiceTest extends AbstractContainer {
         FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
         FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
         flowerCargoRepository.save(flowerCargo);
-
+        StockDto stockDto = StockDto.builder()
+                .flowerId(flowerCargoId.getFlowerId())
+                .stock(10L)
+                .build();
         // when
-        cargoService.plusStockCount(flowerCargoId, 10L);
+        cargoService.plusStockCounts(store.getId(), List.of(stockDto));
 
         em.flush();
         em.clear();
@@ -119,9 +123,13 @@ class CargoServiceTest extends AbstractContainer {
         FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
         FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
         flowerCargoRepository.save(flowerCargo);
+        StockDto stockDto = StockDto.builder()
+                .flowerId(flowerCargoId.getFlowerId())
+                .stock(10L)
+                .build();
 
         // when
-        cargoService.minusStockCount(flowerCargoId, 10L);
+        cargoService.minusStockCounts(store.getId(), List.of(stockDto));
 
         em.flush();
         em.clear();
@@ -143,9 +151,13 @@ class CargoServiceTest extends AbstractContainer {
         FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(),1L);
         FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
         flowerCargoRepository.save(flowerCargo);
+        StockDto stockDto = StockDto.builder()
+                .flowerId(flowerCargoId.getFlowerId())
+                .stock(-10000L)
+                .build();
 
         // when // then
-        assertThatThrownBy(() -> cargoService.plusStockCount(flowerCargoId, -10000L))
+        assertThatThrownBy(() -> cargoService.plusStockCounts(store.getId(), List.of(stockDto)))
                 .isInstanceOf(StockCannotBeNegativeException.class)
                 .hasMessage("재고는 음수가 될 수 없습니다.");
 
@@ -166,7 +178,7 @@ class CargoServiceTest extends AbstractContainer {
         StockModifyDto s1 = createStockModifyDto(1L, -3L);
 
         // when // then
-        assertThatThrownBy(() -> cargoService.modifyAllStocks(s1, flowerCargoId))
+        assertThatThrownBy(() -> cargoService.modifyAllStocks(store.getId(), List.of(s1)))
                 .isInstanceOf(StockCannotBeNegativeException.class)
                 .hasMessage("재고는 음수가 될 수 없습니다.");
 

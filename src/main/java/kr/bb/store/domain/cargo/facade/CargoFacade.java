@@ -1,5 +1,6 @@
 package kr.bb.store.domain.cargo.facade;
 
+import bloomingblooms.domain.flower.StockChangeDto;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
@@ -21,42 +22,38 @@ public class CargoFacade {
     private final CargoService cargoService;
     private final RedissonClient redissonClient;
     private final OutOfStockSQSPublisher outOfStockSQSPublisher;
-    // TODO : Environment로 교체
     private static final Long STOCK_ALERT_COUNT = 50L;
 
     public void modifyAllStocksWithLock(Long storeId, List<StockModifyDto> stockModifyDtos) {
-        stockModifyDtos.forEach(stockModifyDto -> {
-            FlowerCargoId flowerCargoId = makeId(storeId, stockModifyDto.getFlowerId());
-            RLock lock = redissonClient.getLock(makeRedissonKey(storeId, stockModifyDto.getFlowerId()));
-            try {
-                boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
-                if(!available) {
-                    throw new StockChangeFailedException();
-                }
-
-                cargoService.modifyAllStocks(stockModifyDto, flowerCargoId);
-
-            } catch (InterruptedException e){
-                throw new LockInterruptedException();
-            } finally {
-                if(lock.isLocked() && lock.isHeldByCurrentThread()) {
-                    lock.unlock();
-                }
-            }
-        });
-    }
-
-    public void plusStockCountWithLock(Long storeId, Long flowerId, Long stock) {
-        FlowerCargoId flowerCargoId = makeId(storeId,flowerId);
-        RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
+        RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
         try {
             boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
             if(!available) {
                 throw new StockChangeFailedException();
             }
 
-            Long stockCount = cargoService.plusStockCount(flowerCargoId, stock);
-            if(isInsufficientCondition(stockCount)) {
+            cargoService.modifyAllStocks(storeId, stockModifyDtos);
+
+        } catch (InterruptedException e){
+            throw new LockInterruptedException();
+        } finally {
+            if(lock.isLocked() && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+    }
+
+    public void plusStockCountsWithLock(StockChangeDto stockChangeDto) {
+        Long storeId = stockChangeDto.getStoreId();
+        RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
+        try {
+            boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
+            if(!available) {
+                throw new StockChangeFailedException();
+            }
+
+            Long minStockCount = cargoService.plusStockCounts(storeId, stockChangeDto.getStockDtos());
+            if(isInsufficientCondition(minStockCount)) {
                 outOfStockSQSPublisher.publish(storeId);
             }
 
@@ -69,17 +66,17 @@ public class CargoFacade {
         }
     }
 
-    public void minusStockCountWithLock(Long storeId, Long flowerId, Long stock) {
-        FlowerCargoId flowerCargoId = makeId(storeId,flowerId);
-        RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
+    public void minusStockCountsWithLock(StockChangeDto stockChangeDto) {
+        Long storeId = stockChangeDto.getStoreId();
+        RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
         try {
             boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
             if(!available) {
                 throw new StockChangeFailedException();
             }
 
-            Long stockCount = cargoService.minusStockCount(flowerCargoId, stock);
-            if(isInsufficientCondition(stockCount)) {
+            Long minStockCount = cargoService.minusStockCounts(storeId, stockChangeDto.getStockDtos());
+            if(isInsufficientCondition(minStockCount)) {
                 outOfStockSQSPublisher.publish(storeId);
             }
 
@@ -105,6 +102,9 @@ public class CargoFacade {
 
     private String makeRedissonKey(Long storeId, Long flowerId) {
         return storeId + ":" + flowerId;
+    }
+    private String makeRedissonKey(Long storeId) {
+        return storeId.toString();
     }
 
     private boolean isInsufficientCondition(Long stockCount) {

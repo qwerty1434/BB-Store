@@ -13,11 +13,11 @@ public class CargoFeignController {
     private final CargoFacade cargoFacade;
     @PutMapping("/add")
     public void addStock(@RequestBody StockChangeDto stockChangeDto) {
-        cargoFacade.plusStockCountWithLock(stockChangeDto.getStoreId(), stockChangeDto.getFlowerId(), stockChangeDto.getStock());
+        cargoFacade.plusStockCountsWithLock(stockChangeDto);
     }
 
     @PutMapping("/substract")
     public void subtractStock(@RequestBody StockChangeDto stockChangeDto) {
-        cargoFacade.minusStockCountWithLock(stockChangeDto.getStoreId(), stockChangeDto.getFlowerId(), stockChangeDto.getStock());
+        cargoFacade.minusStockCountsWithLock(stockChangeDto);
     }
 }
