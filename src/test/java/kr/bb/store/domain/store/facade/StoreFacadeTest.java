@@ -1,6 +1,7 @@
 package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.product.StoreSubscriptionProductId;
 import bloomingblooms.response.CommonResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
@@ -126,8 +127,11 @@ class StoreFacadeTest {
         storeAddressRepository.save(storeAddress);
 
         Long userId = 1L;
+        StoreSubscriptionProductId subscriptionId = StoreSubscriptionProductId.builder()
+                .subscriptionProductId("구독상품 아이디")
+                .build();
         BDDMockito.given(productFeignClient.getSubscriptionProductId(any()))
-                .willReturn(CommonResponse.<String>builder().data("구독상품 아이디").build());
+                .willReturn(CommonResponse.<StoreSubscriptionProductId>builder().data(subscriptionId).build());
         Map<Long, Boolean> likeData = Map.of(store.getId(), true);
         BDDMockito.given(storeLikeFeignClient.getStoreLikes(any(), any()))
                 .willReturn(CommonResponse.<Map<Long,Boolean>>builder().data(likeData).build());

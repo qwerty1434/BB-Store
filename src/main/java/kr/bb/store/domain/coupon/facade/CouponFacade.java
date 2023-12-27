@@ -2,7 +2,6 @@ package kr.bb.store.domain.coupon.facade;
 
 import bloomingblooms.domain.notification.NotificationKind;
 import bloomingblooms.domain.order.ProcessOrderDto;
-import kr.bb.store.client.UserClient;
 import kr.bb.store.domain.coupon.service.CouponService;
 import kr.bb.store.domain.coupon.util.KafkaProcessor;
 import kr.bb.store.message.OrderStatusSQSPublisher;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class CouponFacade {
     private final CouponService couponService;
-    private final UserClient userClient;
     private final OrderStatusSQSPublisher orderStatusSQSPublisher;
     private final KafkaProcessor<ProcessOrderDto> stockDecreaseKafkaProducer;
 
@@ -28,7 +26,7 @@ public class CouponFacade {
             stockDecreaseKafkaProducer.send("stock-decrease", processOrderDto);
         } catch (Exception e) {
             Long userId = processOrderDto.getUserId();
-            String phoneNumber = userClient.getPhoneNumber(userId).getData();
+            String phoneNumber = processOrderDto.getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
         }

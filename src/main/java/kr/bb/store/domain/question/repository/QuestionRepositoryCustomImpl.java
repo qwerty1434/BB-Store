@@ -44,6 +44,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
                         question.isDeleted.isFalse()
                 )
+                .orderBy(question.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();
@@ -82,6 +83,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.productId.eq(productId),
                         question.isDeleted.isFalse()
                 )
+                .orderBy(question.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();
@@ -120,6 +122,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.userId.eq(userId),
                         question.isDeleted.isFalse()
                 )
+                .orderBy(question.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();
@@ -158,6 +161,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.userId.eq(userId),
                         question.isDeleted.isFalse()
                 )
+                .orderBy(question.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();

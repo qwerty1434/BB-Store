@@ -129,7 +129,7 @@ class CargoFacadeTest extends AbstractContainer {
                                 .stockDtos(List.of(stockDto))
                                 .build();
 
-                        cargoFacade.plusStockCountsWithLock(stockChangeDto);
+                        cargoFacade.plusStockCountsWithLock(idx, stockChangeDto);
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();
@@ -181,7 +181,7 @@ class CargoFacadeTest extends AbstractContainer {
                                 .stockDtos(List.of(stockDto))
                                 .build();
 
-                        cargoFacade.minusStockCountsWithLock(stockChangeDto);
+                        cargoFacade.minusStockCountsWithLock(idx, stockChangeDto);
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();

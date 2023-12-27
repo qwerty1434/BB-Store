@@ -1,23 +1,26 @@
 package kr.bb.store.domain.question.facade;
 
-import kr.bb.store.client.UserClient;
+import kr.bb.store.client.UserFeignClient;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.controller.response.*;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.service.QuestionService;
+import kr.bb.store.exception.NonPropagatingException;
 import kr.bb.store.message.AnswerSQSPublisher;
 import kr.bb.store.message.QuestionSQSPublisher;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class QuestionFacade {
     private final QuestionService questionService;
     private final QuestionSQSPublisher questionSQSPublisher;
     private final AnswerSQSPublisher answerSQSPublisher;
-    private final UserClient userClient;
+    private final UserFeignClient userFeignClient;
 
     public void createQuestion(Long userId, QuestionCreateRequest questionCreateRequest) {
         questionService.createQuestion(userId, questionCreateRequest);
@@ -30,11 +33,17 @@ public class QuestionFacade {
     }
 
     public void createAnswer(Long questionId, String content) {
-        questionService.createAnswer(questionId, content);
         Question question = questionService.getQuestionById(questionId);
+        questionService.createAnswer(question, content);
         Long userId = question.getUserId();
-        String phoneNumber = userClient.getPhoneNumber(userId).getData();
-        answerSQSPublisher.publish(userId, phoneNumber);
+        try{
+            String phoneNumber = userFeignClient.getPhoneNumber(userId).getData();
+            answerSQSPublisher.publish(userId, phoneNumber);
+        }catch (Exception e) {
+            log.error(e.toString());
+            log.warn("{}'s Request of '{}' failed. sqs message may not work properly", "UserFeignClient", "getPhoneNumber");
+            throw new NonPropagatingException(e.getMessage());
+        }
     }
 
     public QuestionsForOwnerPagingResponse getQuestionsForStoreOwner(Long storeId, Boolean isReplied, Pageable pageable) {

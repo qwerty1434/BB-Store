@@ -49,7 +49,7 @@ class AnswerCreatorTest {
         String content = "답변글";
 
         // when
-        Answer answer = answerCreator.create(question.getId(),content);
+        Answer answer = answerCreator.create(question,content);
         answerRepository.save(answer);
 
         // then
@@ -75,7 +75,7 @@ class AnswerCreatorTest {
         String content = "답변글";
 
         // when
-        Answer answer = answerCreator.create(q5.getId(),content);
+        Answer answer = answerCreator.create(q5,content);
         answerRepository.save(answer);
 
         // then

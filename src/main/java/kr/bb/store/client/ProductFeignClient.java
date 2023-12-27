@@ -1,6 +1,7 @@
 package kr.bb.store.client;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.product.StoreSubscriptionProductId;
 import bloomingblooms.response.CommonResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -36,14 +37,14 @@ public interface ProductFeignClient {
             fallbackMethod = "getSubscriptionProductIdFallback"
     )
     @GetMapping("client/store")
-    CommonResponse<String> getSubscriptionProductId(@RequestParam(name="store-id") Long storeId);
+    CommonResponse<StoreSubscriptionProductId> getSubscriptionProductId(@RequestParam(name="store-id") Long storeId);
 
-    default CommonResponse<String> getSubscriptionProductIdFallback(Exception e) {
+    default CommonResponse<StoreSubscriptionProductId> getSubscriptionProductIdFallback(Exception e) {
         log.error(e.toString());
         log.warn("{}'s Request of '{}' failed. request will return fallback data",
                 "ProductFeignClient", "getSubscriptionProductIdFallback");
-        return CommonResponse.<String>builder()
-                .data("")
+        return CommonResponse.<StoreSubscriptionProductId>builder()
+                .data(null)
                 .message("data from circuit")
                 .build();
     }
