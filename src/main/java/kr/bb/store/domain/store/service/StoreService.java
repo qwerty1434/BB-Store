@@ -20,6 +20,7 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.exception.DeliveryInconsistencyException;
 import kr.bb.store.domain.store.handler.*;
+import kr.bb.store.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +61,14 @@ public class StoreService {
         Sido sido = sidoReader.readSidoByName(storeInfoEditRequest.getSido());
         Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeInfoEditRequest.getGugun());
         storeManager.edit(store, storeAddress, deliveryPolicy, sido, gugun, storeInfoEditRequest);
+    }
+
+    @Transactional
+    public void updateAverageRating(Map<Long, Double> averageRatings) {
+        averageRatings.forEach((storeId, averageRating) -> {
+            Store store = storeReader.read(storeId);
+            store.updateAverageRating(averageRating);
+        });
     }
 
     public StoreDetailInfoResponse getStoreDetailInfo(Long storeId) {
@@ -160,4 +169,5 @@ public class StoreService {
                 .map(GugunDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
 }

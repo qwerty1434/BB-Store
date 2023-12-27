@@ -20,6 +20,7 @@ import kr.bb.store.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,6 +36,10 @@ public class StoreFacade {
     private final StoreLikeFeignClient storeLikeFeignClient;
     private final StoreSubscriptionFeignClient storeSubscriptionFeignClient;
 
+    @KafkaListener(topics = "store-average-rating-update", groupId = "average-rating")
+    public void updateAverageRating(Map<Long,Double> averageRatings) {
+        storeService.updateAverageRating(averageRatings);
+    }
 
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
         List<FlowerDto> flowers = productFeignClient.getFlowers().getData();

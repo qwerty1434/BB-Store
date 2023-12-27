@@ -35,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -442,6 +444,31 @@ class StoreServiceTest {
         assertThatThrownBy(() -> storeService.validateDeliveryPrice(List.of(validatePriceDto)))
                 .isInstanceOf(DeliveryInconsistencyException.class)
                 .hasMessage("해당 요청은 실제 배송 정보와 일치하지 않습니다.");
+
+    }
+
+    @DisplayName("가게의 평균평점을 업데이트한다")
+    @Test
+    void updateAverageRating() {
+        // given
+        Store s1 = createStoreEntity();
+        Store s2 = createStoreEntity();
+        Store s3 = createStoreEntity();
+
+        storeRepository.saveAll(List.of(s1, s2, s3));
+
+        Map<Long, Double> averageRatings = Map.of(s1.getId(), 5D, s2.getId(), 4.2D, s3.getId(), 4.8D);
+
+        // when
+        storeService.updateAverageRating(averageRatings);
+        em.flush();
+        em.clear();
+
+        List<Store> result = storeRepository.findAll();
+
+        // then
+        assertThat(result).extracting("averageRating")
+                .containsExactlyInAnyOrder(5D,4.2D,4.8D);
 
     }
 

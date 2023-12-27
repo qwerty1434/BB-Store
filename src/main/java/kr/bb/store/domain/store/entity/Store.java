@@ -68,4 +68,8 @@ public class Store extends BaseEntity {
         this.accountNumber = accountNumber;
         this.bank = bank;
     }
+
+    public void updateAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
 }
