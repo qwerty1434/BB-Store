@@ -43,6 +43,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                 .where(
                         store.isDeleted.isFalse()
                 )
+                .orderBy(store.averageRating.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetch();
