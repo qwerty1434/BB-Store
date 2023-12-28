@@ -36,10 +36,11 @@ public interface ProductFeignClient {
             name = "getSubscriptionProductId",
             fallbackMethod = "getSubscriptionProductIdFallback"
     )
-    @GetMapping("client/store")
+    @GetMapping("/client/store")
     CommonResponse<StoreSubscriptionProductId> getSubscriptionProductId(@RequestParam(name="store-id") Long storeId);
 
     default CommonResponse<StoreSubscriptionProductId> getSubscriptionProductIdFallback(Exception e) {
+        // TODO : fallback제거 - 단순 프론트테스트 편의를 높이기 위해 작성해둔 코드
         log.error(e.toString());
         log.warn("{}'s Request of '{}' failed. request will return fallback data",
                 "ProductFeignClient", "getSubscriptionProductIdFallback");

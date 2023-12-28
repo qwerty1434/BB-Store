@@ -73,7 +73,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.4.RELEASE'
     implementation 'software.amazon.awssdk:sns:2.21.37'
 
-    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '202312270111'
+    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '202312280417'
 }
 
 dependencyManagement {

@@ -5,6 +5,8 @@ import kr.bb.store.domain.cargo.facade.CargoFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
@@ -12,12 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class CargoFeignController {
     private final CargoFacade cargoFacade;
     @PutMapping("/add")
-    public void addStock(@RequestHeader(value = "userId") Long userId, @RequestBody StockChangeDto stockChangeDto) {
-        cargoFacade.plusStockCountsWithLock(userId, stockChangeDto);
+    public void addStock(@RequestHeader(value = "userId") Long userId, @RequestBody List<StockChangeDto> stockChangeDtos) {
+        cargoFacade.plusStocksWithLock(userId, stockChangeDtos);
     }
 
-    @PutMapping("/substract")
-    public void subtractStock(@RequestHeader(value = "userId") Long userId, @RequestBody StockChangeDto stockChangeDto) {
-        cargoFacade.minusStockCountsWithLock(userId, stockChangeDto);
+    @PutMapping("/subtract")
+    public void subtractStock(@RequestHeader(value = "userId") Long userId, @RequestBody List<StockChangeDto> stockChangeDtos) {
+        cargoFacade.minusStocksWithLock(userId, stockChangeDtos);
     }
 }

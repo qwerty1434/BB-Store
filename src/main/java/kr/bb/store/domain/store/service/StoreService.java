@@ -6,6 +6,7 @@ import bloomingblooms.domain.store.StorePolicy;
 import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.cargo.service.CargoService;
+import kr.bb.store.domain.store.controller.request.SortType;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -60,6 +61,22 @@ public class StoreService {
         Sido sido = sidoReader.readSidoByName(storeInfoEditRequest.getSido());
         Gugun gugun = gugunReader.readGugunCorrespondingSido(sido, storeInfoEditRequest.getGugun());
         storeManager.edit(store, storeAddress, deliveryPolicy, sido, gugun, storeInfoEditRequest);
+    }
+
+    @Transactional
+    public void updateAverageRating(Map<Long, Double> averageRatings) {
+        averageRatings.forEach((storeId, averageRating) -> {
+            Store store = storeReader.read(storeId);
+            store.updateAverageRating(averageRating);
+        });
+    }
+
+    @Transactional
+    public void updateMonthlySalesRevenue(Map<Long, Long> monthlySalesRevenues) {
+        monthlySalesRevenues.forEach((storeId, monthlySalesRevenue) -> {
+            Store store = storeReader.read(storeId);
+            store.updateMonthlySalesRevenue(monthlySalesRevenue);
+        });
     }
 
     public StoreDetailInfoResponse getStoreDetailInfo(Long storeId) {
@@ -147,17 +164,34 @@ public class StoreService {
         ));
     }
 
-    public List<SidoDto> getSido() {
+    public Page<Store> getStoresForAdmin(Pageable pageable, SortType sort, String sidoCode, String gugunCode) {
+        Sido sido = sidoReader.readSido(sidoCode);
+        Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
+        sort = (sort == null) ? SortType.DATE : sort;
+
+        switch (sort) {
+            case RATE:
+                return storeReader.readStoresOrderByAverageRating(pageable, sido, gugun);
+            case AMOUNT:
+                return storeReader.readStoresOrderByMonthlySalesRevenue(pageable, sido, gugun);
+            default:
+                return storeReader.readStoresOrderByCreatedAt(pageable, sido, gugun);
+        }
+    }
+
+
+    public List<SidoDto> getAllSido() {
         return sidoReader.readAll()
                 .stream()
                 .map(SidoDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<GugunDto> getGugun(String sidoCode) {
+    public List<GugunDto> getGuguns(String sidoCode) {
         return gugunReader.readGuguns(sidoCode)
                 .stream()
                 .map(GugunDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
 }

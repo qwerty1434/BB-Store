@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -46,6 +47,9 @@ public class Store extends BaseEntity {
     @NotNull
     private String bank;
 
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long monthlySalesRevenue;
+
     @Builder
     public Store(Long storeManagerId, String storeCode, String storeName, String detailInfo,
                  String storeThumbnailImage, String phoneNumber, String accountNumber, String bank) {
@@ -67,5 +71,13 @@ public class Store extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.accountNumber = accountNumber;
         this.bank = bank;
+    }
+
+    public void updateAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public void updateMonthlySalesRevenue(Long monthlySalesRevenue) {
+        this.monthlySalesRevenue = monthlySalesRevenue;
     }
 }
