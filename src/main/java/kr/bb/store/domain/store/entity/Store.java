@@ -76,4 +76,8 @@ public class Store extends BaseEntity {
     public void updateAverageRating(Double averageRating) {
         this.averageRating = averageRating;
     }
+
+    public void updateMonthlySalesRevenue(Long monthlySalesRevenue) {
+        this.monthlySalesRevenue = monthlySalesRevenue;
+    }
 }

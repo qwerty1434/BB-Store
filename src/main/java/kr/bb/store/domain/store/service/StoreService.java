@@ -71,6 +71,14 @@ public class StoreService {
         });
     }
 
+    @Transactional
+    public void updateMonthlySalesRevenue(Map<Long, Long> monthlySalesRevenues) {
+        monthlySalesRevenues.forEach((storeId, monthlySalesRevenue) -> {
+            Store store = storeReader.read(storeId);
+            store.updateMonthlySalesRevenue(monthlySalesRevenue);
+        });
+    }
+
     public StoreDetailInfoResponse getStoreDetailInfo(Long storeId) {
         return storeReader.readDetailInfo(storeId);
     }

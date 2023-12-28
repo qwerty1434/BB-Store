@@ -475,6 +475,32 @@ class StoreServiceTest {
                 .containsExactlyInAnyOrder(5D,4.2D,4.8D);
 
     }
+    @DisplayName("가게의 월 매출액을 업데이트한다")
+    @Test
+    void updateMonthlySalesRevenue() {
+        // given
+        Store s1 = createStoreEntity();
+        Store s2 = createStoreEntity();
+        Store s3 = createStoreEntity();
+
+        storeRepository.saveAll(List.of(s1, s2, s3));
+        em.flush();
+        em.clear();
+
+        Map<Long, Long> monthlySalesRevenues = Map.of(s1.getId(), 100_000L, s2.getId(), 200_000L, s3.getId(), 300_000L);
+
+        // when
+        storeService.updateMonthlySalesRevenue(monthlySalesRevenues);
+        em.flush();
+        em.clear();
+
+        List<Store> result = storeRepository.findAll();
+
+        // then
+        assertThat(result).extracting("monthlySalesRevenue")
+                .containsExactlyInAnyOrder(100_000L,200_000L,300_000L);
+
+    }
 
     @DisplayName("관리자의 가게 조회 시 gugun은 선택하지 않을 수 있다")
     @Test

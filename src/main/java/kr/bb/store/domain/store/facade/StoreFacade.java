@@ -45,6 +45,11 @@ public class StoreFacade {
         storeService.updateAverageRating(averageRatings);
     }
 
+    @KafkaListener(topics = "settlement", groupId = "settlement")
+    public void updateMonthlySalesRevenue(Map<Long,Long> monthlySalesRevenues) {
+        storeService.updateMonthlySalesRevenue(monthlySalesRevenues);
+    }
+
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
         List<FlowerDto> flowers = productFeignClient.getFlowers().getData();
         return storeService.createStore(userId, storeCreateRequest, flowers);
