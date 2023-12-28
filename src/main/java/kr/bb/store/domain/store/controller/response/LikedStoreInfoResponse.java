@@ -14,6 +14,7 @@ public class LikedStoreInfoResponse {
     private Long storeId;
     private String storeName;
     private String detailInfo;
+    private String storeThumbnail;
     private Float averageRating;
 
     public static LikedStoreInfoResponse fromEntity(Store store) {
@@ -21,6 +22,7 @@ public class LikedStoreInfoResponse {
                 .storeId(store.getId())
                 .storeName(store.getStoreName())
                 .detailInfo(store.getDetailInfo())
+                .storeThumbnail(store.getStoreThumbnailImage())
                 .averageRating(store.getAverageRating().floatValue())
                 .build();
     }
@@ -30,6 +32,7 @@ public class LikedStoreInfoResponse {
                 .storeId(storeId)
                 .storeName(storeName)
                 .detailInfo(detailInfo)
+                .storeThumbnail(storeThumbnail)
                 .averageRating(averageRating)
                 .build();
     }
