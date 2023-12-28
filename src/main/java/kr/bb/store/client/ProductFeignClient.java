@@ -36,7 +36,7 @@ public interface ProductFeignClient {
             name = "getSubscriptionProductId",
             fallbackMethod = "getSubscriptionProductIdFallback"
     )
-    @GetMapping("client/store")
+    @GetMapping("/client/store")
     CommonResponse<StoreSubscriptionProductId> getSubscriptionProductId(@RequestParam(name="store-id") Long storeId);
 
     default CommonResponse<StoreSubscriptionProductId> getSubscriptionProductIdFallback(Exception e) {

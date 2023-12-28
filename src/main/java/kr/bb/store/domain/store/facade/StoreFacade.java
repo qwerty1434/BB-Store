@@ -2,6 +2,7 @@ package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
+import bloomingblooms.domain.product.StoreSubscriptionProductId;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
