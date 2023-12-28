@@ -1,6 +1,7 @@
 package kr.bb.store.domain.cargo.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
+import bloomingblooms.domain.flower.StockChangeDto;
 import bloomingblooms.domain.flower.StockDto;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.domain.AbstractContainer;
@@ -100,8 +101,13 @@ class CargoServiceTest extends AbstractContainer {
                 .flowerId(flowerCargoId.getFlowerId())
                 .stock(10L)
                 .build();
+        StockChangeDto stockChangeDto = StockChangeDto.builder()
+                .stockDtos(List.of(stockDto))
+                .phoneNumber("010-1111-2222")
+                .storeId(store.getId())
+                .build();
         // when
-        cargoService.plusStockCounts(store.getId(), List.of(stockDto));
+        cargoService.plusStockCounts(List.of(stockChangeDto));
 
         em.flush();
         em.clear();
@@ -127,9 +133,14 @@ class CargoServiceTest extends AbstractContainer {
                 .flowerId(flowerCargoId.getFlowerId())
                 .stock(10L)
                 .build();
+        StockChangeDto stockChangeDto = StockChangeDto.builder()
+                .stockDtos(List.of(stockDto))
+                .phoneNumber("010-1111-2222")
+                .storeId(store.getId())
+                .build();
 
         // when
-        cargoService.minusStockCounts(store.getId(), List.of(stockDto));
+        cargoService.minusStockCounts(List.of(stockChangeDto));
 
         em.flush();
         em.clear();
@@ -155,9 +166,14 @@ class CargoServiceTest extends AbstractContainer {
                 .flowerId(flowerCargoId.getFlowerId())
                 .stock(-10000L)
                 .build();
+        StockChangeDto stockChangeDto = StockChangeDto.builder()
+                .stockDtos(List.of(stockDto))
+                .phoneNumber("010-1111-2222")
+                .storeId(store.getId())
+                .build();
 
         // when // then
-        assertThatThrownBy(() -> cargoService.plusStockCounts(store.getId(), List.of(stockDto)))
+        assertThatThrownBy(() -> cargoService.plusStockCounts(List.of(stockChangeDto)))
                 .isInstanceOf(StockCannotBeNegativeException.class)
                 .hasMessage("재고는 음수가 될 수 없습니다.");
 

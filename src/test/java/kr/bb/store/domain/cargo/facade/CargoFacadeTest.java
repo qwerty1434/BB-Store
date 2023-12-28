@@ -129,7 +129,7 @@ class CargoFacadeTest extends AbstractContainer {
                                 .stockDtos(List.of(stockDto))
                                 .build();
 
-                        cargoFacade.plusStockCountsWithLock(idx, stockChangeDto);
+                        cargoFacade.plusStocksWithLock(idx, List.of(stockChangeDto));
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();
@@ -152,15 +152,18 @@ class CargoFacadeTest extends AbstractContainer {
         final int concurrentRequestCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(concurrentRequestCount);
-        final Long flowerId = 1L;
+        final Long flowerId1 = 1L;
+        final Long flowerId2 = 2L;
 
         Future<Long> storeCreate = executorService.submit(() -> {
             TransactionStatus status = txManager.getTransaction(new DefaultTransactionAttribute());
             Store store = createStore();
             storeRepository.save(store);
-            FlowerCargoId flowerCargoId = createFlowerCargoId(store.getId(), flowerId);
-            FlowerCargo flowerCargo = createFlowerCargo(flowerCargoId, 100L, "장미", store);
-            flowerCargoRepository.save(flowerCargo);
+            FlowerCargoId flowerCargoId1 = createFlowerCargoId(store.getId(), flowerId1);
+            FlowerCargo flowerCargo1 = createFlowerCargo(flowerCargoId1, 100L, "장미", store);
+            FlowerCargoId flowerCargoId2 = createFlowerCargoId(store.getId(), flowerId2);
+            FlowerCargo flowerCargo2 = createFlowerCargo(flowerCargoId2, 100L, "해바라기", store);
+            flowerCargoRepository.saveAll(List.of(flowerCargo1, flowerCargo2));
             txManager.commit(status);
             return store.getId();
         });
@@ -171,17 +174,21 @@ class CargoFacadeTest extends AbstractContainer {
         LongStream.rangeClosed(1L, concurrentRequestCount)
                 .forEach( idx -> executorService.submit(() -> {
                     try {
-                        StockDto stockDto = StockDto.builder()
-                                .flowerId(flowerId)
+                        StockDto stockDto1 = StockDto.builder()
+                                .flowerId(flowerId1)
+                                .stock(1L)
+                                .build();
+                        StockDto stockDto2 = StockDto.builder()
+                                .flowerId(flowerId2)
                                 .stock(1L)
                                 .build();
                         StockChangeDto stockChangeDto = StockChangeDto
                                 .builder()
                                 .storeId(storeId)
-                                .stockDtos(List.of(stockDto))
+                                .stockDtos(List.of(stockDto1,stockDto2))
                                 .build();
 
-                        cargoFacade.minusStockCountsWithLock(idx, stockChangeDto);
+                        cargoFacade.minusStocksWithLock(idx, List.of(stockChangeDto));
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();
@@ -189,12 +196,15 @@ class CargoFacadeTest extends AbstractContainer {
                 }));
 
         latch.await();
-        FlowerCargoId flowerCargoId = createFlowerCargoId(storeId, flowerId);
-        FlowerCargo result = flowerCargoRepository.findById(flowerCargoId).get();
+        FlowerCargoId flowerCargoId1 = createFlowerCargoId(storeId, flowerId1);
+        FlowerCargo result1 = flowerCargoRepository.findById(flowerCargoId1).get();
+
+        FlowerCargoId flowerCargoId2 = createFlowerCargoId(storeId, flowerId2);
+        FlowerCargo result2 = flowerCargoRepository.findById(flowerCargoId2).get();
 
         // then
-        assertThat(result.getStock()).isEqualTo(0);
-
+        assertThat(result1.getStock()).isEqualTo(0);
+        assertThat(result2.getStock()).isEqualTo(0);
     }
 
     private FlowerCargo createFlowerCargo(FlowerCargoId flowerCargoId, Long stock, String name, Store store) {

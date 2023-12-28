@@ -2,10 +2,8 @@ package kr.bb.store.domain.cargo.facade;
 
 import bloomingblooms.domain.flower.StockChangeDto;
 import bloomingblooms.domain.notification.NotificationKind;
-import kr.bb.store.client.UserFeignClient;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
-import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.exception.LockInterruptedException;
 import kr.bb.store.domain.cargo.exception.StockChangeFailedException;
 import kr.bb.store.domain.cargo.service.CargoService;
@@ -17,6 +15,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -26,12 +25,11 @@ public class CargoFacade {
     private final RedissonClient redissonClient;
     private final OutOfStockSQSPublisher outOfStockSQSPublisher;
     private final OrderStatusSQSPublisher orderStatusSQSPublisher;
-    private final UserFeignClient userFeignClient;
-    private static final Long STOCK_ALERT_COUNT = 50L;
 
     public void modifyAllStocksWithLock(Long storeId, List<StockModifyDto> stockModifyDtos) {
         RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
         try {
+            // TODO : waitTime, leaseTime 외부 환경변수로 빼기
             boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
             if(!available) {
                 throw new StockChangeFailedException();
@@ -48,59 +46,29 @@ public class CargoFacade {
         }
     }
 
-    public void plusStockCountsWithLock(Long userId, StockChangeDto stockChangeDto) {
-        Long storeId = stockChangeDto.getStoreId();
-        RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
+    public void plusStocksWithLock(Long userId, List<StockChangeDto> stockChangeDtos) {
         try {
-            boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
-            if(!available) {
-                throw new StockChangeFailedException();
-            }
-
-            Long minStockCount = cargoService.plusStockCounts(storeId, stockChangeDto.getStockDtos());
-            if(isInsufficientCondition(minStockCount)) {
+            Set<Long> sufficientStores = cargoService.plusStockCounts(stockChangeDtos);
+            for (Long storeId : sufficientStores) {
                 outOfStockSQSPublisher.publish(storeId);
             }
-
-        } catch (InterruptedException e){
-            throw new LockInterruptedException();
         } catch (Exception e) {
-            // TODO : 여기서 feign요청하는게 아니라 넘겨주는 데이터에서 phoneNumber 받기
-            String phoneNumber = userFeignClient.getPhoneNumber(userId).getData();
+            String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
-        } finally {
-            if(lock.isLocked() && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
         }
     }
 
-    public void minusStockCountsWithLock(Long userId, StockChangeDto stockChangeDto) {
-        Long storeId = stockChangeDto.getStoreId();
-        RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
+    public void minusStocksWithLock(Long userId, List<StockChangeDto> stockChangeDtos) {
         try {
-            boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
-            if(!available) {
-                throw new StockChangeFailedException();
-            }
-
-            Long minStockCount = cargoService.minusStockCounts(storeId, stockChangeDto.getStockDtos());
-            if(isInsufficientCondition(minStockCount)) {
+            Set<Long> sufficientStores = cargoService.minusStockCounts(stockChangeDtos);
+            for (Long storeId : sufficientStores) {
                 outOfStockSQSPublisher.publish(storeId);
             }
-
-        } catch (InterruptedException e){
-            throw new LockInterruptedException();
         } catch (Exception e) {
-            // TODO : 여기서 feign요청하는게 아니라 넘겨주는 데이터에서 phoneNumber 받기
-            String phoneNumber = userFeignClient.getPhoneNumber(userId).getData();
+            String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
-        } finally {
-            if(lock.isLocked() && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
         }
     }
 
@@ -108,22 +76,8 @@ public class CargoFacade {
         return cargoService.getAllStocks(storeId);
     }
 
-    private FlowerCargoId makeId(Long storeId, Long flowerId) {
-        return FlowerCargoId.builder()
-                .storeId(storeId)
-                .flowerId(flowerId)
-                .build();
-    }
-
-    private String makeRedissonKey(Long storeId, Long flowerId) {
-        return storeId + ":" + flowerId;
-    }
     private String makeRedissonKey(Long storeId) {
         return storeId.toString();
-    }
-
-    private boolean isInsufficientCondition(Long stockCount) {
-        return stockCount < STOCK_ALERT_COUNT;
     }
 
 }
