@@ -10,12 +10,15 @@ import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
 import kr.bb.store.domain.coupon.service.CouponService;
+import kr.bb.store.domain.store.controller.request.SortType;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
 import kr.bb.store.domain.store.dto.GugunDto;
 import kr.bb.store.domain.store.dto.SidoDto;
+import kr.bb.store.domain.store.dto.StoreForAdminDto;
+import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -157,12 +160,23 @@ public class StoreFacade {
         return storeService.getDeliveryPolicies(storeIds);
     }
 
-    public List<SidoDto> getSido() {
-        return storeService.getSido();
+    public StoreForAdminDtoResponse getStoresForAdmin(Pageable pageable, SortType sort, String sidoCode, String gugunCode) {
+        Page<Store> storesForAdmin = storeService.getStoresForAdmin(pageable, sort, sidoCode, gugunCode);
+        List<StoreForAdminDto> data = storesForAdmin.getContent()
+                .stream()
+                .map(StoreForAdminDto::fromEntity)
+                .collect(Collectors.toList());
+
+        return StoreForAdminDtoResponse.of(data, storesForAdmin.getTotalElements());
+
     }
 
-    public List<GugunDto> getGugun(String sidoCode) {
-        return storeService.getGugun(sidoCode);
+    public List<SidoDto> getAllSido() {
+        return storeService.getAllSido();
+    }
+
+    public List<GugunDto> getGuguns(String sidoCode) {
+        return storeService.getGuguns(sidoCode);
     }
 
     private boolean isNotGuest(Long userId) {

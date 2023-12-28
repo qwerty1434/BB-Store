@@ -114,6 +114,18 @@ public class StoreReader {
                 .collect(Collectors.toList());
     }
 
+    public Page<Store> readStoresOrderByCreatedAt(Pageable pageable, Sido sido, Gugun gugun) {
+        return storeRepository.getStoresWithRegionAndPagingOrderByCreatedAt(pageable, sido, gugun);
+    }
+
+    public Page<Store> readStoresOrderByAverageRating(Pageable pageable, Sido sido, Gugun gugun) {
+        return storeRepository.getStoresWithRegionAndPagingOrderByAverageRating(pageable, sido, gugun);
+    }
+
+    public Page<Store> readStoresOrderByMonthlySalesRevenue(Pageable pageable, Sido sido, Gugun gugun) {
+        return storeRepository.getStoresWithReginAndPagingOrderByMonthlySalesRevenue(pageable, sido, gugun);
+    }
+
     public StoreAddress readAddress(Long storeId) {
         return storeAddressRepository.findByStoreId(storeId)
                 .orElseThrow(StoreNotFoundException::new);

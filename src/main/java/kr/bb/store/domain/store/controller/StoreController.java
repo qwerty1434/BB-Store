@@ -2,6 +2,7 @@ package kr.bb.store.domain.store.controller;
 
 
 import bloomingblooms.response.CommonResponse;
+import kr.bb.store.domain.store.controller.request.SortType;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -29,7 +30,7 @@ public class StoreController {
 
     @PutMapping("/{storeId}")
     public void editStoreInfo(@PathVariable Long storeId,
-                                        @Valid @RequestBody StoreInfoEditRequest storeInfoEditRequest) {
+                              @Valid @RequestBody StoreInfoEditRequest storeInfoEditRequest) {
         storeFacade.editStoreInfo(storeId, storeInfoEditRequest);
     }
 
@@ -74,13 +75,19 @@ public class StoreController {
         return CommonResponse.success(storeFacade.getDeliveryPolicy(storeId));
     }
 
+    @GetMapping("/admin")
+    public CommonResponse<StoreForAdminDtoResponse> getStoresForAdmin(Pageable pageable, @RequestParam(required = false) SortType sort,
+            @RequestParam String sido, @RequestParam(required = false, defaultValue = "") String gugun) {
+        return CommonResponse.success(storeFacade.getStoresForAdmin(pageable, sort, sido, gugun));
+    }
+
     @GetMapping("/address/sido")
-    public CommonResponse<List<SidoDto>> getSido() {
-        return CommonResponse.success(storeFacade.getSido());
+    public CommonResponse<List<SidoDto>> getAllSido() {
+        return CommonResponse.success(storeFacade.getAllSido());
     }
 
     @GetMapping("/address/gugun")
     public CommonResponse<List<GugunDto>> getGugun(@RequestParam String sido) {
-        return CommonResponse.success(storeFacade.getGugun(sido));
+        return CommonResponse.success(storeFacade.getGuguns(sido));
     }
 }

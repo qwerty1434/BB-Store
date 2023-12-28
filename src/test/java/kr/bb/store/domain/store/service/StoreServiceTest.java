@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
+import kr.bb.store.domain.store.controller.request.SortType;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -37,6 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -456,6 +458,8 @@ class StoreServiceTest {
         Store s3 = createStoreEntity();
 
         storeRepository.saveAll(List.of(s1, s2, s3));
+        em.flush();
+        em.clear();
 
         Map<Long, Double> averageRatings = Map.of(s1.getId(), 5D, s2.getId(), 4.2D, s3.getId(), 4.8D);
 
@@ -472,6 +476,85 @@ class StoreServiceTest {
 
     }
 
+    @DisplayName("관리자의 가게 조회 시 gugun은 선택하지 않을 수 있다")
+    @Test
+    void getStoresForAdmin1() {
+        // given
+        Sido sido1 = new Sido("1", "서울");
+        Sido sido2 = new Sido("2", "부산");
+        Gugun gugun1 = new Gugun("100",sido1,"강남구");
+        Gugun gugun2 = new Gugun("200",sido1,"종로구");
+        Gugun gugun3 = new Gugun("300",sido2,"해운대구");
+
+        Store s1 = createStoreWithManagerId(1L);
+        Store s2 = createStoreWithManagerId(2L);
+        Store s3 = createStoreWithManagerId(3L);
+        Store s4 = createStoreWithManagerId(4L);
+        Store s5 = createStoreWithManagerId(5L);
+        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
+
+        StoreAddress sa1 = createStoresAddressWithSidoGugun(s1,sido1,gugun1);
+        StoreAddress sa2 = createStoresAddressWithSidoGugun(s2,sido1,gugun2);
+        StoreAddress sa3 = createStoresAddressWithSidoGugun(s3,sido2,gugun3);
+        StoreAddress sa4 = createStoresAddressWithSidoGugun(s4,sido1,gugun1);
+        StoreAddress sa5 = createStoresAddressWithSidoGugun(s5,sido1,gugun1);
+        storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
+
+        Pageable page = PageRequest.of(0,5);
+        SortType sort = SortType.DATE;
+        String sidoCode = sido1.getCode();
+        String gugunCode = "";
+
+        // when
+        List<Store> result = storeService.getStoresForAdmin(page, sort, sidoCode, gugunCode).getContent();
+
+        // then
+        assertThat(result).hasSize(4)
+                .extracting("storeManagerId")
+                .containsExactlyInAnyOrder(5L,4L,2L,1L);
+
+    }
+
+    @DisplayName("관리자의 가게 조회 시 정렬조건을 선택하지 않으면 날짜순으로 정렬된다")
+    @Test
+    void getStoresForAdmin2() {
+        // given
+        Sido sido1 = new Sido("1", "서울");
+        Sido sido2 = new Sido("2", "부산");
+        Gugun gugun1 = new Gugun("100",sido1,"강남구");
+        Gugun gugun2 = new Gugun("200",sido1,"종로구");
+        Gugun gugun3 = new Gugun("300",sido2,"해운대구");
+
+        Store s1 = createStoreWithManagerId(1L);
+        Store s2 = createStoreWithManagerId(2L);
+        Store s3 = createStoreWithManagerId(3L);
+        Store s4 = createStoreWithManagerId(4L);
+        Store s5 = createStoreWithManagerId(5L);
+        storeRepository.saveAll(List.of(s1,s2,s3,s4,s5));
+
+        StoreAddress sa1 = createStoresAddressWithSidoGugun(s1,sido1,gugun1);
+        StoreAddress sa2 = createStoresAddressWithSidoGugun(s2,sido1,gugun2);
+        StoreAddress sa3 = createStoresAddressWithSidoGugun(s3,sido2,gugun3);
+        StoreAddress sa4 = createStoresAddressWithSidoGugun(s4,sido1,gugun1);
+        StoreAddress sa5 = createStoresAddressWithSidoGugun(s5,sido1,gugun1);
+        storeAddressRepository.saveAll(List.of(sa1,sa2,sa3,sa4,sa5));
+
+        Pageable page = PageRequest.of(0,5);
+        SortType sort = null;
+        String sidoCode = sido1.getCode();
+        String gugunCode = gugun1.getCode();
+
+        // when
+        List<Store> result = storeService.getStoresForAdmin(page, sort, sidoCode, gugunCode).getContent();
+
+        // then
+        assertThat(result).hasSize(3);
+        IntStream.range(1, result.size()).forEach(i -> {
+            Store prev = result.get(i-1);
+            Store next = result.get(i);
+            assertThat(prev.getCreatedAt().isAfter(next.getCreatedAt())).isTrue();
+        });
+    }
 
     private Store createStoreWithManagerId(Long userId) {
         return Store.builder()

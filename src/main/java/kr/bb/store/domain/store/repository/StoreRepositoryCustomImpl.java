@@ -7,6 +7,7 @@ import kr.bb.store.domain.store.controller.response.QStoreForMapResponse;
 import kr.bb.store.domain.store.controller.response.QStoreListResponse;
 import kr.bb.store.domain.store.controller.response.StoreForMapResponse;
 import kr.bb.store.domain.store.controller.response.StoreListResponse;
+import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
 import org.springframework.data.domain.Page;
@@ -101,6 +102,90 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                         store.isDeleted.isFalse()
                 )
                 .fetch();
+    }
+
+    @Override
+    public Page<Store> getStoresWithRegionAndPagingOrderByCreatedAt(Pageable pageable, Sido sido, Gugun gugun) {
+        List<Store> contents = queryFactory.select(store)
+                .from(storeAddress)
+                .leftJoin(storeAddress.store, store)
+                .where(
+                        storeAddress.sido.eq(sido),
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null,
+                        store.isDeleted.isFalse()
+                )
+                .orderBy(store.createdAt.desc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .fetch();
+
+        Long count = queryFactory
+                .select(store.id.count())
+                .from(storeAddress)
+                .leftJoin(storeAddress.store, store)
+                .where(
+                        storeAddress.sido.eq(sido),
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null,
+                        store.isDeleted.isFalse()
+                )
+                .fetchOne();
+        return new PageImpl<>(contents,pageable,count);
+    }
+
+    @Override
+    public Page<Store> getStoresWithRegionAndPagingOrderByAverageRating(Pageable pageable, Sido sido, Gugun gugun) {
+        List<Store> contents = queryFactory.select(store)
+                .from(storeAddress)
+                .leftJoin(storeAddress.store, store)
+                .where(
+                        storeAddress.sido.eq(sido),
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null,
+                        store.isDeleted.isFalse()
+                )
+                .orderBy(store.averageRating.desc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .fetch();
+
+        Long count = queryFactory
+                .select(store.id.count())
+                .from(storeAddress)
+                .leftJoin(storeAddress.store, store)
+                .where(
+                        storeAddress.sido.eq(sido),
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null,
+                        store.isDeleted.isFalse()
+                )
+                .fetchOne();
+        return new PageImpl<>(contents,pageable,count);
+    }
+
+    @Override
+    public Page<Store> getStoresWithReginAndPagingOrderByMonthlySalesRevenue(Pageable pageable, Sido sido, Gugun gugun) {
+        List<Store> contents = queryFactory.select(store)
+                .from(storeAddress)
+                .leftJoin(storeAddress.store, store)
+                .where(
+                        storeAddress.sido.eq(sido),
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null,
+                        store.isDeleted.isFalse()
+                )
+                .orderBy(store.monthlySalesRevenue.desc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .fetch();
+
+        Long count = queryFactory
+                .select(store.id.count())
+                .from(storeAddress)
+                .leftJoin(storeAddress.store, store)
+                .where(
+                        storeAddress.sido.eq(sido),
+                        gugun != null ? storeAddress.gugun.eq(gugun) : null,
+                        store.isDeleted.isFalse()
+                )
+                .fetchOne();
+        return new PageImpl<>(contents,pageable,count);
     }
 
     private OrderSpecifier<Double> nearbyStoreOrderer(double centerLat, double centerLon) {

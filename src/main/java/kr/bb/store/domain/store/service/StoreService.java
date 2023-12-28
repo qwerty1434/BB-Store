@@ -6,6 +6,7 @@ import bloomingblooms.domain.store.StorePolicy;
 import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.cargo.service.CargoService;
+import kr.bb.store.domain.store.controller.request.SortType;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
@@ -20,7 +21,6 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.exception.DeliveryInconsistencyException;
 import kr.bb.store.domain.store.handler.*;
-import kr.bb.store.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -156,14 +156,30 @@ public class StoreService {
         ));
     }
 
-    public List<SidoDto> getSido() {
+    public Page<Store> getStoresForAdmin(Pageable pageable, SortType sort, String sidoCode, String gugunCode) {
+        Sido sido = sidoReader.readSido(sidoCode);
+        Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
+        sort = (sort == null) ? SortType.DATE : sort;
+
+        switch (sort) {
+            case RATE:
+                return storeReader.readStoresOrderByAverageRating(pageable, sido, gugun);
+            case AMOUNT:
+                return storeReader.readStoresOrderByMonthlySalesRevenue(pageable, sido, gugun);
+            default:
+                return storeReader.readStoresOrderByCreatedAt(pageable, sido, gugun);
+        }
+    }
+
+
+    public List<SidoDto> getAllSido() {
         return sidoReader.readAll()
                 .stream()
                 .map(SidoDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    public List<GugunDto> getGugun(String sidoCode) {
+    public List<GugunDto> getGuguns(String sidoCode) {
         return gugunReader.readGuguns(sidoCode)
                 .stream()
                 .map(GugunDto::fromEntity)
