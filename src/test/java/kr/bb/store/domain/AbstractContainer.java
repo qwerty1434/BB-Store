@@ -1,5 +1,6 @@
 package kr.bb.store.domain;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
@@ -11,6 +12,7 @@ public abstract class AbstractContainer {
     static {
         REDIS_CONTAINER = new GenericContainer<>(REDIS_IMAGE)
                 .withExposedPorts(6379)
+                .withCommand("--requirepass", "password")
                 .withReuse(true);
         REDIS_CONTAINER.start();
     }
@@ -19,5 +21,6 @@ public abstract class AbstractContainer {
     public static void overrideProps(DynamicPropertyRegistry registry){
         registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
         registry.add("spring.data.redis.port", () -> ""+REDIS_CONTAINER.getMappedPort(6379));
+        registry.add("spring.data.redis.password", () -> "password");
     }
 }
