@@ -24,6 +24,7 @@ public class QuestionFacade {
 
     public void createQuestion(Long userId, QuestionCreateRequest questionCreateRequest) {
         questionService.createQuestion(userId, questionCreateRequest);
+        log.info("question from user {} created successfully", userId);
         Long storeId = questionCreateRequest.getStoreId();
         questionSQSPublisher.publish(storeId);
     }
@@ -35,6 +36,7 @@ public class QuestionFacade {
     public void createAnswer(Long questionId, String content) {
         Question question = questionService.getQuestionById(questionId);
         questionService.createAnswer(question, content);
+        log.info("answer to question {} created successfully", questionId);
         Long userId = question.getUserId();
         try{
             String phoneNumber = userFeignClient.getPhoneNumber(userId).getData();

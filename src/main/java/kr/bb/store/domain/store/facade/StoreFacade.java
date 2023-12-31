@@ -2,7 +2,6 @@ package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
-import bloomingblooms.domain.product.StoreSubscriptionProductId;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
@@ -22,6 +21,7 @@ import kr.bb.store.domain.store.dto.StoreForAdminDto;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StoreFacade {
@@ -43,11 +44,13 @@ public class StoreFacade {
     @KafkaListener(topics = "store-average-rating-update", groupId = "average-rating")
     public void updateAverageRating(Map<Long,Double> averageRatings) {
         storeService.updateAverageRating(averageRatings);
+        log.info("stores averageRating updated");
     }
 
     @KafkaListener(topics = "settlement", groupId = "settlement")
     public void updateMonthlySalesRevenue(Map<Long,Long> monthlySalesRevenues) {
         storeService.updateMonthlySalesRevenue(monthlySalesRevenues);
+        log.info("stores monthlySalesRevenue updated");
     }
 
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
@@ -57,6 +60,7 @@ public class StoreFacade {
 
     public void editStoreInfo(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
         storeService.editStoreInfo(storeId, storeInfoEditRequest);
+        log.info("info of store {} edited", storeId);
     }
 
     public SimpleStorePagingResponse getStoresWithLikes(Long userId, Pageable pageable) {

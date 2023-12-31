@@ -10,9 +10,11 @@ import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class QuestionSQSPublisher {
@@ -35,6 +37,7 @@ public class QuestionSQSPublisher {
                     queueUrl, objectMapper.writeValueAsString(questionRegisterNotificationData)
             );
             sqs.sendMessage(sendMessageRequest);
+            log.info("question sqs published to store {}. message kind is : {}", storeId, NotificationKind.QUESTION);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
