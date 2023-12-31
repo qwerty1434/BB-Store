@@ -12,7 +12,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 
 @Configuration
-public class AWSConfiguration {
+public class AWSConfig {
     @Value("${cloud.aws.credentials.ACCESS_KEY_ID}")
     private String accessKeyId;
 
