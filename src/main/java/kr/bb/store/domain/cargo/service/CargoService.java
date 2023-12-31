@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static kr.bb.store.util.RedisUtils.makeRedissonKey;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -158,9 +160,6 @@ public class CargoService {
                 .build();
     }
 
-    private String makeRedissonKey(Long storeId, Long flowerId) {
-        return  storeId + ":" + flowerId;
-    }
 
     private boolean isOutOfStock(long afterChangeCount) {
         return afterChangeCount < EMPTY_COUNT;

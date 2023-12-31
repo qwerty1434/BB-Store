@@ -3,7 +3,7 @@ package kr.bb.store.domain.coupon.facade;
 import bloomingblooms.domain.notification.NotificationKind;
 import bloomingblooms.domain.order.ProcessOrderDto;
 import kr.bb.store.domain.coupon.service.CouponService;
-import kr.bb.store.domain.coupon.util.KafkaProcessor;
+import kr.bb.store.util.KafkaProcessor;
 import kr.bb.store.message.OrderStatusSQSPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;

@@ -1,4 +1,4 @@
-package kr.bb.store.domain.coupon.util;
+package kr.bb.store.util;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
