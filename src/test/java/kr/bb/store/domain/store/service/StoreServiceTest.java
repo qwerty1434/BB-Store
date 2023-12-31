@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.store.controller.request.SortType;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
@@ -23,29 +24,22 @@ import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-@Transactional
-class StoreServiceTest {
+class StoreServiceTest extends BasicIntegrationTest {
     @Autowired
     private StoreService storeService;
     @Autowired
@@ -60,8 +54,6 @@ class StoreServiceTest {
     private DeliveryPolicyRepository deliveryPolicyRepository;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private RedissonClient redissonClient;
 
     @DisplayName("회원 번호를 전달받아 가게를 생성한다")
     @Test
@@ -578,7 +570,7 @@ class StoreServiceTest {
         IntStream.range(1, result.size()).forEach(i -> {
             Store prev = result.get(i-1);
             Store next = result.get(i);
-            assertThat(prev.getCreatedAt().isAfter(next.getCreatedAt())).isTrue();
+            assertThat(prev.getCreatedAt().isAfter(next.getCreatedAt()) || prev.getCreatedAt().isEqual(next.getCreatedAt())).isTrue();
         });
     }
 

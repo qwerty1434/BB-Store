@@ -1,6 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
-import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.entity.IssuedCouponId;
@@ -11,18 +11,12 @@ import kr.bb.store.domain.store.repository.StoreRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@SpringBootTest
-@Transactional
-class IssuedCouponReaderTest {
+class IssuedCouponReaderTest extends BasicIntegrationTest {
     @Autowired
     private IssuedCouponReader issuedCouponReader;
     @Autowired
@@ -31,11 +25,6 @@ class IssuedCouponReaderTest {
     private CouponRepository couponRepository;
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
-
 
     @DisplayName("유저Id와 쿠폰Id로 해당 유저의 쿠폰 발급 여부를 조사한다")
     @Test

@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.Position;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
@@ -17,14 +17,10 @@ import kr.bb.store.domain.store.repository.StoreRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -32,9 +28,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
-@SpringBootTest
-@Transactional
-class StoreReaderTest {
+class StoreReaderTest extends BasicIntegrationTest {
     @Autowired
     private StoreReader storeReader;
     @Autowired
@@ -49,10 +43,6 @@ class StoreReaderTest {
     private GugunRepository gugunRepository;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
 
 
     @DisplayName("가게 아이디를 입력받아 가게에 대한 상세정보를 반환한다")

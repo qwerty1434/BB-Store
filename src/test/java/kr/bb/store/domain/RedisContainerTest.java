@@ -1,11 +1,10 @@
 package kr.bb.store.domain;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 
-public abstract class AbstractContainer {
+public class RedisContainerTest {
     static final String REDIS_IMAGE = "redis:6-alpine";
     static final GenericContainer REDIS_CONTAINER;
 

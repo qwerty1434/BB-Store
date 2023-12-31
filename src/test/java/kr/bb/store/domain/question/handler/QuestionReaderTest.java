@@ -1,6 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
-import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
@@ -13,22 +13,17 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
-class QuestionReaderTest {
+
+class QuestionReaderTest extends BasicIntegrationTest {
     @Autowired
     private QuestionReader questionReader;
     @Autowired
@@ -39,10 +34,6 @@ class QuestionReaderTest {
     private StoreRepository storeRepository;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
 
 
     @DisplayName("질문 Id를 바탕으로 질문 상세정보를 받아온다")
