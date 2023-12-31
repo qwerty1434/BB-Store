@@ -3,7 +3,6 @@ package kr.bb.store.domain.cargo.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.flower.StockChangeDto;
-import bloomingblooms.domain.flower.StockDto;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockInfoDto;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
@@ -22,9 +21,13 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static kr.bb.store.util.RedisUtils.makeRedissonKey;
 
 @Slf4j
 @Service
@@ -50,24 +53,27 @@ public class CargoService {
         return stockChangeDtos.stream()
                 .flatMap(stockChangeDto -> stockChangeDto.getStockDtos().stream()
                         .map(stockDto -> {
-                            RLock lock = redissonClient.getLock(makeRedissonKey(stockChangeDto.getStoreId(), stockDto.getFlowerId()));
+                            long storeId = stockChangeDto.getStoreId();
+                            long flowerId = stockDto.getFlowerId();
+                            long stockCount = stockDto.getStock();
+                            RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
                             try {
                                 boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
                                 if (!available) {
                                     throw new StockChangeFailedException();
                                 }
 
-                                FlowerCargo flowerCargo = getFlowerCargo(stockChangeDto.getStoreId(), stockDto.getFlowerId());
+                                FlowerCargo flowerCargo = getFlowerCargo(storeId, flowerId);
 
-                                long afterPlusCount = flowerCargo.getStock() + stockDto.getStock();
+                                long afterPlusCount = flowerCargo.getStock() + stockCount;
                                 if (isOutOfStock(afterPlusCount)) {
                                     throw new StockCannotBeNegativeException();
                                 }
 
-                                flowerCargoRepository.plusStock(flowerCargo.getId().getStoreId(), flowerCargo.getId().getFlowerId(), stockDto.getStock());
+                                flowerCargoRepository.plusStock(flowerCargo.getId().getStoreId(), flowerId, stockCount);
 
                                 if (isInsufficientCondition(afterPlusCount)) {
-                                    return stockChangeDto.getStoreId();
+                                    return storeId;
                                 }
                             } catch (InterruptedException e) {
                                 throw new LockInterruptedException();
@@ -86,24 +92,27 @@ public class CargoService {
         return stockChangeDtos.stream()
                 .flatMap(stockChangeDto -> stockChangeDto.getStockDtos().stream()
                         .map(stockDto -> {
-                            RLock lock = redissonClient.getLock(makeRedissonKey(stockChangeDto.getStoreId(), stockDto.getFlowerId()));
+                            long storeId = stockChangeDto.getStoreId();
+                            long flowerId = stockDto.getFlowerId();
+                            long stockCount = stockDto.getStock();
+                            RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
                             try {
                                 boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
                                 if (!available) {
                                     throw new StockChangeFailedException();
                                 }
 
-                                FlowerCargo flowerCargo = getFlowerCargo(stockChangeDto.getStoreId(), stockDto.getFlowerId());
+                                FlowerCargo flowerCargo = getFlowerCargo(stockChangeDto.getStoreId(), flowerId);
 
-                                long afterMinusCount = flowerCargo.getStock() - stockDto.getStock();
+                                long afterMinusCount = flowerCargo.getStock() - stockCount;
                                 if (isOutOfStock(afterMinusCount)) {
                                     throw new StockCannotBeNegativeException();
                                 }
 
-                                flowerCargoRepository.minusStock(flowerCargo.getId().getStoreId(), flowerCargo.getId().getFlowerId(), stockDto.getStock());
+                                flowerCargoRepository.minusStock(storeId, flowerId, stockCount);
 
                                 if (isInsufficientCondition(afterMinusCount)) {
-                                    return stockChangeDto.getStoreId();
+                                    return storeId;
                                 }
                             } catch (InterruptedException e) {
                                 throw new LockInterruptedException();
@@ -114,16 +123,6 @@ public class CargoService {
                         }))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
-    }
-
-    @Transactional(readOnly = true)
-    public RemainingStocksResponse getAllStocks(Long storeId) {
-        List<FlowerCargo> flowerCargos = flowerCargoRepository.findAllByStoreId(storeId);
-        List<StockInfoDto> stockInfoDtos = flowerCargos.stream()
-                .map(StockInfoDto::fromEntity)
-                .collect(Collectors.toList());
-
-        return RemainingStocksResponse.from(stockInfoDtos);
     }
 
     @Transactional
@@ -139,6 +138,15 @@ public class CargoService {
         flowerCargoRepository.saveAll(flowerCargos);
     }
 
+    public RemainingStocksResponse getAllStocks(Long storeId) {
+        List<FlowerCargo> flowerCargos = flowerCargoRepository.findAllByStoreId(storeId);
+        List<StockInfoDto> stockInfoDtos = flowerCargos.stream()
+                .map(StockInfoDto::fromEntity)
+                .collect(Collectors.toList());
+
+        return RemainingStocksResponse.from(stockInfoDtos);
+    }
+
     private FlowerCargo getFlowerCargo(Long storeId, Long flowerId) {
         FlowerCargoId flowerCargoId = makeId(storeId, flowerId);
         return flowerCargoRepository.findById(flowerCargoId)
@@ -152,9 +160,6 @@ public class CargoService {
                 .build();
     }
 
-    private String makeRedissonKey(Long storeId, Long flowerId) {
-        return  storeId + ":" + flowerId;
-    }
 
     private boolean isOutOfStock(long afterChangeCount) {
         return afterChangeCount < EMPTY_COUNT;

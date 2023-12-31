@@ -5,15 +5,16 @@ import bloomingblooms.domain.notification.NotificationKind;
 import bloomingblooms.domain.notification.NotificationURL;
 import bloomingblooms.domain.notification.PublishNotificationInformation;
 import bloomingblooms.domain.notification.question.InqueryResponseNotification;
-import bloomingblooms.domain.notification.question.QuestionRegister;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AnswerSQSPublisher {
@@ -37,6 +38,7 @@ public class AnswerSQSPublisher {
                     queueUrl, objectMapper.writeValueAsString(inqueryResponseNotificationData)
             );
             sqs.sendMessage(sendMessageRequest);
+            log.info("answer sqs published to user {}. message kind is : {}", userId, NotificationKind.INQUERY);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

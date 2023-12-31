@@ -6,10 +6,13 @@ import bloomingblooms.response.CommonResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
-import kr.bb.store.domain.store.controller.response.*;
+import kr.bb.store.domain.store.controller.response.StoreForMapResponse;
+import kr.bb.store.domain.store.controller.response.StoreInfoUserResponse;
+import kr.bb.store.domain.store.controller.response.StoreListResponse;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.StoreAddress;
 import kr.bb.store.domain.store.entity.address.Gugun;
@@ -18,11 +21,9 @@ import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,7 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
-class StoreFacadeTest {
+class StoreFacadeTest extends BasicIntegrationTest {
     @Autowired
     private StoreFacade storeFacade;
     @Autowired
@@ -59,8 +60,6 @@ class StoreFacadeTest {
     private StoreLikeFeignClient storeLikeFeignClient;
     @MockBean
     private StoreSubscriptionFeignClient storeSubscriptionFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
 
     @DisplayName("store생성 시 재고정보도 함께 생성된다")
     @Test

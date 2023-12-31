@@ -4,16 +4,17 @@ import bloomingblooms.domain.notification.NotificationData;
 import bloomingblooms.domain.notification.NotificationKind;
 import bloomingblooms.domain.notification.NotificationURL;
 import bloomingblooms.domain.notification.PublishNotificationInformation;
-import bloomingblooms.domain.notification.question.QuestionRegister;
 import bloomingblooms.domain.notification.stock.OutOfStockNotification;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OutOfStockSQSPublisher {
@@ -36,6 +37,7 @@ public class OutOfStockSQSPublisher {
                     queueUrl, objectMapper.writeValueAsString(outOfStockNotificationData)
             );
             sqs.sendMessage(sendMessageRequest);
+            log.info("outOfStock sqs published to store {}. message kind is : {}", storeId, NotificationKind.OUT_OF_STOCK);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

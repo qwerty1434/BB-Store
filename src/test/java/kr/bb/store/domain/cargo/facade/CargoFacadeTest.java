@@ -2,20 +2,17 @@ package kr.bb.store.domain.cargo.facade;
 
 import bloomingblooms.domain.flower.StockChangeDto;
 import bloomingblooms.domain.flower.StockDto;
-import kr.bb.store.client.ProductFeignClient;
-import kr.bb.store.domain.AbstractContainer;
+import kr.bb.store.domain.RedisContainerTest;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import kr.bb.store.message.OutOfStockSQSPublisher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest
-class CargoFacadeTest extends AbstractContainer {
+class CargoFacadeTest extends RedisContainerTest {
     @Autowired
     private CargoFacade cargoFacade;
 
@@ -46,12 +43,6 @@ class CargoFacadeTest extends AbstractContainer {
 
     @Autowired
     private PlatformTransactionManager txManager;
-
-    @MockBean
-    private ProductFeignClient productFeignClient;
-
-    @MockBean
-    private OutOfStockSQSPublisher outOfStockSQSPublisher;
 
 
     @DisplayName("꽃 아이디와 수량을 입력받아 재고를 변경한다")

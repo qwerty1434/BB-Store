@@ -3,8 +3,7 @@ package kr.bb.store.domain.cargo.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.flower.StockChangeDto;
 import bloomingblooms.domain.flower.StockDto;
-import kr.bb.store.client.ProductFeignClient;
-import kr.bb.store.domain.AbstractContainer;
+import kr.bb.store.domain.RedisContainerTest;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
@@ -18,8 +17,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -32,7 +29,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 
 @Testcontainers
 @SpringBootTest
-class CargoServiceTest extends AbstractContainer {
+class CargoServiceTest extends RedisContainerTest {
 
     @Autowired
     private CargoService cargoService;
@@ -45,12 +42,6 @@ class CargoServiceTest extends AbstractContainer {
 
     @Autowired
     private EntityManager em;
-
-    @Autowired
-    private PlatformTransactionManager txManager;
-
-    @MockBean
-    private ProductFeignClient productFeignClient;
 
     @AfterEach
     public void teardown() {

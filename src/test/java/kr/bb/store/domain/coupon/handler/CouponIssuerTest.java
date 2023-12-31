@@ -1,8 +1,7 @@
 package kr.bb.store.domain.coupon.handler;
 
 
-import kr.bb.store.client.ProductFeignClient;
-import kr.bb.store.domain.AbstractContainer;
+import kr.bb.store.domain.RedisContainerTest;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.exception.AlreadyIssuedCouponException;
@@ -10,15 +9,14 @@ import kr.bb.store.domain.coupon.exception.CouponOutOfStockException;
 import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
-import kr.bb.store.domain.coupon.util.RedisUtils;
-import kr.bb.store.domain.coupon.util.RedisOperation;
+import kr.bb.store.util.RedisOperation;
+import kr.bb.store.util.RedisUtils;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -32,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers
 @SpringBootTest
 @Transactional
-class CouponIssuerTest extends AbstractContainer{
+class CouponIssuerTest extends RedisContainerTest {
     @Autowired
     private CouponIssuer couponIssuer;
     @Autowired
@@ -45,8 +43,7 @@ class CouponIssuerTest extends AbstractContainer{
     private RedisOperation redisOperation;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private ProductFeignClient productFeignClient;
+
 
     @DisplayName("사용자에게 쿠폰을 발급해 준다")
     @Test

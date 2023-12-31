@@ -1,7 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.client.ProductFeignClient;
-import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -13,22 +12,15 @@ import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.repository.DeliveryPolicyRepository;
 import kr.bb.store.domain.store.repository.StoreAddressRepository;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import kr.bb.store.domain.store.service.StoreService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
-class StoreManagerTest {
+class StoreManagerTest extends BasicIntegrationTest {
     @Autowired
     private StoreManager storeManager;
     @Autowired
@@ -43,11 +35,6 @@ class StoreManagerTest {
     private GugunRepository gugunRepository;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
-
 
     @DisplayName("요청받은 내용으로 가게 정보를 수정한다 - 가게명, 위도, 최소주문금액 수정")
     @Test

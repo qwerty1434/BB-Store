@@ -1,6 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
-import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.RedisContainerTest;
 import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
 import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
@@ -12,13 +12,10 @@ import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
-import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -29,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class CouponReaderTest {
+class CouponReaderTest extends RedisContainerTest {
     @Autowired
     private CouponReader couponReader;
     @Autowired
@@ -40,10 +37,7 @@ class CouponReaderTest {
     private IssuedCouponRepository issuedCouponRepository;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
+
 
 
     @DisplayName("가게 사장에게 보여줄 쿠폰 정보를 조회한다")

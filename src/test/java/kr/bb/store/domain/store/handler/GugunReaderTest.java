@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
@@ -8,10 +8,8 @@ import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.address.InvalidParentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,18 +19,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
-class GugunReaderTest {
+class GugunReaderTest extends BasicIntegrationTest {
     @Autowired
     private GugunReader gugunReader;
     @Autowired
     private SidoRepository sidoRepository;
     @Autowired
     private GugunRepository gugunRepository;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
-
 
     @DisplayName("시/도, 그리고 구/군명을 입력받아 gugun값을 반환한다")
     @Test

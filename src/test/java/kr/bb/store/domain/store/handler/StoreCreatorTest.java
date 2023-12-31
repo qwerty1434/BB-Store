@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.client.ProductFeignClient;
+import kr.bb.store.domain.BasicIntegrationTest;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.address.Gugun;
@@ -8,24 +8,17 @@ import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.entity.address.SidoRepository;
 import kr.bb.store.domain.store.exception.CannotOwnMultipleStoreException;
-import kr.bb.store.domain.store.dto.StoreDto;
 import kr.bb.store.domain.store.repository.StoreRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-@Transactional
-class StoreCreatorTest {
+class StoreCreatorTest extends BasicIntegrationTest {
     @Autowired
     private StoreCreator storeCreator;
     @Autowired
@@ -36,11 +29,6 @@ class StoreCreatorTest {
     private GugunRepository gugunRepository;
     @Autowired
     private EntityManager em;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
-
 
     @DisplayName("회원 번호를 전달받아 가게를 생성한다")
     @Test

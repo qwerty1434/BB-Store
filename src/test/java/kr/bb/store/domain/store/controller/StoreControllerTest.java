@@ -24,11 +24,6 @@ class StoreControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private StoreFacade storeFacade;
-    @MockBean
-    private ProductFeignClient productFeignClient;
-    @MockBean
-    private RedissonClient redissonClient;
-
 
     @DisplayName("가게생성 시 요청값은 모두 null이 아니여야 한다")
     @Test

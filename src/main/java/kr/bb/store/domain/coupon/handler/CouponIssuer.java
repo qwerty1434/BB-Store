@@ -8,14 +8,15 @@ import kr.bb.store.domain.coupon.exception.CouponOutOfStockException;
 import kr.bb.store.domain.coupon.exception.DeletedCouponException;
 import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
-import kr.bb.store.domain.coupon.util.RedisUtils;
-import kr.bb.store.domain.coupon.util.RedisOperation;
+import kr.bb.store.util.RedisOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Predicate;
+
+import static kr.bb.store.util.RedisUtils.makeRedisKey;
 
 @RequiredArgsConstructor
 @Component
@@ -27,7 +28,7 @@ public class CouponIssuer {
         if(coupon.getIsDeleted()) throw new DeletedCouponException();
         if(coupon.isExpired(issueDate)) throw new ExpiredCouponException();
 
-        String redisKey = RedisUtils.makeRedisKey(coupon);
+        String redisKey = makeRedisKey(coupon);
         String redisValue = userId.toString();
         if(isDuplicated(redisKey, redisValue)) throw new AlreadyIssuedCouponException();
 
@@ -50,11 +51,11 @@ public class CouponIssuer {
                 .filter(Predicate.not(Coupon::getIsDeleted))
                 .filter(Predicate.not(coupon -> coupon.isExpired(issueDate)))
                 .filter(Predicate.not(coupon -> {
-                    String redisKey = RedisUtils.makeRedisKey(coupon);
+                    String redisKey = makeRedisKey(coupon);
                     return isDuplicated(redisKey,redisValue);
                 }))
                 .filter(coupon -> {
-                    String redisKey = RedisUtils.makeRedisKey(coupon);
+                    String redisKey = makeRedisKey(coupon);
 
                     List<Long> result = (List) redisOperation.countAndSet(redisKey, redisValue);
 

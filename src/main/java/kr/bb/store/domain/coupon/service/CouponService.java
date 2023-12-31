@@ -15,16 +15,17 @@ import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.exception.CouponInconsistencyException;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.handler.*;
-import kr.bb.store.domain.coupon.util.RedisUtils;
-import kr.bb.store.domain.coupon.util.RedisOperation;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
+import kr.bb.store.util.RedisOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static kr.bb.store.util.RedisUtils.makeRedisKey;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -43,7 +44,7 @@ public class CouponService {
         Store store = storeReader.findStoreById(storeId);
         Coupon coupon = couponCreator.create(store, couponCreateRequest.toDto());
 
-        String redisKey = RedisUtils.makeRedisKey(coupon);
+        String redisKey = makeRedisKey(coupon);
         redisOperation.addAndSetExpr(redisKey, coupon.getEndDate().plusDays(1));
     }
 
@@ -53,7 +54,7 @@ public class CouponService {
         validateCouponAuthorization(coupon,storeId);
         couponManager.edit(coupon, couponEditRequest.toDto());
 
-        String redisKey = RedisUtils.makeRedisKey(coupon);
+        String redisKey = makeRedisKey(coupon);
         redisOperation.setExpr(redisKey, couponEditRequest.getEndDate());
     }
 
