@@ -19,13 +19,13 @@ public class CouponController {
 
     @PostMapping("/{storeId}/coupons")
     public void createCoupon(@PathVariable Long storeId,
-                                       @RequestBody CouponCreateRequest couponCreateRequest) {
+                             @RequestBody CouponCreateRequest couponCreateRequest) {
         couponService.createCoupon(storeId, couponCreateRequest);
     }
 
     @PutMapping("/{storeId}/coupons/{couponId}")
     public void editCoupon(@PathVariable Long storeId, @PathVariable Long couponId,
-                                     @RequestBody CouponEditRequest couponEditRequest) {
+                           @RequestBody CouponEditRequest couponEditRequest) {
         couponService.editCoupon(storeId, couponId, couponEditRequest);
     }
 
@@ -41,19 +41,19 @@ public class CouponController {
 
     @PostMapping("/coupons/{couponId}")
     public void downloadCoupon(@PathVariable Long couponId,
-                                         @RequestHeader(value = "userId") Long userId) {
+                               @RequestHeader(value = "userId") Long userId) {
         couponService.downloadCoupon(userId, couponId, LocalDate.now());
     }
 
     @PostMapping("/{storeId}/coupons/all")
     public void downloadAllCoupons(@PathVariable Long storeId,
-                                             @RequestHeader(value = "userId") Long userId) {
+                                   @RequestHeader(value = "userId") Long userId) {
         couponService.downloadAllCoupons(userId, storeId, LocalDate.now());
     }
 
     @GetMapping("/{storeId}/coupons/product")
     public CommonResponse<CouponsForUserResponse> storeCouponsForUser(@PathVariable Long storeId,
-                                                                      @RequestHeader(value = "userId", required = false) Long userId) {
+            @RequestHeader(value = "userId", required = false) Long userId) {
 
         LocalDate now = LocalDate.now();
         return CommonResponse.success(couponService.getAllStoreCouponsForUser(userId, storeId, now));
@@ -61,8 +61,8 @@ public class CouponController {
 
     @PostMapping("/{storeId}/coupons/payment")
     public CommonResponse<CouponsForUserResponse> couponsInPaymentStep(@PathVariable Long storeId,
-                                                                       @RequestHeader(value = "userId") Long userId,
-                                                                       @RequestBody TotalAmountRequest totalAmountRequest) {
+            @RequestHeader(value = "userId") Long userId,
+            @RequestBody TotalAmountRequest totalAmountRequest) {
 
         LocalDate now = LocalDate.now();
         return CommonResponse.success(couponService.getAvailableCouponsInPayment(totalAmountRequest, userId, storeId, now));
