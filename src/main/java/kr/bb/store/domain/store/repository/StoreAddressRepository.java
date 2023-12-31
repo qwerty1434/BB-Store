@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface StoreAddressRepository extends JpaRepository<StoreAddress,Long>,StoreAddressRepositoryCustom {
+public interface StoreAddressRepository extends JpaRepository<StoreAddress,Long> {
     Optional<StoreAddress> findByStoreId(Long storeId);
 }

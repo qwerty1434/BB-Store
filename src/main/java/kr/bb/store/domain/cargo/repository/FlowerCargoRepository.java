@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FlowerCargoRepository extends JpaRepository<FlowerCargo, FlowerCargoId>,FlowerCargoRepositoryCustom {
+public interface FlowerCargoRepository extends JpaRepository<FlowerCargo, FlowerCargoId> {
     List<FlowerCargo> findAllByStoreId(Long storeId);
 
     @Modifying
