@@ -49,9 +49,7 @@ public class CargoFacade {
     public void plusStocksWithLock(Long userId, List<StockChangeDto> stockChangeDtos) {
         try {
             Set<Long> sufficientStores = cargoService.plusStockCounts(stockChangeDtos);
-            for (Long storeId : sufficientStores) {
-                outOfStockSQSPublisher.publish(storeId);
-            }
+            sufficientStores.forEach(outOfStockSQSPublisher::publish);
         } catch (Exception e) {
             String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
@@ -62,9 +60,7 @@ public class CargoFacade {
     public void minusStocksWithLock(Long userId, List<StockChangeDto> stockChangeDtos) {
         try {
             Set<Long> sufficientStores = cargoService.minusStockCounts(stockChangeDtos);
-            for (Long storeId : sufficientStores) {
-                outOfStockSQSPublisher.publish(storeId);
-            }
+            sufficientStores.forEach(outOfStockSQSPublisher::publish);
         } catch (Exception e) {
             String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
