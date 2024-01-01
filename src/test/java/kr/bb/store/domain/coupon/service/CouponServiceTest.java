@@ -3,6 +3,7 @@ package kr.bb.store.domain.coupon.service;
 
 import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.domain.RedisContainerTest;
+import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
@@ -41,6 +42,8 @@ class CouponServiceTest extends RedisContainerTest {
     @Autowired
     private StoreRepository storeRepository;
     @Autowired
+    private FlowerCargoRepository cargoRepository;
+    @Autowired
     private IssuedCouponRepository issuedCouponRepository;
     @Autowired
     private RedisOperation redisOperation;
@@ -49,6 +52,7 @@ class CouponServiceTest extends RedisContainerTest {
     void teardown() {
         issuedCouponRepository.deleteAllInBatch();
         couponRepository.deleteAllInBatch();
+        cargoRepository.deleteAllInBatch();
         storeRepository.deleteAllInBatch();
     }
 
