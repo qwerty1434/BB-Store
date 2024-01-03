@@ -3,10 +3,12 @@ package kr.bb.store.domain;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 public class BasicIntegrationTest {
     /*
      * @SpringBootTest는 실제로 모든 빈을 등록함
