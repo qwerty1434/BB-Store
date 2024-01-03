@@ -1,7 +1,7 @@
 package kr.bb.store.domain.coupon.handler;
 
 
-import kr.bb.store.domain.RedisContainerTest;
+import kr.bb.store.domain.RedisContainerTestEnv;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.exception.AlreadyIssuedCouponException;
@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers
 @SpringBootTest
 @Transactional
-class CouponIssuerTest extends RedisContainerTest {
+class CouponIssuerTestEnv extends RedisContainerTestEnv {
     @Autowired
     private CouponIssuer couponIssuer;
     @Autowired

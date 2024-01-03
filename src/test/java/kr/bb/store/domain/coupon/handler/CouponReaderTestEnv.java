@@ -1,6 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
-import kr.bb.store.domain.RedisContainerTest;
+import kr.bb.store.domain.RedisContainerTestEnv;
 import kr.bb.store.domain.coupon.dto.CouponDto;
 import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
 import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class CouponReaderTest extends RedisContainerTest {
+class CouponReaderTestEnv extends RedisContainerTestEnv {
     @Autowired
     private CouponReader couponReader;
     @Autowired

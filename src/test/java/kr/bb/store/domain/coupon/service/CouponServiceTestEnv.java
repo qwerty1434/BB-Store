@@ -2,7 +2,7 @@ package kr.bb.store.domain.coupon.service;
 
 
 import bloomingblooms.domain.order.ValidatePriceDto;
-import kr.bb.store.domain.RedisContainerTest;
+import kr.bb.store.domain.RedisContainerTestEnv;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.entity.Coupon;
@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
 @SpringBootTest
-class CouponServiceTest extends RedisContainerTest {
+class CouponServiceTestEnv extends RedisContainerTestEnv {
     @Autowired
     private CouponService couponService;
     @Autowired

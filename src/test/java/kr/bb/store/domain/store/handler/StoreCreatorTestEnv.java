@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.entity.address.Gugun;
@@ -18,7 +18,7 @@ import javax.persistence.EntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class StoreCreatorTest extends BasicIntegrationTest {
+class StoreCreatorTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private StoreCreator storeCreator;
     @Autowired

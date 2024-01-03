@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-public class BasicIntegrationTest {
+public class BasicIntegrationTestEnv {
     /*
      * @SpringBootTest는 실제로 모든 빈을 등록함
      * RedisConfig에서는 RedissonClient를 빈으로 등록하는 factory method가 정의되어 있고 이를 빈으로 등록하려 함

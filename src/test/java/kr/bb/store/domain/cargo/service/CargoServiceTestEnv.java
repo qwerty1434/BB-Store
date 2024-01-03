@@ -3,7 +3,7 @@ package kr.bb.store.domain.cargo.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.flower.StockChangeDto;
 import bloomingblooms.domain.flower.StockDto;
-import kr.bb.store.domain.RedisContainerTest;
+import kr.bb.store.domain.RedisContainerTestEnv;
 import kr.bb.store.domain.cargo.controller.response.RemainingStocksResponse;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
@@ -29,7 +29,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 
 @Testcontainers
 @SpringBootTest
-class CargoServiceTest extends RedisContainerTest {
+class CargoServiceTestEnv extends RedisContainerTestEnv {
 
     @Autowired
     private CargoService cargoService;

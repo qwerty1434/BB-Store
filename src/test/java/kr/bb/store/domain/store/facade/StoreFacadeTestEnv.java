@@ -6,7 +6,7 @@ import bloomingblooms.response.CommonResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -40,7 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
-class StoreFacadeTest extends BasicIntegrationTest {
+class StoreFacadeTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private StoreFacade storeFacade;
     @Autowired

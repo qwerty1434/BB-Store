@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
-class GugunReaderTest extends BasicIntegrationTest {
+class GugunReaderTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private GugunReader gugunReader;
     @Autowired

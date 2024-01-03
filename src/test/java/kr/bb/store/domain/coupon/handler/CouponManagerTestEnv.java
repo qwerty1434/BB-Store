@@ -1,6 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
-import kr.bb.store.domain.RedisContainerTest;
+import kr.bb.store.domain.RedisContainerTestEnv;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Testcontainers
 @SpringBootTest
 @Transactional
-class CouponManagerTest extends RedisContainerTest {
+class CouponManagerTestEnv extends RedisContainerTestEnv {
     @Autowired
     private CouponManager couponManager;
     @Autowired

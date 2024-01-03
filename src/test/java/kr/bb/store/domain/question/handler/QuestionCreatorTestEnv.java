@@ -1,6 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.entity.Question;
 import kr.bb.store.domain.question.repository.QuestionRepository;
@@ -14,7 +14,7 @@ import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class QuestionCreatorTest extends BasicIntegrationTest {
+class QuestionCreatorTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private QuestionCreator questionCreator;
     @Autowired

@@ -1,6 +1,6 @@
 package kr.bb.store.domain.coupon.handler;
 
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.entity.IssuedCouponId;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.List;
 
-class IssuedCouponReaderTest extends BasicIntegrationTest {
+class IssuedCouponReaderTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private IssuedCouponReader issuedCouponReader;
     @Autowired
