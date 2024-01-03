@@ -24,8 +24,10 @@ public interface ProductFeignClient {
     @GetMapping("/client/store")
     CommonResponse<StoreSubscriptionProductId> getSubscriptionProductId(@RequestParam(name="store-id") Long storeId);
 
+    // subscriptionProductId는 정기구독 신청 버튼을 위해 받아오는 데이터
+    // 해당 값을 받아오지 못하더라도 다른 가게정보들은 고객이 볼 수 있는게 더 합리적이라고 팀적으로 판단함
+    // subscriptionProductId가 null일 때 프론트에서는 해당 버튼을 클릭할 수 없는 비활성화 상태로 보이게 됨
     default CommonResponse<StoreSubscriptionProductId> getSubscriptionProductIdFallback(Exception e) {
-        // TODO : circuit을 사용할지 말지 프론트와 논의 (구독상품 클릭이 안되더라고 가게정보를 보이게 할건지)
         log.error(e.toString());
         log.warn("{}'s Request of '{}' failed. request will return fallback data",
                 "ProductFeignClient", "getSubscriptionProductIdFallback");
