@@ -1,6 +1,6 @@
 package kr.bb.store.domain.question.handler;
 
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.dto.MyQuestionInMypageDto;
 import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
@@ -23,7 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-class QuestionReaderTest extends BasicIntegrationTest {
+class QuestionReaderTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private QuestionReader questionReader;
     @Autowired

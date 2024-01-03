@@ -6,7 +6,7 @@ import bloomingblooms.response.CommonResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.repository.FlowerCargoRepository;
 import kr.bb.store.domain.store.controller.request.StoreCreateRequest;
@@ -39,7 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
-class StoreFacadeTest extends BasicIntegrationTest {
+class StoreFacadeTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private StoreFacade storeFacade;
     @Autowired

@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.Position;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
@@ -28,7 +28,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
-class StoreReaderTest extends BasicIntegrationTest {
+class StoreReaderTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private StoreReader storeReader;
     @Autowired

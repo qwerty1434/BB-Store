@@ -12,7 +12,6 @@ import kr.bb.store.domain.store.controller.request.StoreInfoEditRequest;
 import kr.bb.store.domain.store.controller.response.*;
 import kr.bb.store.domain.store.dto.DeliveryPolicyDto;
 import kr.bb.store.domain.store.dto.GugunDto;
-import kr.bb.store.domain.store.controller.response.LikedStoreInfoResponse;
 import kr.bb.store.domain.store.dto.SidoDto;
 import kr.bb.store.domain.store.entity.DeliveryPolicy;
 import kr.bb.store.domain.store.entity.Store;
@@ -21,7 +20,9 @@ import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.Sido;
 import kr.bb.store.domain.store.exception.DeliveryInconsistencyException;
 import kr.bb.store.domain.store.handler.*;
+import kr.bb.store.util.RestPage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -83,8 +84,11 @@ public class StoreService {
         return storeReader.readDetailInfo(storeId);
     }
 
-    public Page<StoreListResponse> getStoresWithPaging(Pageable pageable) {
-        return  storeReader.readStoresWithPaging(pageable);
+    // 스프링의 기본 PageImpl은 기본생성자가 존재하지 않아 String으로 저장된 캐싱 데이터를 다시 객체로 변환할 수 없음
+    // RestPage객체는 @JsonCreator를 사용해 기본생성자가 아닌 인자가 있는 생성자로 직렬화/역직렬화를 할 수 있게 했다
+    @Cacheable(key = "#pageable.pageNumber + '::' + #pageable.pageSize", cacheNames = "storeListWithPaging")
+    public RestPage<StoreListResponse> getStoresWithPaging(Pageable pageable) {
+        return new RestPage<>(storeReader.readStoresWithPaging(pageable));
     }
 
     public StoreInfoUserResponse getStoreInfoForUser(Long storeId, Boolean isLiked, Boolean isSubscribed, String subscriptionProductId) {

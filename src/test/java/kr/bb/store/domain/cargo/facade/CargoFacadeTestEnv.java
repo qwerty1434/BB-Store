@@ -2,7 +2,7 @@ package kr.bb.store.domain.cargo.facade;
 
 import bloomingblooms.domain.flower.StockChangeDto;
 import bloomingblooms.domain.flower.StockDto;
-import kr.bb.store.domain.RedisContainerTest;
+import kr.bb.store.domain.RedisContainerTestEnv;
 import kr.bb.store.domain.cargo.dto.StockModifyDto;
 import kr.bb.store.domain.cargo.entity.FlowerCargo;
 import kr.bb.store.domain.cargo.entity.FlowerCargoId;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest
-class CargoFacadeTest extends RedisContainerTest {
+class CargoFacadeTestEnv extends RedisContainerTestEnv {
     @Autowired
     private CargoFacade cargoFacade;
 

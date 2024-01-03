@@ -1,6 +1,6 @@
 package kr.bb.store.domain.question.service;
 
-import kr.bb.store.domain.BasicIntegrationTest;
+import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.question.controller.request.QuestionCreateRequest;
 import kr.bb.store.domain.question.controller.response.QuestionDetailInfoResponse;
 import kr.bb.store.domain.question.entity.Answer;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-class QuestionServiceTest extends BasicIntegrationTest {
+class QuestionServiceTestEnv extends BasicIntegrationTestEnv {
     @Autowired
     private QuestionService questionService;
     @Autowired

@@ -22,6 +22,7 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -42,22 +43,26 @@ public class StoreFacade {
     private final StoreSubscriptionFeignClient storeSubscriptionFeignClient;
 
     @KafkaListener(topics = "store-average-rating-update", groupId = "average-rating")
+    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
     public void updateAverageRating(Map<Long,Double> averageRatings) {
         storeService.updateAverageRating(averageRatings);
         log.info("stores averageRating updated");
     }
 
     @KafkaListener(topics = "settlement", groupId = "settlement")
+    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
     public void updateMonthlySalesRevenue(Map<Long,Long> monthlySalesRevenues) {
         storeService.updateMonthlySalesRevenue(monthlySalesRevenues);
         log.info("stores monthlySalesRevenue updated");
     }
 
+    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
         List<FlowerDto> flowers = productFeignClient.getFlowers().getData();
         return storeService.createStore(userId, storeCreateRequest, flowers);
     }
 
+    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
     public void editStoreInfo(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
         storeService.editStoreInfo(storeId, storeInfoEditRequest);
         log.info("info of store {} edited", storeId);

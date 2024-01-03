@@ -1,10 +1,12 @@
 package kr.bb.store.domain;
 
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 
-public class RedisContainerTest {
+@ActiveProfiles("test")
+public class RedisContainerTestEnv {
     static final String REDIS_IMAGE = "redis:6-alpine";
     static final GenericContainer REDIS_CONTAINER;
 
