@@ -85,9 +85,9 @@ public class CouponIssuer {
     }
 
     /*
-    모든 쿠폰은 생성시 expirationDate 설정을 위해 DUMMY_DATA를 넣어 redis에 등록됩니다.
-    하나의 데이터가 더 들어있기 때문에 이를 고려해 '<=' 가 아닌 '<'로 개수를 비교해야
-    쿠폰에 등록한 limitCount만큼 발급이 가능합니다.
+     * 모든 쿠폰은 생성시 expirationDate 설정을 위해 DUMMY_DATA를 넣어 redis에 등록됩니다.
+     * 하나의 데이터가 더 들어있기 때문에 이를 고려해 '<=' 가 아닌 '<'로 개수를 비교해야
+     * 쿠폰에 등록한 limitCount만큼 발급이 가능합니다.
      */
     private boolean isExhausted(Integer limitCount, Long issueCount) {
         return limitCount < issueCount;
