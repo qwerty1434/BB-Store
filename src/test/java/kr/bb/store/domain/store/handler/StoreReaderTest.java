@@ -28,7 +28,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
-class StoreReaderTestEnv extends BasicIntegrationTestEnv {
+class StoreReaderTest extends BasicIntegrationTestEnv {
     @Autowired
     private StoreReader storeReader;
     @Autowired

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
-class GugunReaderTestEnv extends BasicIntegrationTestEnv {
+class GugunReaderTest extends BasicIntegrationTestEnv {
     @Autowired
     private GugunReader gugunReader;
     @Autowired

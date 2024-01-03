@@ -14,7 +14,7 @@ import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class QuestionCreatorTestEnv extends BasicIntegrationTestEnv {
+class QuestionCreatorTest extends BasicIntegrationTestEnv {
     @Autowired
     private QuestionCreator questionCreator;
     @Autowired

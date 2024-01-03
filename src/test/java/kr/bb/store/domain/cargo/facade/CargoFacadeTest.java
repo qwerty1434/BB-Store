@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Testcontainers
 @SpringBootTest
-class CargoFacadeTestEnv extends RedisContainerTestEnv {
+class CargoFacadeTest extends RedisContainerTestEnv {
     @Autowired
     private CargoFacade cargoFacade;
 

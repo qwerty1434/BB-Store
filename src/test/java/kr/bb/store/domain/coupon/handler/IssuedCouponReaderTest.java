@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.List;
 
-class IssuedCouponReaderTestEnv extends BasicIntegrationTestEnv {
+class IssuedCouponReaderTest extends BasicIntegrationTestEnv {
     @Autowired
     private IssuedCouponReader issuedCouponReader;
     @Autowired

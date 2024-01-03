@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Testcontainers
 @SpringBootTest
-class CouponServiceTestEnv extends RedisContainerTestEnv {
+class CouponServiceTest extends RedisContainerTestEnv {
     @Autowired
     private CouponService couponService;
     @Autowired

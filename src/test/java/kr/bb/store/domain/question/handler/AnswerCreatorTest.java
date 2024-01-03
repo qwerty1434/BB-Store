@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AnswerCreatorTestEnv extends BasicIntegrationTestEnv {
+class AnswerCreatorTest extends BasicIntegrationTestEnv {
     @Autowired
     private AnswerCreator answerCreator;
     @Autowired

@@ -39,7 +39,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class StoreServiceTestEnv extends BasicIntegrationTestEnv {
+class StoreServiceTest extends BasicIntegrationTestEnv {
     @Autowired
     private StoreService storeService;
     @Autowired
