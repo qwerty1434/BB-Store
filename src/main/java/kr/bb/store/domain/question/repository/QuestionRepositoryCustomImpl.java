@@ -72,7 +72,7 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.nickname,
                         question.createdAt,
                         question.isSecret,
-                        subQueryOfIsMine(userId),
+                        isMyQuestion(userId),
                         answer.content,
                         answer.createdAt
                 ))
@@ -196,11 +196,9 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .otherwise(question.content);
     }
 
-    private Expression<Boolean> subQueryOfIsMine(Long userId) {
+    private Expression<Boolean> isMyQuestion(Long userId) {
         if(userId == null) return Expressions.asBoolean(false);
-        return as(select(question.id.count().goe(1))
-                .from(question)
-                .where(question.userId.eq(userId)), "isMine");
+        return question.userId.eq(userId);
     }
 
     private BooleanExpression isNotMyQuestion(Long userId) {
