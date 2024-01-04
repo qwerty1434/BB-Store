@@ -25,6 +25,10 @@ public class IssuedCoupon extends BaseEntity {
     @JoinColumn(name="coupon_id")
     private Coupon coupon;
 
+    private String nickname;
+
+    private String phoneNumber;
+
     @Builder.Default
     @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean isUsed = false;

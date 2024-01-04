@@ -24,7 +24,7 @@ public class CouponIssuer {
     private final IssuedCouponRepository issuedCouponRepository;
     private final RedisOperation redisOperation;
 
-    public IssuedCoupon issueCoupon(Coupon coupon, Long userId, LocalDate issueDate) {
+    public IssuedCoupon issueCoupon(Coupon coupon, Long userId, String nickname, String phoneNumber, LocalDate issueDate) {
         if(coupon.getIsDeleted()) throw new DeletedCouponException();
         if(coupon.isExpired(issueDate)) throw new ExpiredCouponException();
 
@@ -41,10 +41,10 @@ public class CouponIssuer {
             throw new CouponOutOfStockException();
         }
 
-        return issuedCouponRepository.save(makeIssuedCoupon(coupon,userId));
+        return issuedCouponRepository.save(makeIssuedCoupon(coupon,userId,nickname,phoneNumber));
     }
 
-    public void issuePossibleCoupons(List<Coupon> coupons, Long userId, LocalDate issueDate) {
+    public void issuePossibleCoupons(List<Coupon> coupons, Long userId, String nickname, String phoneNumber, LocalDate issueDate) {
         final String redisValue = userId.toString();
 
         coupons.stream()
@@ -67,12 +67,14 @@ public class CouponIssuer {
                     }
                     return true;
                 })
-                .forEach(coupon -> issuedCouponRepository.save(makeIssuedCoupon(coupon,userId)));
+                .forEach(coupon -> issuedCouponRepository.save(makeIssuedCoupon(coupon,userId,nickname,phoneNumber)));
     }
 
-    private IssuedCoupon makeIssuedCoupon(Coupon coupon, Long userId) {
+    private IssuedCoupon makeIssuedCoupon(Coupon coupon, Long userId, String nickname, String phoneNumber) {
         return IssuedCoupon.builder()
                 .id(makeIssuedCouponId(coupon.getId(), userId))
+                .nickname(nickname)
+                .phoneNumber(phoneNumber)
                 .coupon(coupon)
                 .build();
     }

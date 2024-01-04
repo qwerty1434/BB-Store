@@ -57,10 +57,12 @@ class CouponIssuerTest extends RedisContainerTestEnv {
         couponRepository.save(coupon);
 
         Long userId = 1L;
+        String nickname = "nick";
+        String phoneNumber = "phoneNumber";
         LocalDate issueDate = LocalDate.now();
 
         // when
-        IssuedCoupon issuedCoupon = couponIssuer.issueCoupon(coupon, userId, issueDate);
+        IssuedCoupon issuedCoupon = couponIssuer.issueCoupon(coupon, userId, nickname, phoneNumber, issueDate);
         em.flush();
         em.clear();
 
@@ -84,10 +86,12 @@ class CouponIssuerTest extends RedisContainerTestEnv {
         couponRepository.save(coupon);
 
         Long userId = 1L;
+        String nickname = "nick";
+        String phoneNumber = "phoneNumber";
         LocalDate expiredDate = LocalDate.now().plusDays(5);
 
         // when // then
-        assertThatThrownBy(() -> couponIssuer.issueCoupon(coupon, userId, expiredDate))
+        assertThatThrownBy(() -> couponIssuer.issueCoupon(coupon, userId, nickname, phoneNumber, expiredDate))
                 .isInstanceOf(ExpiredCouponException.class)
                 .hasMessage("기한이 만료된 쿠폰입니다.");
 
@@ -105,12 +109,14 @@ class CouponIssuerTest extends RedisContainerTestEnv {
         couponRepository.save(coupon);
 
         Long userId = 1L;
+        String nickname = "nick";
+        String phoneNumber = "phoneNumber";
         LocalDate issueDate = LocalDate.now();
 
         // when
         assertThatThrownBy(() -> {
-            couponIssuer.issueCoupon(coupon, userId, issueDate);
-            couponIssuer.issueCoupon(coupon, userId, issueDate);
+            couponIssuer.issueCoupon(coupon, userId, nickname, phoneNumber, issueDate);
+            couponIssuer.issueCoupon(coupon, userId, nickname, phoneNumber, issueDate);
         })
                 .isInstanceOf(AlreadyIssuedCouponException.class)
                 .hasMessage("이미 발급받은 쿠폰입니다.");
@@ -133,10 +139,12 @@ class CouponIssuerTest extends RedisContainerTestEnv {
         redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
 
         Long userId = 1L;
+        String nickname = "nick";
+        String phoneNumber = "phoneNumber";
         LocalDate issueDate = LocalDate.now();
 
         // when // then
-        assertThatThrownBy(() -> couponIssuer.issueCoupon(coupon, userId, issueDate))
+        assertThatThrownBy(() -> couponIssuer.issueCoupon(coupon, userId, nickname, phoneNumber, issueDate))
                 .isInstanceOf(CouponOutOfStockException.class)
                 .hasMessage("준비된 쿠폰이 모두 소진되었습니다.");
 
@@ -159,16 +167,18 @@ class CouponIssuerTest extends RedisContainerTestEnv {
         couponRepository.saveAll(coupons);
 
         Long userId = 1L;
+        String nickname = "nick";
+        String phoneNumber = "phoneNumber";
         LocalDate issueDate = LocalDate.now();
 
         String redisKey = RedisUtils.makeRedisKey(exhaustedCoupon);
         redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
 
-        IssuedCoupon usedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, issueDate);
+        IssuedCoupon usedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, nickname, phoneNumber, issueDate);
         usedCoupon.use(LocalDate.now());
 
         // when
-        couponIssuer.issuePossibleCoupons(coupons, userId, issueDate);
+        couponIssuer.issuePossibleCoupons(coupons, userId, nickname, phoneNumber, issueDate);
 
         List<IssuedCoupon> usableCouponsOfUser = issuedCouponRepository.findUsableCouponsByUserId(userId);
 

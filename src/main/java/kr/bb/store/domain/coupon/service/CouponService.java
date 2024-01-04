@@ -4,12 +4,10 @@ import bloomingblooms.domain.order.ValidatePriceDto;
 import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.controller.request.TotalAmountRequest;
+import kr.bb.store.domain.coupon.controller.response.CouponIssuerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
-import kr.bb.store.domain.coupon.dto.CouponDto;
-import kr.bb.store.domain.coupon.dto.CouponForOwnerDto;
-import kr.bb.store.domain.coupon.dto.CouponWithAvailabilityDto;
-import kr.bb.store.domain.coupon.dto.CouponWithIssueStatusDto;
+import kr.bb.store.domain.coupon.dto.*;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
 import kr.bb.store.domain.coupon.exception.CouponInconsistencyException;
@@ -19,11 +17,13 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
 import kr.bb.store.util.RedisOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static kr.bb.store.util.RedisUtils.makeRedisKey;
 
@@ -66,15 +66,15 @@ public class CouponService {
     }
 
     @Transactional
-    public void downloadCoupon(Long userId, Long couponId, LocalDate now) {
+    public void downloadCoupon(Long userId, Long couponId, String nickname, String phoneNumber, LocalDate now) {
         Coupon coupon = couponReader.read(couponId);
-        couponIssuer.issueCoupon(coupon, userId, now);
+        couponIssuer.issueCoupon(coupon, userId, nickname, phoneNumber, now);
     }
 
     @Transactional
-    public void downloadAllCoupons(Long userId, Long storeId, LocalDate now) {
+    public void downloadAllCoupons(Long userId, Long storeId, String nickname, String phoneNumber, LocalDate now) {
         List<Coupon> coupons = couponReader.readStoresAllValidateCoupon(storeId, now);
-        couponIssuer.issuePossibleCoupons(coupons, userId, now);
+        couponIssuer.issuePossibleCoupons(coupons, userId, nickname, phoneNumber, now);
     }
 
     @Transactional
@@ -141,4 +141,16 @@ public class CouponService {
         if(!coupon.getStore().getId().equals(storeId)) throw new UnAuthorizedCouponException();
     }
 
+    public CouponIssuerResponse getCouponMembers(Long userId, Long couponId, Pageable pageable) {
+        Coupon coupon = couponReader.read(couponId);
+        if(!coupon.getStore().getStoreManagerId().equals(userId)) {
+            throw new UnAuthorizedCouponException();
+        }
+
+        List<IssuedCouponDto> issuedCoupons = issuedCouponReader.readByCouponId(couponId, pageable)
+                .stream().map(IssuedCouponDto::fromEntity).collect(Collectors.toList());
+        long count = issuedCouponReader.countByCouponId(couponId);
+
+        return CouponIssuerResponse.of(issuedCoupons, count);
+    }
 }

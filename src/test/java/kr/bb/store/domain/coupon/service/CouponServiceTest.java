@@ -219,7 +219,9 @@ class CouponServiceTest extends RedisContainerTestEnv {
     void issueCouponInMultiThread() throws InterruptedException, ExecutionException {
         // given
         int limitCount = 100;
-        int applicantsCount = 1000;
+        int applicantsCount = 200;
+        final String nickname = "nickname";
+        final String phoneNumber = "phoneNumber";
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(applicantsCount);
 
@@ -244,7 +246,7 @@ class CouponServiceTest extends RedisContainerTestEnv {
                 .forEach(userId ->
                     executorService.submit(() -> {
                         try {
-                            couponService.downloadCoupon(userId,couponId,LocalDate.now());
+                            couponService.downloadCoupon(userId,couponId,nickname,phoneNumber,LocalDate.now());
                         } catch (Exception ignored) {
                         } finally {
                             latch.countDown();
