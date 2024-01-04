@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class StoreListResponse {
     private Long storeId;
     private String storeThumbnailImage;
@@ -22,12 +21,13 @@ public class StoreListResponse {
     private String detailAddress;
 
     @QueryProjection
-    public StoreListResponse(Long storeId, String storeThumbnailImage, String storeName, String detailInfo, Double averageRating, String address, String detailAddress) {
+    public StoreListResponse(Long storeId, String storeThumbnailImage, String storeName, String detailInfo, Double averageRating, Boolean isLiked, String address, String detailAddress) {
         this.storeId = storeId;
         this.storeThumbnailImage = storeThumbnailImage;
         this.storeName = storeName;
         this.detailInfo = detailInfo;
         this.averageRating = averageRating;
+        this.isLiked = isLiked;
         this.address = address;
         this.detailAddress = detailAddress;
     }
