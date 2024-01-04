@@ -4,10 +4,13 @@ import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.controller.request.TotalAmountRequest;
+import kr.bb.store.domain.coupon.controller.request.UserInfoRequest;
+import kr.bb.store.domain.coupon.controller.response.CouponIssuerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
 import kr.bb.store.domain.coupon.service.CouponService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -41,14 +44,16 @@ public class CouponController {
 
     @PostMapping("/coupons/{couponId}")
     public void downloadCoupon(@PathVariable Long couponId,
-                               @RequestHeader(value = "userId") Long userId) {
-        couponService.downloadCoupon(userId, couponId, LocalDate.now());
+                               @RequestHeader(value = "userId") Long userId,
+                               @RequestBody UserInfoRequest userInfoRequest) {
+        couponService.downloadCoupon(userId, couponId, userInfoRequest.getNickname(), userInfoRequest.getPhoneNumber(), LocalDate.now());
     }
 
     @PostMapping("/{storeId}/coupons/all")
     public void downloadAllCoupons(@PathVariable Long storeId,
-                                   @RequestHeader(value = "userId") Long userId) {
-        couponService.downloadAllCoupons(userId, storeId, LocalDate.now());
+                                   @RequestHeader(value = "userId") Long userId,
+                                   @RequestBody UserInfoRequest userInfoRequest) {
+        couponService.downloadAllCoupons(userId, storeId, userInfoRequest.getNickname(), userInfoRequest.getPhoneNumber(), LocalDate.now());
     }
 
     @GetMapping("/{storeId}/coupons/product")
@@ -73,5 +78,11 @@ public class CouponController {
 
         LocalDate now = LocalDate.now();
         return CommonResponse.success(couponService.getMyValidCoupons(userId, now));
+    }
+
+    @GetMapping("/coupons/{couponId}/members")
+    public CommonResponse<CouponIssuerResponse> couponMembers(@RequestHeader(value = "userId") Long userId,
+            @PathVariable Long couponId, Pageable pageable) {
+        return CommonResponse.success(couponService.getCouponMembers(userId, couponId, pageable));
     }
 }
