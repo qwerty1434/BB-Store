@@ -14,12 +14,12 @@ import java.util.List;
 public class CargoFeignController {
     private final CargoFacade cargoFacade;
     @PutMapping("/add")
-    public void addStock(@RequestHeader(value = "userId") Long userId, @RequestBody List<StockChangeDto> stockChangeDtos) {
-        cargoFacade.plusStocksWithLock(userId, stockChangeDtos);
+    public void addStock(@RequestBody List<StockChangeDto> stockChangeDtos) {
+        cargoFacade.plusStocksWithLock(stockChangeDtos);
     }
 
     @PutMapping("/subtract")
-    public void subtractStock(@RequestHeader(value = "userId") Long userId, @RequestBody List<StockChangeDto> stockChangeDtos) {
-        cargoFacade.minusStocksWithLock(userId, stockChangeDtos);
+    public void subtractStock(@RequestBody List<StockChangeDto> stockChangeDtos) {
+        cargoFacade.minusStocksWithLock(stockChangeDtos);
     }
 }

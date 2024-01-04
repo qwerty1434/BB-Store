@@ -120,7 +120,7 @@ class CargoFacadeTest extends RedisContainerTestEnv {
                                 .stockDtos(List.of(stockDto))
                                 .build();
 
-                        cargoFacade.plusStocksWithLock(idx, List.of(stockChangeDto));
+                        cargoFacade.plusStocksWithLock(List.of(stockChangeDto));
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();
@@ -179,7 +179,7 @@ class CargoFacadeTest extends RedisContainerTestEnv {
                                 .stockDtos(List.of(stockDto1,stockDto2))
                                 .build();
 
-                        cargoFacade.minusStocksWithLock(idx, List.of(stockChangeDto));
+                        cargoFacade.minusStocksWithLock(List.of(stockChangeDto));
                     } catch (Exception ignored) {
                     } finally {
                         latch.countDown();
