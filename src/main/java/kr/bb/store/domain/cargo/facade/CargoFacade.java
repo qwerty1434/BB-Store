@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,11 +31,16 @@ public class CargoFacade {
     private final OutOfStockSQSPublisher outOfStockSQSPublisher;
     private final OrderStatusSQSPublisher orderStatusSQSPublisher;
 
+    @Value("${redisson.lock.wait-second}")
+    private Integer waitSecond;
+
+    @Value("${redisson.lock.lease-second}")
+    private Integer leaseSecond;
+
     public void modifyAllStocksWithLock(Long storeId, List<StockModifyDto> stockModifyDtos) {
         RLock lock = redissonClient.getLock(makeRedissonKey(storeId));
         try {
-            // TODO : waitTime, leaseTime 외부 환경변수로 빼기
-            boolean available = lock.tryLock(5,1, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(waitSecond, leaseSecond, TimeUnit.SECONDS);
             if(!available) {
                 throw new StockChangeFailedException();
             }

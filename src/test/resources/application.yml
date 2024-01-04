@@ -40,6 +40,10 @@ cloud:
         url:
       out-of-stock-notification-queue:
         url:
+redisson:
+  lock:
+    wait-second: 5
+    lease-second: 1
 endpoint:
   product-service: localhost:8800
   storeLike-service: localhost:8500
