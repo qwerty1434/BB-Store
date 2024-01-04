@@ -51,12 +51,9 @@ public class StoreFeignController {
     }
 
     @PostMapping("/coupons/validate-purchase")
-    public CommonResponse<Object> validateForOrder(@RequestBody List<ValidatePriceDto> validatePriceDtos) {
+    public CommonResponse validateForOrder(@RequestBody List<ValidatePriceDto> validatePriceDtos) {
         storeFacade.validateForOrder(validatePriceDtos);
-        return CommonResponse.builder().result(CommonResponse.Result.SUCCESS)
-                .data(null)
-                .message(null)
-                .build();
+        return CommonResponse.success(null);
     }
 
     @PostMapping("/simple-info")
