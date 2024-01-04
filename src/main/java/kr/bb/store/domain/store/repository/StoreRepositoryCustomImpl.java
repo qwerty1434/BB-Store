@@ -2,6 +2,7 @@ package kr.bb.store.domain.store.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.bb.store.domain.store.controller.response.QStoreForMapResponse;
 import kr.bb.store.domain.store.controller.response.QStoreListResponse;
@@ -35,6 +36,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                     store.storeName,
                     store.detailInfo,
                     store.averageRating,
+                    Expressions.asBoolean(false),
                     storeAddress.address,
                     storeAddress.detailAddress
                 ))
