@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static kr.bb.store.util.RedisUtils.makeRedissonKey;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -72,10 +74,6 @@ public class CargoFacade {
 
     public RemainingStocksResponse getAllStocks(Long storeId) {
         return cargoService.getAllStocks(storeId);
-    }
-
-    private String makeRedissonKey(Long storeId) {
-        return storeId.toString();
     }
 
 }
