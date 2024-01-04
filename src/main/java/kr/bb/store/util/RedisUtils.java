@@ -12,4 +12,8 @@ public class RedisUtils {
     public static String makeRedissonKey(Long storeId, Long flowerId) {
         return  "redisson:" + storeId + ":" + flowerId;
     }
+
+    public static String makeRedissonKey(Long storeId) {
+        return "redisson:" + storeId.toString();
+    }
 }

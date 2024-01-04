@@ -137,6 +137,10 @@ public class StoreFacade {
         return storeService.getStoreName(storeId);
     }
 
+    public Map<Long, String> getStoreNames(List<Long> storeIds) {
+        return storeService.getStoreNames(storeIds);
+    }
+
     public StoreNameAndAddressDto getStoreNameAndAddress(Long storeId) {
         return storeService.getStoreNameAndAddress(storeId).toCommonDto();
     }
@@ -197,5 +201,6 @@ public class StoreFacade {
     private boolean isNotGuest(Long userId) {
         return userId != null;
     }
+
 
 }

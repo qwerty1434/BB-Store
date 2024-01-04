@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class StoreManagerTestEnv extends BasicIntegrationTestEnv {
+class StoreManagerTest extends BasicIntegrationTestEnv {
     @Autowired
     private StoreManager storeManager;
     @Autowired

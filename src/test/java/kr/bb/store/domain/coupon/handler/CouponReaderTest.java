@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class CouponReaderTestEnv extends RedisContainerTestEnv {
+class CouponReaderTest extends RedisContainerTestEnv {
     @Autowired
     private CouponReader couponReader;
     @Autowired

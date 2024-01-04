@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-class QuestionServiceTestEnv extends BasicIntegrationTestEnv {
+class QuestionServiceTest extends BasicIntegrationTestEnv {
     @Autowired
     private QuestionService questionService;
     @Autowired

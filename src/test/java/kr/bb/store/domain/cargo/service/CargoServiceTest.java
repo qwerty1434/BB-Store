@@ -29,7 +29,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 
 @Testcontainers
 @SpringBootTest
-class CargoServiceTestEnv extends RedisContainerTestEnv {
+class CargoServiceTest extends RedisContainerTestEnv {
 
     @Autowired
     private CargoService cargoService;

@@ -18,7 +18,7 @@ import javax.persistence.EntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class StoreCreatorTestEnv extends BasicIntegrationTestEnv {
+class StoreCreatorTest extends BasicIntegrationTestEnv {
     @Autowired
     private StoreCreator storeCreator;
     @Autowired

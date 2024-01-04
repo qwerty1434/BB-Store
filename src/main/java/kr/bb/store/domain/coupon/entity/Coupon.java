@@ -76,8 +76,6 @@ public class Coupon extends BaseEntity {
     }
 
     public boolean isRightPrice(long receivedPaymentPrice, long receivedDiscountPrice) {
-        System.out.println(minPrice <= receivedPaymentPrice);
-        System.out.println(discountPrice +"||"+ receivedDiscountPrice);
         return minPrice <= receivedPaymentPrice && discountPrice == receivedDiscountPrice;
     }
 

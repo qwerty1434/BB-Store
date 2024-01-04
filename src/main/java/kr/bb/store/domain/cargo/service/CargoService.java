@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,12 @@ public class CargoService {
     private final FlowerCargoRepository flowerCargoRepository;
     private static final Long EMPTY_COUNT = 0L;
     private static final Long STOCK_ALERT_COUNT = 50L;
+
+    @Value("${redisson.lock.wait-second}")
+    private Integer waitSecond;
+
+    @Value("${redisson.lock.lease-second}")
+    private Integer leaseSecond;
 
     @Transactional
     public void modifyAllStocks(Long storeId, List<StockModifyDto> stockModifyDtos) {
@@ -58,7 +65,7 @@ public class CargoService {
                             long stockCount = stockDto.getStock();
                             RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
                             try {
-                                boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
+                                boolean available = lock.tryLock(waitSecond, leaseSecond, TimeUnit.SECONDS);
                                 if (!available) {
                                     throw new StockChangeFailedException();
                                 }
@@ -97,7 +104,7 @@ public class CargoService {
                             long stockCount = stockDto.getStock();
                             RLock lock = redissonClient.getLock(makeRedissonKey(storeId, flowerId));
                             try {
-                                boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
+                                boolean available = lock.tryLock(waitSecond, leaseSecond, TimeUnit.SECONDS);
                                 if (!available) {
                                     throw new StockChangeFailedException();
                                 }

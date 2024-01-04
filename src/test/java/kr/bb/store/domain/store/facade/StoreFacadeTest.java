@@ -39,7 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
-class StoreFacadeTestEnv extends BasicIntegrationTestEnv {
+class StoreFacadeTest extends BasicIntegrationTestEnv {
     @Autowired
     private StoreFacade storeFacade;
     @Autowired

@@ -34,12 +34,13 @@ import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class StoreServiceTestEnv extends BasicIntegrationTestEnv {
+class StoreServiceTest extends BasicIntegrationTestEnv {
     @Autowired
     private StoreService storeService;
     @Autowired
@@ -572,6 +573,28 @@ class StoreServiceTestEnv extends BasicIntegrationTestEnv {
             Store next = result.get(i);
             assertThat(prev.getCreatedAt().isAfter(next.getCreatedAt()) || prev.getCreatedAt().isEqual(next.getCreatedAt())).isTrue();
         });
+    }
+
+    @DisplayName("여러 가게들의 이름을 반환한다")
+    @Test
+    void getStoreNames() {
+        // given
+        Store s1 = createStoreWithStoreName("가게1");
+        Store s2 = createStoreWithStoreName("가게2");
+        Store s3 = createStoreWithStoreName("가게3");
+        List<Store> stores = storeRepository.saveAll(List.of(s1, s2, s3));
+        List<Long> storeIds = stores.stream()
+                .map(Store::getId)
+                .collect(Collectors.toList());
+
+        // when
+        Map<Long, String> result = storeService.getStoreNames(storeIds);
+
+        // then
+        assertThat(result.get(s1.getId())).isEqualTo(s1.getStoreName());
+        assertThat(result.get(s2.getId())).isEqualTo(s2.getStoreName());
+        assertThat(result.get(s3.getId())).isEqualTo(s3.getStoreName());
+
     }
 
     private Store createStoreWithManagerId(Long userId) {
