@@ -35,6 +35,11 @@ public class StoreFeignController {
         return CommonResponse.success(storeFacade.getStoreName(storeId));
     }
 
+    @GetMapping("/store-name")
+    public CommonResponse<Map<Long, String>> getStoreNames(@RequestParam List<Long> storeIds) {
+        return CommonResponse.success(storeFacade.getStoreNames(storeIds));
+    }
+
     @GetMapping("/{storeId}")
     public CommonResponse<StoreInfoDto> getStoreInfo(@PathVariable Long storeId) {
         return CommonResponse.success(storeFacade.getStoreInfo(storeId));
@@ -46,7 +51,7 @@ public class StoreFeignController {
     }
 
     @PostMapping("/coupons/validate-purchase")
-    public void validateForOrder(List<ValidatePriceDto> validatePriceDtos) {
+    public void validateForOrder(@RequestBody List<ValidatePriceDto> validatePriceDtos) {
         storeFacade.validateForOrder(validatePriceDtos);
     }
 

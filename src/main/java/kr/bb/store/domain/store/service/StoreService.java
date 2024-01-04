@@ -118,6 +118,12 @@ public class StoreService {
         return store.getStoreName();
     }
 
+    public Map<Long, String> getStoreNames(List<Long> storeIds) {
+        List<Store> stores = storeReader.reads(storeIds);
+        return stores.stream()
+                .collect(Collectors.toMap(Store::getId, Store::getStoreName));
+    }
+
     public StoreNameAndAddressDto getStoreNameAndAddress(Long storeId) {
         Store store = storeReader.read(storeId);
         StoreAddress storeAddress = storeReader.readAddress(storeId);

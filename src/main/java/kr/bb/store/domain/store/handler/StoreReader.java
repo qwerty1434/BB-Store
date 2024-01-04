@@ -101,6 +101,10 @@ public class StoreReader {
                 .orElseThrow(StoreNotFoundException::new);
     }
 
+    public List<Store> reads(List<Long> storeIds) {
+        return storeRepository.findAllByIdIn(storeIds);
+    }
+
     public StoreInfoDto readInfo(Long storeId) {
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(StoreNotFoundException::new);
