@@ -56,22 +56,24 @@ public class CargoFacade {
         }
     }
 
-    public void plusStocksWithLock(Long userId, List<StockChangeDto> stockChangeDtos) {
+    public void plusStocksWithLock(List<StockChangeDto> stockChangeDtos) {
         try {
             Set<Long> sufficientStores = cargoService.plusStockCounts(stockChangeDtos);
             sufficientStores.forEach(outOfStockSQSPublisher::publish);
         } catch (Exception e) {
+            Long userId = stockChangeDtos.get(0).getUserId();
             String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
         }
     }
 
-    public void minusStocksWithLock(Long userId, List<StockChangeDto> stockChangeDtos) {
+    public void minusStocksWithLock(List<StockChangeDto> stockChangeDtos) {
         try {
             Set<Long> sufficientStores = cargoService.minusStockCounts(stockChangeDtos);
             sufficientStores.forEach(outOfStockSQSPublisher::publish);
         } catch (Exception e) {
+            Long userId = stockChangeDtos.get(0).getUserId();
             String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
             throw e;
