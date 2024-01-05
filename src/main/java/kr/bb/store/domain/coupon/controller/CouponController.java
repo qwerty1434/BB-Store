@@ -8,7 +8,7 @@ import kr.bb.store.domain.coupon.controller.request.UserInfoRequest;
 import kr.bb.store.domain.coupon.controller.response.CouponIssuerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
 import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
-import kr.bb.store.domain.coupon.service.CouponService;
+import kr.bb.store.domain.coupon.facade.CouponFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -18,42 +18,42 @@ import java.time.LocalDate;
 @RestController
 @RequiredArgsConstructor
 public class CouponController {
-    private final CouponService couponService;
+    private final CouponFacade couponFacade;
 
     @PostMapping("/{storeId}/coupons")
     public void createCoupon(@PathVariable Long storeId,
                              @RequestBody CouponCreateRequest couponCreateRequest) {
-        couponService.createCoupon(storeId, couponCreateRequest);
+        couponFacade.createCoupon(storeId, couponCreateRequest);
     }
 
     @PutMapping("/{storeId}/coupons/{couponId}")
     public void editCoupon(@PathVariable Long storeId, @PathVariable Long couponId,
                            @RequestBody CouponEditRequest couponEditRequest) {
-        couponService.editCoupon(storeId, couponId, couponEditRequest);
+        couponFacade.editCoupon(storeId, couponId, couponEditRequest);
     }
 
     @DeleteMapping("/{storeId}/coupons/{couponId}")
     public void deleteCoupon(@PathVariable Long storeId, @PathVariable Long couponId) {
-        couponService.softDeleteCoupon(storeId, couponId);
+        couponFacade.softDeleteCoupon(storeId, couponId);
     }
 
     @GetMapping("/{storeId}/coupons")
     public CommonResponse<CouponsForOwnerResponse> coupons(@PathVariable Long storeId) {
-        return CommonResponse.success(couponService.getAllStoreCoupons(storeId));
+        return CommonResponse.success(couponFacade.getAllStoreCoupons(storeId));
     }
 
     @PostMapping("/coupons/{couponId}")
     public void downloadCoupon(@PathVariable Long couponId,
                                @RequestHeader(value = "userId") Long userId,
                                @RequestBody UserInfoRequest userInfoRequest) {
-        couponService.downloadCoupon(userId, couponId, userInfoRequest.getNickname(), userInfoRequest.getPhoneNumber(), LocalDate.now());
+        couponFacade.downloadCoupon(userId, couponId, userInfoRequest.getNickname(), userInfoRequest.getPhoneNumber(), LocalDate.now());
     }
 
     @PostMapping("/{storeId}/coupons/all")
     public void downloadAllCoupons(@PathVariable Long storeId,
                                    @RequestHeader(value = "userId") Long userId,
                                    @RequestBody UserInfoRequest userInfoRequest) {
-        couponService.downloadAllCoupons(userId, storeId, userInfoRequest.getNickname(), userInfoRequest.getPhoneNumber(), LocalDate.now());
+        couponFacade.downloadAllCoupons(userId, storeId, userInfoRequest.getNickname(), userInfoRequest.getPhoneNumber(), LocalDate.now());
     }
 
     @GetMapping("/{storeId}/coupons/product")
@@ -61,7 +61,7 @@ public class CouponController {
             @RequestHeader(value = "userId", required = false) Long userId) {
 
         LocalDate now = LocalDate.now();
-        return CommonResponse.success(couponService.getAllStoreCouponsForUser(userId, storeId, now));
+        return CommonResponse.success(couponFacade.getAllStoreCouponsForUser(userId, storeId, now));
     }
 
     @PostMapping("/{storeId}/coupons/payment")
@@ -70,19 +70,19 @@ public class CouponController {
             @RequestBody TotalAmountRequest totalAmountRequest) {
 
         LocalDate now = LocalDate.now();
-        return CommonResponse.success(couponService.getAvailableCouponsInPayment(totalAmountRequest, userId, storeId, now));
+        return CommonResponse.success(couponFacade.getAvailableCouponsInPayment(totalAmountRequest, userId, storeId, now));
     }
 
     @GetMapping("/coupons/my")
     public CommonResponse<CouponsForUserResponse> myCoupons(@RequestHeader(value = "userId") Long userId) {
 
         LocalDate now = LocalDate.now();
-        return CommonResponse.success(couponService.getMyValidCoupons(userId, now));
+        return CommonResponse.success(couponFacade.getMyValidCoupons(userId, now));
     }
 
     @GetMapping("/coupons/{couponId}/members")
     public CommonResponse<CouponIssuerResponse> couponMembers(@RequestHeader(value = "userId") Long userId,
             @PathVariable Long couponId, Pageable pageable) {
-        return CommonResponse.success(couponService.getCouponMembers(userId, couponId, pageable));
+        return CommonResponse.success(couponFacade.getCouponMembers(userId, couponId, pageable));
     }
 }

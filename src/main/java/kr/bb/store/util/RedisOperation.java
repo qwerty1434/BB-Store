@@ -47,16 +47,5 @@ public class RedisOperation {
         });
     }
 
-    public Object countAndSet(String key, String value) {
-        return redisTemplate.execute(new SessionCallback<>() {
-            @Override
-            public Object execute(RedisOperations operations) throws DataAccessException {
-                operations.multi();
-                count(key);
-                add(key,value);
-                return operations.exec();
-            }
-        });
-    }
 
 }
