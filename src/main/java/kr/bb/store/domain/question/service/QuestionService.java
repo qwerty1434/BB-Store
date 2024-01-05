@@ -7,7 +7,6 @@ import kr.bb.store.domain.question.dto.QuestionForOwnerDto;
 import kr.bb.store.domain.question.dto.QuestionInProductDto;
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
-import kr.bb.store.domain.question.exception.QuestionNotFoundException;
 import kr.bb.store.domain.question.handler.AnswerCreator;
 import kr.bb.store.domain.question.handler.QuestionCreator;
 import kr.bb.store.domain.question.handler.QuestionReader;

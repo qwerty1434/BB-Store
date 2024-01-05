@@ -86,7 +86,7 @@ public class StoreService {
 
     // 스프링의 기본 PageImpl은 기본생성자가 존재하지 않아 String으로 저장된 캐싱 데이터를 다시 객체로 변환할 수 없음
     // RestPage객체는 @JsonCreator를 사용해 기본생성자가 아닌 인자가 있는 생성자로 직렬화/역직렬화를 할 수 있게 했다
-    @Cacheable(key = "#pageable.pageNumber + '::' + #pageable.pageSize", cacheNames = "storeListWithPaging")
+    @Cacheable(key = "#pageable.pageNumber + '::' + #pageable.pageSize", cacheNames = "store-list-with-paging")
     public RestPage<StoreListResponse> getStoresWithPaging(Pageable pageable) {
         return new RestPage<>(storeReader.readStoresWithPaging(pageable));
     }

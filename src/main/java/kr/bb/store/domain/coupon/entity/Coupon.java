@@ -1,11 +1,13 @@
 package kr.bb.store.domain.coupon.entity;
 
 import kr.bb.store.domain.common.entity.BaseEntity;
-import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponDurationException;
 import kr.bb.store.domain.coupon.exception.InvalidCouponStartDateException;
 import kr.bb.store.domain.store.entity.Store;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

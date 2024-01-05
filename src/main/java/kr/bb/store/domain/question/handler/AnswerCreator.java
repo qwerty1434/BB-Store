@@ -2,9 +2,7 @@ package kr.bb.store.domain.question.handler;
 
 import kr.bb.store.domain.question.entity.Answer;
 import kr.bb.store.domain.question.entity.Question;
-import kr.bb.store.domain.question.exception.QuestionNotFoundException;
 import kr.bb.store.domain.question.repository.AnswerRepository;
-import kr.bb.store.domain.question.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

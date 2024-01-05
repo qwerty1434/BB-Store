@@ -1,6 +1,5 @@
 package kr.bb.store.domain.store.handler;
 
-import kr.bb.store.domain.store.dto.GugunDto;
 import kr.bb.store.domain.store.entity.address.Gugun;
 import kr.bb.store.domain.store.entity.address.GugunRepository;
 import kr.bb.store.domain.store.entity.address.Sido;
