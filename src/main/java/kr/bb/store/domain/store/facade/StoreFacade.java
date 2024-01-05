@@ -43,26 +43,26 @@ public class StoreFacade {
     private final StoreSubscriptionFeignClient storeSubscriptionFeignClient;
 
     @KafkaListener(topics = "store-average-rating-update", groupId = "average-rating")
-    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
+    @CacheEvict(cacheNames = "store-list-with-paging", allEntries = true)
     public void updateAverageRating(Map<Long,Double> averageRatings) {
         storeService.updateAverageRating(averageRatings);
         log.info("stores averageRating updated");
     }
 
     @KafkaListener(topics = "settlement", groupId = "settlement")
-    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
+    @CacheEvict(cacheNames = "store-list-with-paging", allEntries = true)
     public void updateMonthlySalesRevenue(Map<Long,Long> monthlySalesRevenues) {
         storeService.updateMonthlySalesRevenue(monthlySalesRevenues);
         log.info("stores monthlySalesRevenue updated");
     }
 
-    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
+    @CacheEvict(cacheNames = "store-list-with-paging", allEntries = true)
     public Long createStore(Long userId, StoreCreateRequest storeCreateRequest) {
         List<FlowerDto> flowers = productFeignClient.getFlowers().getData();
         return storeService.createStore(userId, storeCreateRequest, flowers);
     }
 
-    @CacheEvict(cacheNames = "storeListWithPaging", allEntries = true)
+    @CacheEvict(cacheNames = "store-list-with-paging", allEntries = true)
     public void editStoreInfo(Long storeId, StoreInfoEditRequest storeInfoEditRequest) {
         storeService.editStoreInfo(storeId, storeInfoEditRequest);
         log.info("info of store {} edited", storeId);
