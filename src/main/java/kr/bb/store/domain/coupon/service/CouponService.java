@@ -5,8 +5,6 @@ import kr.bb.store.domain.coupon.controller.request.CouponCreateRequest;
 import kr.bb.store.domain.coupon.controller.request.CouponEditRequest;
 import kr.bb.store.domain.coupon.controller.request.TotalAmountRequest;
 import kr.bb.store.domain.coupon.controller.response.CouponIssuerResponse;
-import kr.bb.store.domain.coupon.controller.response.CouponsForOwnerResponse;
-import kr.bb.store.domain.coupon.controller.response.CouponsForUserResponse;
 import kr.bb.store.domain.coupon.dto.*;
 import kr.bb.store.domain.coupon.entity.Coupon;
 import kr.bb.store.domain.coupon.entity.IssuedCoupon;
@@ -99,27 +97,34 @@ public class CouponService {
         });
     }
 
-    public CouponsForOwnerResponse getAllStoreCoupons(Long storeId) {
-        List<CouponForOwnerDto> couponForOwnerDtos = couponReader.readCouponsForOwner(storeId);
-        return CouponsForOwnerResponse.from(couponForOwnerDtos);
+    public List<CouponForOwnerDto> getAllStoreCoupons(Long storeId) {
+        return couponReader.readCouponsForOwner(storeId);
     }
 
-    public CouponsForUserResponse getAllStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
-        List<CouponWithIssueStatusDto> couponWithIssueStatusDtos =
-                couponReader.readStoreCouponsForUser(userId, storeId, now);
-        return CouponsForUserResponse.from(couponWithIssueStatusDtos);
+    public List<CouponWithIssueStatusDto> getAllStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
+        return couponReader.readStoreCouponsForUser(userId, storeId, now);
     }
 
-    public CouponsForUserResponse getAvailableCouponsInPayment(TotalAmountRequest totalAmountRequest,
+    public List<CouponWithAvailabilityDto> getAvailableCouponsInPayment(TotalAmountRequest totalAmountRequest,
                                                                Long userId, Long storeId, LocalDate now) {
-        List<CouponWithAvailabilityDto> couponWithAvailabilityDtos =
-                couponReader.readAvailableCouponsInStore(totalAmountRequest.getTotalAmount(), userId, storeId, now);
-        return CouponsForUserResponse.from(couponWithAvailabilityDtos);
+        return couponReader.readAvailableCouponsInStore(totalAmountRequest.getTotalAmount(), userId, storeId, now);
     }
 
-    public CouponsForUserResponse getMyValidCoupons(Long userId, LocalDate now) {
-        List<CouponDto> couponDtos = couponReader.readMyValidCoupons(userId, now);
-        return CouponsForUserResponse.from(couponDtos);
+    public List<CouponDto> getMyValidCoupons(Long userId, LocalDate now) {
+        return couponReader.readMyValidCoupons(userId, now);
+    }
+
+    public CouponIssuerResponse getCouponMembers(Long userId, Long couponId, Pageable pageable) {
+        Coupon coupon = couponReader.read(couponId);
+        if(!coupon.getStore().getStoreManagerId().equals(userId)) {
+            throw new UnAuthorizedCouponException();
+        }
+
+        List<IssuedCouponDto> issuedCoupons = issuedCouponReader.readByCouponId(couponId, pageable)
+                .stream().map(IssuedCouponDto::fromEntity).collect(Collectors.toList());
+        long count = issuedCouponReader.countByCouponId(couponId);
+
+        return CouponIssuerResponse.of(issuedCoupons, count);
     }
 
     public Integer getMyAvailableCouponCount(Long userId, LocalDate now) {
@@ -141,16 +146,4 @@ public class CouponService {
         if(!coupon.getStore().getId().equals(storeId)) throw new UnAuthorizedCouponException();
     }
 
-    public CouponIssuerResponse getCouponMembers(Long userId, Long couponId, Pageable pageable) {
-        Coupon coupon = couponReader.read(couponId);
-        if(!coupon.getStore().getStoreManagerId().equals(userId)) {
-            throw new UnAuthorizedCouponException();
-        }
-
-        List<IssuedCouponDto> issuedCoupons = issuedCouponReader.readByCouponId(couponId, pageable)
-                .stream().map(IssuedCouponDto::fromEntity).collect(Collectors.toList());
-        long count = issuedCouponReader.countByCouponId(couponId);
-
-        return CouponIssuerResponse.of(issuedCoupons, count);
-    }
 }
