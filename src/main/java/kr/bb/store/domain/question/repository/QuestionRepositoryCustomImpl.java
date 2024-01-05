@@ -12,11 +12,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
-
 import java.util.List;
 
-import static com.querydsl.core.types.ExpressionUtils.as;
-import static com.querydsl.jpa.JPAExpressions.select;
 import static kr.bb.store.domain.question.entity.QAnswer.answer;
 import static kr.bb.store.domain.question.entity.QQuestion.question;
 
