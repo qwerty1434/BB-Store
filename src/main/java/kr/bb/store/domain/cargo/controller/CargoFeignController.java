@@ -1,6 +1,7 @@
 package kr.bb.store.domain.cargo.controller;
 
 import bloomingblooms.domain.flower.StockChangeDto;
+import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.cargo.facade.CargoFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +15,14 @@ import java.util.List;
 public class CargoFeignController {
     private final CargoFacade cargoFacade;
     @PutMapping("/add")
-    public void addStock(@RequestBody List<StockChangeDto> stockChangeDtos) {
+    public CommonResponse addStock(@RequestBody List<StockChangeDto> stockChangeDtos) {
         cargoFacade.plusStocksWithLock(stockChangeDtos);
+        return CommonResponse.success(null);
     }
 
     @PutMapping("/subtract")
-    public void subtractStock(@RequestBody List<StockChangeDto> stockChangeDtos) {
+    public CommonResponse subtractStock(@RequestBody List<StockChangeDto> stockChangeDtos) {
         cargoFacade.minusStocksWithLock(stockChangeDtos);
+        return CommonResponse.success(null);
     }
 }
