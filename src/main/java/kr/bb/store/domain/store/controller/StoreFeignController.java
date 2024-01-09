@@ -1,6 +1,6 @@
 package kr.bb.store.domain.store.controller;
 
-import bloomingblooms.domain.order.ValidatePriceDto;
+import bloomingblooms.domain.order.ValidatePolicyDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
@@ -51,8 +51,8 @@ public class StoreFeignController {
     }
 
     @PostMapping("/coupons/validate-purchase")
-    public CommonResponse validateForOrder(@RequestBody List<ValidatePriceDto> validatePriceDtos) {
-        storeFacade.validateForOrder(validatePriceDtos);
+    public CommonResponse validateForOrder(@RequestBody ValidatePolicyDto validatePolicyDto) {
+        storeFacade.validateForOrder(validatePolicyDto);
         return CommonResponse.success(null);
     }
 
