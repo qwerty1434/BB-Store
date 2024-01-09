@@ -1,7 +1,8 @@
 package kr.bb.store.domain.store.facade;
 
 import bloomingblooms.domain.flower.FlowerDto;
-import bloomingblooms.domain.order.ValidatePriceDto;
+import bloomingblooms.domain.notification.order.OrderType;
+import bloomingblooms.domain.order.ValidatePolicyDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
@@ -159,9 +160,11 @@ public class StoreFacade {
                 .collect(Collectors.toList());
     }
 
-    public void validateForOrder(List<ValidatePriceDto> validatePriceDtos) {
-        couponService.validateCouponPrice(validatePriceDtos);
-        storeService.validateDeliveryPrice(validatePriceDtos);
+    public void validateForOrder(ValidatePolicyDto validatePolicyDto) {
+        couponService.validateCouponPrice(validatePolicyDto.getValidatePriceDtos());
+        if(!validatePolicyDto.getOrderType().equals(OrderType.PICKUP)) {
+            storeService.validateDeliveryPrice(validatePolicyDto.getValidatePriceDtos());
+        }
     }
 
     public List<LikedStoreInfoResponse> simpleInfos(List<Long> storeIds){
