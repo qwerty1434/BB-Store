@@ -94,8 +94,6 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                             )
                 ))
                 .from(coupon)
-                .leftJoin(issuedCoupon)
-                .on(coupon.id.eq(issuedCoupon.id.couponId))
                 .where(
                         coupon.store.id.eq(storeId),
                         isCouponUnexpired(now),
