@@ -15,6 +15,7 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
 import kr.bb.store.util.RedisOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +26,10 @@ import java.util.stream.Collectors;
 
 import static kr.bb.store.util.RedisUtils.makeRedisKey;
 
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Slf4j
 @Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class CouponService {
     private final CouponCreator couponCreator;
     private final CouponManager couponManager;
@@ -133,6 +135,7 @@ public class CouponService {
 
     public void validateCouponPrice(List<ValidatePriceDto> validatePriceDtos) {
         validatePriceDtos.stream()
+                .peek(dto -> log.info("couponId is : {}, is not null is : {}",dto.getCouponId(), dto.getCouponId() != null))
                 .filter(dto -> dto.getCouponId() != null)
                 .forEach(dto -> {
                     Coupon coupon = couponReader.read(dto.getCouponId());
