@@ -38,7 +38,7 @@ public class CouponFacade {
             Long userId = processOrderDto.getUserId();
             String phoneNumber = processOrderDto.getPhoneNumber();
             orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.INVALID_COUPON);
-            throw e;
+            log.error("coupon use failed with cause of {}", e);
         }
     }
 
