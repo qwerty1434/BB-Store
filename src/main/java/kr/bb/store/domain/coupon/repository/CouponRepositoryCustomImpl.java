@@ -90,7 +90,6 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                             .where(
                                     issuedCoupon.id.couponId.eq(coupon.id),
                                     issuedCoupon.id.userId.eq(userId),
-                                    issuedCoupon.isUsed.isFalse(),
                                     coupon.isDeleted.isFalse()
                             )
                 ))
