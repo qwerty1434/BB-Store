@@ -32,7 +32,10 @@ public interface ProductFeignClient {
         log.warn("{}'s Request of '{}' failed. request will return fallback data",
                 "ProductFeignClient", "getSubscriptionProductIdFallback");
         return CommonResponse.<StoreSubscriptionProductId>builder()
-                .data(null)
+                .data(StoreSubscriptionProductId.builder()
+                        .subscriptionProductId(null)
+                        .build()
+                )
                 .message("data from circuit")
                 .build();
     }
