@@ -132,13 +132,15 @@ public class CouponService {
     }
 
     public void validateCouponPrice(List<ValidatePriceDto> validatePriceDtos) {
-        validatePriceDtos.forEach(dto -> {
-            Coupon coupon = couponReader.read(dto.getCouponId());
-            Long receivedPaymentPrice = dto.getActualAmount();
-            Long receivedDiscountPrice = dto.getCouponAmount();
-            if(!coupon.isRightPrice(receivedPaymentPrice, receivedDiscountPrice)) {
-                throw new CouponInconsistencyException();
-            }
+        validatePriceDtos.stream()
+                .filter(dto -> dto.getCouponId() != null)
+                .forEach(dto -> {
+                    Coupon coupon = couponReader.read(dto.getCouponId());
+                    Long receivedPaymentPrice = dto.getActualAmount();
+                    Long receivedDiscountPrice = dto.getCouponAmount();
+                    if(!coupon.isRightPrice(receivedPaymentPrice, receivedDiscountPrice)) {
+                        throw new CouponInconsistencyException();
+                    }
         });
     }
 
