@@ -7,6 +7,7 @@ import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
 import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
+import bloomingblooms.dto.response.SettlementStoreInfoResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
 import kr.bb.store.client.StoreSubscriptionFeignClient;
@@ -174,6 +175,11 @@ public class StoreFacade {
 
     }
 
+    public List<SettlementStoreInfoResponse> storeInfoForSettlement(List<Long> storeIds) {
+        return storeService.storeInfoForSettlement(storeIds);
+    }
+
+
     public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
         return storeService.getDeliveryPolicy(storeId);
     }
@@ -204,6 +210,5 @@ public class StoreFacade {
     private boolean isNotGuest(Long userId) {
         return userId != null;
     }
-
 
 }

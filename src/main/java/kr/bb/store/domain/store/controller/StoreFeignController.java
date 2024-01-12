@@ -5,6 +5,7 @@ import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
 import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
+import bloomingblooms.dto.response.SettlementStoreInfoResponse;
 import bloomingblooms.response.CommonResponse;
 import kr.bb.store.domain.store.facade.StoreFacade;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,11 @@ public class StoreFeignController {
     @PostMapping("/simple-info")
     public CommonResponse<List<LikedStoreInfoResponse>> getStoreSimpleInfos(@RequestBody List<Long> storeIds) {
         return CommonResponse.success(storeFacade.simpleInfos(storeIds));
+    }
+
+    @PostMapping("/settlements")
+    public CommonResponse<List<SettlementStoreInfoResponse>> getStoreInfoForSettlement(@RequestBody List<Long> storeIds) {
+        return CommonResponse.success(storeFacade.storeInfoForSettlement(storeIds));
     }
 
     @PostMapping("/policy")
