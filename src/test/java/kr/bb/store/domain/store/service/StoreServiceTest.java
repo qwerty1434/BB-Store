@@ -413,7 +413,7 @@ class StoreServiceTest extends BasicIntegrationTestEnv {
         // when // then
         assertThatThrownBy(() -> storeService.validateDeliveryPrice(List.of(validatePriceDto)))
                 .isInstanceOf(DeliveryInconsistencyException.class)
-                .hasMessage("해당 요청은 실제 배송 정보와 일치하지 않습니다.");
+                .hasMessage("주문 요청이 배송 정책을 위반했습니다.");
 
     }
 
@@ -438,7 +438,7 @@ class StoreServiceTest extends BasicIntegrationTestEnv {
         // when // then
         assertThatThrownBy(() -> storeService.validateDeliveryPrice(List.of(validatePriceDto)))
                 .isInstanceOf(DeliveryInconsistencyException.class)
-                .hasMessage("해당 요청은 실제 배송 정보와 일치하지 않습니다.");
+                .hasMessage("주문 요청이 배송 정책을 위반했습니다.");
 
     }
 
