@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StorePolicy;
+import bloomingblooms.dto.response.SettlementStoreInfoResponse;
 import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.cargo.service.CargoService;
@@ -153,8 +154,27 @@ public class StoreService {
         return storeReader.findStoresByIds(storeIds).stream()
                 .map(LikedStoreInfoResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public List<SettlementStoreInfoResponse> storeInfoForSettlement(List<Long> storeIds) {
+        Map<Long, Store> stores = storeReader.findStoresByIds(storeIds).stream()
+                .collect(Collectors.toMap(Store::getId, store -> store));
+        Map<Long, StoreAddress> storeAddresses = storeReader.findStoreAddressesByStoreIds(storeIds).stream()
+                .collect(Collectors.toMap(storeAddress -> storeAddress.getStore().getId(), storeAddress -> storeAddress));
+
+        return storeIds.stream()
+                .map(id -> SettlementStoreInfoResponse.builder()
+                        .storeId(id)
+                        .storeName(stores.get(id).getStoreName())
+                        .bankName(stores.get(id).getBank())
+                        .accountNumber(stores.get(id).getAccountNumber())
+                        .sido(storeAddresses.get(id).getSido().getName())
+                        .gugun(storeAddresses.get(id).getGugun().getName())
+                        .build()
+                ).collect(Collectors.toList());
 
     }
+
 
     public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
         DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(storeId);

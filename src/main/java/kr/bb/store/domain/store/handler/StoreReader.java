@@ -44,6 +44,10 @@ public class StoreReader {
                 .orElseThrow(StoreAddressNotFoundException::new);
     }
 
+    public List<StoreAddress> findStoreAddressesByStoreIds(List<Long> storeIds) {
+        return storeAddressRepository.findAllById(storeIds);
+    }
+
     public DeliveryPolicy findDeliveryPolicyByStoreId(Long storeId) {
         return deliveryPolicyRepository.findByStoreId(storeId)
                 .orElseThrow(DeliveryPolicyNotFoundException::new);
