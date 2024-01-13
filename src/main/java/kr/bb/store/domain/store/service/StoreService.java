@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.service;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
 import bloomingblooms.domain.store.StorePolicy;
+import bloomingblooms.dto.command.StoreSettlementDto;
 import bloomingblooms.dto.response.SettlementStoreInfoResponse;
 import kr.bb.store.client.dto.StoreInfoDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
@@ -74,10 +75,10 @@ public class StoreService {
     }
 
     @Transactional
-    public void updateMonthlySalesRevenue(Map<Long, Long> monthlySalesRevenues) {
-        monthlySalesRevenues.forEach((storeId, monthlySalesRevenue) -> {
-            Store store = storeReader.read(storeId);
-            store.updateMonthlySalesRevenue(monthlySalesRevenue);
+    public void updateMonthlySalesRevenue(List<StoreSettlementDto> monthlySalesRevenues) {
+        monthlySalesRevenues.forEach(dto -> {
+            Store store = storeReader.read(dto.getStoreId());
+            store.updateMonthlySalesRevenue(dto.getSettlementAmount());
         });
     }
 

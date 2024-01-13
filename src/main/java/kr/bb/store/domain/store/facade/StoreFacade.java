@@ -7,6 +7,7 @@ import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
 import bloomingblooms.domain.wishlist.likes.LikedStoreInfoResponse;
+import bloomingblooms.dto.command.UpdateSettlementCommand;
 import bloomingblooms.dto.response.SettlementStoreInfoResponse;
 import kr.bb.store.client.ProductFeignClient;
 import kr.bb.store.client.StoreLikeFeignClient;
@@ -53,8 +54,8 @@ public class StoreFacade {
 
     @KafkaListener(topics = "settlement", groupId = "settlement")
     @CacheEvict(cacheNames = "store-list-with-paging", allEntries = true)
-    public void updateMonthlySalesRevenue(Map<Long,Long> monthlySalesRevenues) {
-        storeService.updateMonthlySalesRevenue(monthlySalesRevenues);
+    public void updateMonthlySalesRevenue(UpdateSettlementCommand updateSettlementCommand) {
+        storeService.updateMonthlySalesRevenue(updateSettlementCommand.getDtoList());
         log.info("stores monthlySalesRevenue updated");
     }
 

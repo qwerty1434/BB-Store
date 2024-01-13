@@ -2,6 +2,7 @@ package kr.bb.store.domain.store.service;
 
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.order.ValidatePriceDto;
+import bloomingblooms.dto.command.StoreSettlementDto;
 import kr.bb.store.client.dto.StoreNameAndAddressDto;
 import kr.bb.store.domain.BasicIntegrationTestEnv;
 import kr.bb.store.domain.store.controller.request.SortType;
@@ -480,7 +481,9 @@ class StoreServiceTest extends BasicIntegrationTestEnv {
         em.flush();
         em.clear();
 
-        Map<Long, Long> monthlySalesRevenues = Map.of(s1.getId(), 100_000L, s2.getId(), 200_000L, s3.getId(), 300_000L);
+        List<StoreSettlementDto> monthlySalesRevenues = List.of(new StoreSettlementDto(s1.getId(),100_000L),
+                                                                new StoreSettlementDto(s2.getId(),200_000L),
+                                                                new StoreSettlementDto(s3.getId(),300_000L));
 
         // when
         storeService.updateMonthlySalesRevenue(monthlySalesRevenues);
