@@ -47,6 +47,7 @@ dependencies {
     implementation "org.springframework.cloud:spring-cloud-starter-bus-kafka"
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.12.2'
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -73,7 +74,7 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-aws-messaging:2.2.4.RELEASE'
     implementation 'software.amazon.awssdk:sns:2.21.37'
 
-    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '202401120040'
+    implementation group: 'io.github.lotteon-maven', name: 'blooming-blooms-utils', version: '202401121522'
 }
 
 dependencyManagement {
