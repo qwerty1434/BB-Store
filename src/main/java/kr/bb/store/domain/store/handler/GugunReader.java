@@ -23,6 +23,7 @@ public class GugunReader {
         }
         return gugun;
     }
+
     public Gugun readGugunCorrespondingSidoWithCode(Sido sido, String gugunCode) {
         Gugun gugun = gugunRepository.findById(gugunCode)
                 .orElseThrow(GugunNotFoundException::new);

@@ -18,11 +18,6 @@ public class IssuedCouponId implements Serializable {
     private Long couponId;
     private Long userId;
 
-
-
-
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -64,7 +64,6 @@ public class CouponFacade {
         return CouponsForOwnerResponse.from(couponService.getAllStoreCoupons(storeId));
     }
 
-
     public void downloadCoupon(Long userId, Long couponId, String nickname, String phoneNumber, LocalDate now) {
         couponService.downloadCoupon(userId, couponId, nickname, phoneNumber, now);
     }

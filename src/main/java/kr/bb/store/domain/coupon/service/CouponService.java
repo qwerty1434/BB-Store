@@ -15,13 +15,13 @@ import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.handler.StoreReader;
 import kr.bb.store.util.RedisOperation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static kr.bb.store.util.RedisUtils.makeRedisKey;
@@ -134,7 +134,7 @@ public class CouponService {
 
     public void validateCouponPrice(List<ValidatePriceDto> validatePriceDtos) {
         validatePriceDtos.stream()
-                .filter(dto -> dto.getCouponId() != null)
+                .filter(dto -> Objects.nonNull(dto.getCouponId()))
                 .forEach(dto -> {
                     Coupon coupon = couponReader.read(dto.getCouponId());
                     Long receivedPaymentPrice = dto.getActualAmount();

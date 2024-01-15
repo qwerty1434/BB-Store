@@ -23,7 +23,6 @@ public class CouponFeignController {
     @GetMapping("/count")
     public CommonResponse<Integer> availableCouponCountOfUser(@RequestHeader(value = "userId") Long userId) {
         LocalDate now = LocalDate.now();
-
         return CommonResponse.success(couponService.getMyAvailableCouponCount(userId, now));
     }
 }
