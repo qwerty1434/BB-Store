@@ -27,7 +27,7 @@ public class CouponReader {
     }
 
     public List<Coupon> readStoresAllValidateCoupon(Long storeId, LocalDate now) {
-        return couponRepository.findAllDownloadableCouponsByStoreId(storeId, now);
+        return couponRepository.findAllValidateCouponsByStoreId(storeId, now);
     }
 
     public List<CouponWithIssueStatusDto> readStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
