@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.facade;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.notification.order.OrderType;
 import bloomingblooms.domain.order.ValidatePolicyDto;
+import bloomingblooms.domain.store.StoreAverageDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
@@ -47,8 +48,8 @@ public class StoreFacade {
 
     @KafkaListener(topics = "store-average-rating-update", groupId = "average-rating")
     @CacheEvict(cacheNames = "store-list-with-paging", allEntries = true)
-    public void updateAverageRating(Map<Long,Double> averageRatings) {
-        storeService.updateAverageRating(averageRatings);
+    public void updateAverageRating(StoreAverageDto storeAverageDto) {
+        storeService.updateAverageRating(storeAverageDto.getAverage());
         log.info("stores averageRating updated");
     }
 
