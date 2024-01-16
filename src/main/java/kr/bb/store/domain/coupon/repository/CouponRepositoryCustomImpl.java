@@ -44,7 +44,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .where(
                         coupon.store.id.eq(storeId),
                         coupon.isDeleted.isFalse(),
-                        coupon.endDate.loe(now)
+                        coupon.endDate.goe(now)
                 )
                 .fetch();
     }

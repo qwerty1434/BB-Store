@@ -46,15 +46,19 @@ class CouponReaderTest extends RedisContainerTestEnv {
         // given
         Store store = createStore(1L);
         storeRepository.save(store);
-        Coupon c1 = createCoupon(store);
-        Coupon c2 = createCoupon(store);
-        couponRepository.saveAll(List.of(c1,c2));
+        LocalDate now = LocalDate.now().plusYears(1);
+        Coupon c1 = createCouponWithDate(store, now, now);
+        Coupon c2 = createCouponWithDate(store, now.minusDays(5), now.minusDays(1));
+        Coupon c3 = createCouponWithDate(store, now.plusDays(1), now.plusDays(5));
+        Coupon c4 = createCouponWithDate(store, now.minusDays(5), now.plusDays(5));
+
+        couponRepository.saveAll(List.of(c1,c2,c3,c4));
 
         // when
-        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId(), LocalDate.now());
+        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId(), now);
 
         // then
-        assertThat(result).hasSize(2);
+        assertThat(result).hasSize(3);
 
     }
     @DisplayName("아무도 발급받지 않은 쿠폰의 수량은 처음 설정과 동일하다")
