@@ -98,8 +98,8 @@ public class CouponService {
         });
     }
 
-    public List<CouponForOwnerDto> getAllStoreCoupons(Long storeId) {
-        return couponReader.readCouponsForOwner(storeId);
+    public List<CouponForOwnerDto> getAllStoreCoupons(Long storeId, LocalDate now) {
+        return couponReader.readCouponsForOwner(storeId, now);
     }
 
     public List<CouponWithIssueStatusDto> getAllStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {

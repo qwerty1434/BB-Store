@@ -51,7 +51,7 @@ class CouponReaderTest extends RedisContainerTestEnv {
         couponRepository.saveAll(List.of(c1,c2));
 
         // when
-        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId());
+        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId(), LocalDate.now());
 
         // then
         assertThat(result).hasSize(2);
@@ -67,7 +67,7 @@ class CouponReaderTest extends RedisContainerTestEnv {
         couponRepository.save(c1);
 
         // when
-        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId());
+        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId(), LocalDate.now());
 
         // then
         assertThat(result.get(0).getUnusedCount()).isEqualTo(c1.getLimitCount());
@@ -87,7 +87,7 @@ class CouponReaderTest extends RedisContainerTestEnv {
         issuedCouponRepository.save(createIssuedCoupon(c1, userId));
 
         // when
-        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId());
+        List<CouponForOwnerDto> result = couponReader.readCouponsForOwner(store.getId(), LocalDate.now());
 
         // then
         assertThat(result.get(0).getUnusedCount()).isEqualTo(99);
