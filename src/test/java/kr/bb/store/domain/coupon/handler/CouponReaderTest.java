@@ -332,7 +332,7 @@ class CouponReaderTest extends RedisContainerTestEnv {
         assertThat(result).isEqualTo(1);
     }
 
-    @DisplayName("현재 다운받을 수 있는 쿠폰 목록을 반환한다")
+    @DisplayName("현재 가게의 유효한 쿠폰 목록을 반환한다")
     @Test
     void readStoresAllValidateCoupon() {
         // given
@@ -359,8 +359,8 @@ class CouponReaderTest extends RedisContainerTestEnv {
         List<Coupon> result = couponReader.readStoresAllValidateCoupon(s1.getId(), now.plusDays(3));
 
         // then
-        assertThat(result).hasSize(1)
-                .containsExactly(c1);
+        assertThat(result).hasSize(3)
+                .containsExactly(c1,c2,c3);
 
 
     }

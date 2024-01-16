@@ -39,8 +39,6 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                         coupon.endDate
                 ))
                 .from(coupon)
-                .leftJoin(issuedCoupon)
-                .on(coupon.id.eq(issuedCoupon.id.couponId))
                 .where(
                         coupon.store.id.eq(storeId),
                         coupon.isDeleted.isFalse(),
@@ -50,14 +48,11 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
     }
 
     @Override
-    public List<Coupon> findAllDownloadableCouponsByStoreId(Long storeId, LocalDate now) {
+    public List<Coupon> findAllValidateCouponsByStoreId(Long storeId, LocalDate now) {
         return queryFactory
                 .selectFrom(coupon)
-                .leftJoin(issuedCoupon)
-                .on(issuedCoupon.coupon.id.eq(coupon.id))
                 .where(
                         coupon.store.id.eq(storeId),
-                        issuedCoupon.id.isNull(),
                         isCouponUnexpired(now),
                         coupon.isDeleted.isFalse()
                 )
