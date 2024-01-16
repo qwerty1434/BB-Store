@@ -16,7 +16,7 @@ public class GugunReader {
     private final GugunRepository gugunRepository;
 
     public Gugun readGugunCorrespondingSido(Sido sido, String gugunName) {
-        Gugun gugun = gugunRepository.findByName(gugunName)
+        Gugun gugun = gugunRepository.findBySidoAndName(sido, gugunName)
                 .orElseThrow(GugunNotFoundException::new);
         if(!gugun.getSido().getCode().equals(sido.getCode())) {
             throw new InvalidParentException();
