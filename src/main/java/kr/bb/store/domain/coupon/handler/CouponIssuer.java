@@ -61,8 +61,7 @@ public class CouponIssuer {
                 .filter(coupon -> {
                     String redisKey = makeRedisKey(coupon);
                     Integer limitCnt = coupon.getLimitCount();
-                    boolean issuable = (Boolean)redisLuaScriptExecutor.execute(script, redisKey, redisValue, limitCnt);
-                    return issuable;
+                    return (Boolean)redisLuaScriptExecutor.execute(script, redisKey, redisValue, limitCnt);
                 })
                 .forEach(coupon -> issuedCouponRepository.save(makeIssuedCoupon(coupon,userId,nickname,phoneNumber)));
     }

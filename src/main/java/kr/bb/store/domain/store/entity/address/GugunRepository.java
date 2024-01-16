@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface GugunRepository extends JpaRepository<Gugun,String> {
 
     List<Gugun> findGugunBySidoCode(String sidoCode);
-    Optional<Gugun> findByName(String name);
+    Optional<Gugun> findBySidoAndName(Sido sido, String name);
 }

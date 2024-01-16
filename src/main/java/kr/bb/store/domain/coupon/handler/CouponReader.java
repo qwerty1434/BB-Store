@@ -22,8 +22,8 @@ public class CouponReader {
         return couponRepository.findById(couponId).orElseThrow(CouponNotFoundException::new);
     }
 
-    public List<CouponForOwnerDto> readCouponsForOwner(Long storeId) {
-        return couponRepository.findAllDtoByStoreId(storeId);
+    public List<CouponForOwnerDto> readCouponsForOwner(Long storeId, LocalDate now) {
+        return couponRepository.findAllDtoByStoreId(storeId, now);
     }
 
     public List<Coupon> readStoresAllValidateCoupon(Long storeId, LocalDate now) {

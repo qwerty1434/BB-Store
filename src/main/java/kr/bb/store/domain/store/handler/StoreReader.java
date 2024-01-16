@@ -154,6 +154,6 @@ public class StoreReader {
             default:
                 throw new IllegalArgumentException("정의되지 않은 레벨입니다");
         }
-
     }
+
 }

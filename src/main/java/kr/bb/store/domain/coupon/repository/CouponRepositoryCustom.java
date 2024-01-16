@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface CouponRepositoryCustom {
-    List<CouponForOwnerDto> findAllDtoByStoreId(Long storeId);
+    List<CouponForOwnerDto> findAllDtoByStoreId(Long storeId, LocalDate now);
     List<Coupon> findAllDownloadableCouponsByStoreId(Long storeId, LocalDate now);
     List<CouponWithIssueStatusDto> findStoreCouponsForUser(Long userId, Long storeId, LocalDate now);
     List<CouponWithAvailabilityDto> findAvailableCoupons(Long totalAmount, Long userId, Long storeId, LocalDate now);

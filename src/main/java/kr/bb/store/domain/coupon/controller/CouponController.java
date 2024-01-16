@@ -59,7 +59,6 @@ public class CouponController {
     @GetMapping("/{storeId}/coupons/product")
     public CommonResponse<CouponsForUserResponse> storeCouponsForUser(@PathVariable Long storeId,
             @RequestHeader(value = "userId", required = false) Long userId) {
-
         LocalDate now = LocalDate.now();
         return CommonResponse.success(couponFacade.getAllStoreCouponsForUser(userId, storeId, now));
     }
@@ -68,14 +67,12 @@ public class CouponController {
     public CommonResponse<CouponsForUserResponse> couponsInPaymentStep(@PathVariable Long storeId,
             @RequestHeader(value = "userId") Long userId,
             @RequestBody TotalAmountRequest totalAmountRequest) {
-
         LocalDate now = LocalDate.now();
         return CommonResponse.success(couponFacade.getAvailableCouponsInPayment(totalAmountRequest, userId, storeId, now));
     }
 
     @GetMapping("/coupons/my")
     public CommonResponse<CouponsForUserResponse> myCoupons(@RequestHeader(value = "userId") Long userId) {
-
         LocalDate now = LocalDate.now();
         return CommonResponse.success(couponFacade.getMyValidCoupons(userId, now));
     }

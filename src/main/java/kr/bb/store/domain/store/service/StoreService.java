@@ -104,6 +104,7 @@ public class StoreService {
     public StoreListForMapResponse getNearbyStores(Double lat, Double lon, Integer level) {
         return storeReader.getNearbyStores(lat, lon, level);
     }
+
     public StoreListForMapResponse getStoresWithRegion(String sidoCode, String gugunCode) {
         Sido sido = sidoReader.readSido(sidoCode);
         Gugun gugun = "".equals(gugunCode) ? null : gugunReader.readGugunCorrespondingSidoWithCode(sido, gugunCode);
@@ -173,9 +174,7 @@ public class StoreService {
                         .gugun(storeAddresses.get(id).getGugun().getName())
                         .build()
                 ).collect(Collectors.toList());
-
     }
-
 
     public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
         DeliveryPolicy deliveryPolicy = storeReader.findDeliveryPolicyByStoreId(storeId);
@@ -209,7 +208,6 @@ public class StoreService {
                 return storeReader.readStoresOrderByCreatedAt(pageable, sido, gugun);
         }
     }
-
 
     public List<SidoDto> getAllSido() {
         return sidoReader.readAll()

@@ -3,6 +3,7 @@ package kr.bb.store.domain.store.facade;
 import bloomingblooms.domain.flower.FlowerDto;
 import bloomingblooms.domain.notification.order.OrderType;
 import bloomingblooms.domain.order.ValidatePolicyDto;
+import bloomingblooms.domain.store.StoreAverageDto;
 import bloomingblooms.domain.store.StoreInfoDto;
 import bloomingblooms.domain.store.StoreNameAndAddressDto;
 import bloomingblooms.domain.store.StorePolicy;
@@ -47,8 +48,8 @@ public class StoreFacade {
 
     @KafkaListener(topics = "store-average-rating-update", groupId = "average-rating")
     @CacheEvict(cacheNames = "store-list-with-paging", allEntries = true)
-    public void updateAverageRating(Map<Long,Double> averageRatings) {
-        storeService.updateAverageRating(averageRatings);
+    public void updateAverageRating(StoreAverageDto storeAverageDto) {
+        storeService.updateAverageRating(storeAverageDto.getAverage());
         log.info("stores averageRating updated");
     }
 
@@ -78,7 +79,7 @@ public class StoreFacade {
                 .map(StoreListResponse::getStoreId)
                 .collect(Collectors.toList());
 
-        if(isNotGuest(userId)) {
+        if(isLoginUser(userId)) {
             Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             storePages.getContent().forEach(store -> store.setIsLiked(storeLikes.get(store.getStoreId())));
         }
@@ -92,7 +93,8 @@ public class StoreFacade {
     public StoreInfoUserResponse getStoreInfoForUser(Long userId, Long storeId) {
         String subscriptionProductId = productFeignClient.getSubscriptionProductId(storeId).getData()
                 .getSubscriptionProductId();
-        if(isNotGuest(userId)) {
+
+        if(isLoginUser(userId)) {
             Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, List.of(storeId)).getData();
             Map<Long, Boolean> storeSubscriptions = storeSubscriptionFeignClient
                     .getStoreSubscriptions(userId, List.of(storeId)).getData();
@@ -100,8 +102,8 @@ public class StoreFacade {
             Boolean isSubscribed = storeSubscriptions.get(storeId);
             return storeService.getStoreInfoForUser(storeId, isLiked, isSubscribed, subscriptionProductId);
         }
-        return storeService.getStoreInfoForUser(storeId, false, false, subscriptionProductId);
 
+        return storeService.getStoreInfoForUser(storeId, false, false, subscriptionProductId);
     }
 
     public StoreInfoManagerResponse getStoreInfoForManager(Long storeId) {
@@ -111,7 +113,7 @@ public class StoreFacade {
     public StoreListForMapResponse getNearbyStores(Long userId, Double lat, Double lon, Integer level) {
         StoreListForMapResponse nearbyStores = storeService.getNearbyStores(lat, lon, level);
 
-        if(isNotGuest(userId)) {
+        if(isLoginUser(userId)) {
             List<Long> storeIds = nearbyStores.getStoreIds();
             Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             nearbyStores.setLikes(storeLikes);
@@ -123,7 +125,7 @@ public class StoreFacade {
     public StoreListForMapResponse getStoresWithRegion(Long userId, String sidoCode, String gugunCode) {
         StoreListForMapResponse storesWithRegion = storeService.getStoresWithRegion(sidoCode, gugunCode);
 
-        if(isNotGuest(userId)) {
+        if(isLoginUser(userId)) {
             List<Long> storeIds = storesWithRegion.getStoreIds();
             Map<Long, Boolean> storeLikes = storeLikeFeignClient.getStoreLikes(userId, storeIds).getData();
             storesWithRegion.setLikes(storeLikes);
@@ -180,7 +182,6 @@ public class StoreFacade {
         return storeService.storeInfoForSettlement(storeIds);
     }
 
-
     public DeliveryPolicyDto getDeliveryPolicy(Long storeId) {
         return storeService.getDeliveryPolicy(storeId);
     }
@@ -197,7 +198,6 @@ public class StoreFacade {
                 .collect(Collectors.toList());
 
         return StoreForAdminDtoResponse.of(data, storesForAdmin.getTotalElements());
-
     }
 
     public List<SidoDto> getAllSido() {
@@ -208,7 +208,7 @@ public class StoreFacade {
         return storeService.getGuguns(sidoCode);
     }
 
-    private boolean isNotGuest(Long userId) {
+    private boolean isLoginUser(Long userId) {
         return userId != null;
     }
 
