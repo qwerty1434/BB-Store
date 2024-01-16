@@ -39,7 +39,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .rightJoin(answer.question, question)
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
-                        question.isDeleted.isFalse()
+                        question.isDeleted.isFalse(),
+                        question.store.id.eq(storeId)
                 )
                 .orderBy(question.createdAt.desc())
                 .limit(pageable.getPageSize())
@@ -52,7 +53,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                 .rightJoin(answer.question, question)
                 .where(
                         isReplied != null ? checkRepliedCondition(isReplied) : null,
-                        question.isDeleted.isFalse()
+                        question.isDeleted.isFalse(),
+                        question.store.id.eq(storeId)
                 )
                 .fetchOne();
         return new PageImpl<>(contents,pageable,count);
