@@ -39,8 +39,6 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                         coupon.endDate
                 ))
                 .from(coupon)
-                .leftJoin(issuedCoupon)
-                .on(coupon.id.eq(issuedCoupon.id.couponId))
                 .where(
                         coupon.store.id.eq(storeId),
                         coupon.isDeleted.isFalse(),
