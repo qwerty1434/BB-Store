@@ -63,7 +63,7 @@ public class CargoFacade {
         } catch (Exception e) {
             Long userId = stockChangeDtos.get(0).getUserId();
             String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
-            orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.ORDER_FAIL);
+            orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.OUT_OF_STOCK);
 
             throw e;
         }
@@ -76,7 +76,7 @@ public class CargoFacade {
         } catch (Exception e) {
             Long userId = stockChangeDtos.get(0).getUserId();
             String phoneNumber = stockChangeDtos.get(0).getPhoneNumber();
-            orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.ORDER_FAIL);
+            orderStatusSQSPublisher.publish(userId, phoneNumber, NotificationKind.OUT_OF_STOCK);
             throw e;
         }
     }
