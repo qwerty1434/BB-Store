@@ -29,6 +29,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                         coupon.couponName,
                         coupon.minPrice,
                         coupon.discountPrice,
+                        coupon.limitCount,
                         coupon.limitCount.subtract(
                                 JPAExpressions
                                         .select(issuedCoupon.count())

@@ -16,17 +16,19 @@ public class CouponForOwnerDto {
     private String couponName;
     private Long minPrice;
     private Long discountPrice;
+    private Integer limitCount;
     private Integer unusedCount;
     private LocalDate startDate;
     private LocalDate endDate;
 
     @QueryProjection
-    public CouponForOwnerDto(Long key, String couponCode, String couponName, Long minPrice, Long discountPrice, Integer unusedCount, LocalDate startDate, LocalDate endDate) {
+    public CouponForOwnerDto(Long key, String couponCode, String couponName, Long minPrice, Long discountPrice, Integer limitCount, Integer unusedCount, LocalDate startDate, LocalDate endDate) {
         this.key = key;
         this.couponCode = couponCode;
         this.couponName = couponName;
         this.minPrice = minPrice;
         this.discountPrice = discountPrice;
+        this.limitCount = limitCount;
         this.unusedCount = unusedCount;
         this.startDate = startDate;
         this.endDate = endDate;

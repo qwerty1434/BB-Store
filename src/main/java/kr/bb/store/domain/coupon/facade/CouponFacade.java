@@ -73,16 +73,19 @@ public class CouponFacade {
         couponService.downloadAllCoupons(userId, storeId, nickname, phoneNumber, now);
     }
 
-    public CouponsForUserResponse getAllStoreCouponsForUser(Long userId, Long storeId, LocalDate now) {
+    public CouponsForUserResponse getAllStoreCouponsForUser(Long userId, Long storeId) {
+        LocalDate now = LocalDate.now();
         return CouponsForUserResponse.from(couponService.getAllStoreCouponsForUser(userId, storeId, now));
     }
 
     public CouponsForUserResponse getAvailableCouponsInPayment(TotalAmountRequest totalAmountRequest,
-            Long userId, Long storeId, LocalDate now) {
+            Long userId, Long storeId) {
+        LocalDate now = LocalDate.now();
         return CouponsForUserResponse.from(couponService.getAvailableCouponsInPayment(totalAmountRequest, userId, storeId, now));
     }
 
-    public CouponsForUserResponse getMyValidCoupons(Long userId, LocalDate now) {
+    public CouponsForUserResponse getMyValidCoupons(Long userId) {
+        LocalDate now = LocalDate.now();
         return CouponsForUserResponse.from(couponService.getMyValidCoupons(userId, now));
     }
 

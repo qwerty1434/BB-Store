@@ -175,7 +175,6 @@ public class StoreFacade {
         return storeService.simpleInfos(storeIds).stream()
                 .map(kr.bb.store.domain.store.controller.response.LikedStoreInfoResponse::toCommonDto)
                 .collect(Collectors.toList());
-
     }
 
     public List<SettlementStoreInfoResponse> storeInfoForSettlement(List<Long> storeIds) {
