@@ -12,6 +12,6 @@ public class RedisCacheInitializer implements ApplicationRunner {
     @CacheEvict(value = {"store-list-with-paging"}, allEntries = true)
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("Some Cache Initialized");
+        log.info("store-list Cache Initialized");
     }
 }

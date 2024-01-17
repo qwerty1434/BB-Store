@@ -15,6 +15,5 @@ public interface CouponRepositoryCustom {
     List<CouponWithIssueStatusDto> findStoreCouponsForUser(Long userId, Long storeId, LocalDate now);
     List<CouponWithAvailabilityDto> findAvailableCoupons(Long totalAmount, Long userId, Long storeId, LocalDate now);
     List<CouponDto> findMyValidCoupons(Long userId, LocalDate now);
-
     Integer findMyValidCouponCount(Long userId, LocalDate now);
 }
