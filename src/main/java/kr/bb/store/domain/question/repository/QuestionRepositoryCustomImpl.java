@@ -111,7 +111,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.nickname,
                         question.createdAt,
                         answer.content,
-                        answer.createdAt
+                        answer.createdAt,
+                        question.productName
                 ))
                 .from(answer)
                 .rightJoin(answer.question, question)
@@ -151,7 +152,8 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
                         question.nickname,
                         question.createdAt,
                         answer.content,
-                        answer.createdAt
+                        answer.createdAt,
+                        question.productName
                 ))
                 .from(answer)
                 .rightJoin(answer.question, question)
