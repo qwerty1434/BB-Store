@@ -25,7 +25,7 @@ public class MyQuestionInMypageDto {
     private String productName;
 
     @QueryProjection
-    public MyQuestionInMypageDto(Long key, Boolean isReplied, String title, String content, String nickname, LocalDateTime createdAt, String reply, LocalDateTime repliedAt) {
+    public MyQuestionInMypageDto(Long key, Boolean isReplied, String title, String content, String nickname, LocalDateTime createdAt, String reply, LocalDateTime repliedAt, String productName) {
         this.key = key;
         this.isReplied = isReplied;
         this.title = title;
@@ -34,5 +34,6 @@ public class MyQuestionInMypageDto {
         this.createdAt = createdAt.toLocalDate();
         this.reply = reply;
         this.repliedAt  = repliedAt != null ? repliedAt.toLocalDate() : null;
+        this.productName = productName;
     }
 }
