@@ -77,7 +77,9 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                                     issuedCoupon.id.couponId.eq(coupon.id),
                                     issuedCoupon.id.userId.eq(userId),
                                     coupon.isDeleted.isFalse()
-                            )
+                            ),
+                    coupon.limitCount,
+                    coupon.couponCode
                 ))
                 .from(coupon)
                 .where(
