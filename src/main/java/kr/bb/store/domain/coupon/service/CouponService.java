@@ -43,7 +43,7 @@ public class CouponService {
         Store store = storeReader.findStoreById(storeId);
         Coupon coupon = couponCreator.create(store, couponCreateRequest.toDto());
 
-        String redisKey = makeRedisKey(coupon);
+        String redisKey = makeRedisKey(coupon.getCouponCode(), coupon.getId().toString());
         redisOperation.addAndSetExpr(redisKey, coupon.getEndDate().plusDays(1));
     }
 
@@ -53,7 +53,7 @@ public class CouponService {
         validateCouponAuthorization(coupon,storeId);
         couponManager.edit(coupon, couponEditRequest.toDto());
 
-        String redisKey = makeRedisKey(coupon);
+        String redisKey = makeRedisKey(coupon.getCouponCode(), coupon.getId().toString());
         redisOperation.setExpr(redisKey, couponEditRequest.getEndDate());
     }
 

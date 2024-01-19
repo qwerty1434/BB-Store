@@ -228,7 +228,7 @@ class CouponServiceTest extends RedisContainerTestEnv {
             Coupon coupon = couponCreator(store, limitCount);
             couponRepository.save(coupon).getId();
 
-            String redisKey = RedisUtils.makeRedisKey(coupon);
+            String redisKey = RedisUtils.makeRedisKey(coupon.getCouponCode(), coupon.getId().toString());
             redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
 
             return coupon.getId();

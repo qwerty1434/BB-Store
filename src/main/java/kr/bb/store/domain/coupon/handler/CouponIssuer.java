@@ -36,7 +36,7 @@ public class CouponIssuer {
         if(coupon.getIsDeleted()) throw new DeletedCouponException();
         if(coupon.isExpired(issueDate)) throw new ExpiredCouponException();
 
-        String redisKey = makeRedisKey(coupon);
+        String redisKey = makeRedisKey(coupon.getCouponCode(), coupon.getId().toString());
         String redisValue = userId.toString();
         Integer limitCnt = coupon.getLimitCount();
         if(isDuplicated(redisKey, redisValue)) throw new AlreadyIssuedCouponException();
@@ -55,11 +55,11 @@ public class CouponIssuer {
                 .filter(Predicate.not(Coupon::getIsDeleted))
                 .filter(Predicate.not(coupon -> coupon.isExpired(issueDate)))
                 .filter(Predicate.not(coupon -> {
-                    String redisKey = makeRedisKey(coupon);
+                    String redisKey = makeRedisKey(coupon.getCouponCode(), coupon.getId().toString());
                     return isDuplicated(redisKey,redisValue);
                 }))
                 .filter(coupon -> {
-                    String redisKey = makeRedisKey(coupon);
+                    String redisKey = makeRedisKey(coupon.getCouponCode(), coupon.getId().toString());
                     Integer limitCnt = coupon.getLimitCount();
                     return (Boolean)redisLuaScriptExecutor.execute(script, redisKey, redisValue, limitCnt);
                 })

@@ -131,7 +131,7 @@ class CouponIssuerTest extends RedisContainerTestEnv {
 
         couponRepository.save(coupon);
 
-        String redisKey = RedisUtils.makeRedisKey(coupon);
+        String redisKey = RedisUtils.makeRedisKey(coupon.getCouponCode(), coupon.getId().toString());
         redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
 
         Long userId = 1L;
@@ -167,7 +167,7 @@ class CouponIssuerTest extends RedisContainerTestEnv {
         String phoneNumber = "phoneNumber";
         LocalDate issueDate = LocalDate.now();
 
-        String redisKey = RedisUtils.makeRedisKey(exhaustedCoupon);
+        String redisKey = RedisUtils.makeRedisKey(exhaustedCoupon.getCouponCode(), exhaustedCoupon.getId().toString());
         redisOperation.addAndSetExpr(redisKey, LocalDate.now().plusDays(1));
 
         IssuedCoupon usedCoupon = couponIssuer.issueCoupon(possessedCoupon, userId, nickname, phoneNumber, issueDate);
