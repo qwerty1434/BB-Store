@@ -54,7 +54,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .selectFrom(coupon)
                 .where(
                         coupon.store.id.eq(storeId),
-                        isCouponUnexpired(now),
+                        isValidDate(now),
                         coupon.isDeleted.isFalse()
                 )
                 .fetch();
@@ -82,7 +82,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .from(coupon)
                 .where(
                         coupon.store.id.eq(storeId),
-                        isCouponUnexpired(now),
+                        isValidDate(now),
                         coupon.isDeleted.isFalse()
                 )
                 .fetch();
@@ -106,7 +106,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                         coupon.store.id.eq(storeId),
                         issuedCoupon.id.userId.eq(userId),
                         issuedCoupon.isUsed.isFalse(),
-                        isCouponUnexpired(now),
+                        isValidDate(now),
                         coupon.isDeleted.isFalse()
                 )
                 .fetch();
@@ -129,7 +129,7 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .where(
                         issuedCoupon.id.userId.eq(userId),
                         issuedCoupon.isUsed.isFalse(),
-                        isCouponUnexpired(now),
+                        isValidDate(now),
                         coupon.isDeleted.isFalse()
                 )
                 .fetch();
@@ -145,14 +145,15 @@ public class CouponRepositoryCustomImpl implements CouponRepositoryCustom{
                 .where(
                         issuedCoupon.id.userId.eq(userId),
                         issuedCoupon.isUsed.isFalse(),
-                        isCouponUnexpired(now),
+                        isValidDate(now),
                         coupon.isDeleted.isFalse()
                 )
                 .fetchFirst());
     }
 
-    private BooleanExpression isCouponUnexpired(LocalDate now) {
-        return coupon.endDate.after(now).or(coupon.endDate.eq(now));
+    private BooleanExpression isValidDate(LocalDate now) {
+        return coupon.startDate.before(now).or(coupon.startDate.eq(now))
+                .and(coupon.endDate.after(now).or(coupon.endDate.eq(now)));
     }
 
 }
