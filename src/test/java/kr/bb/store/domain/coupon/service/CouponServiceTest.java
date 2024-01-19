@@ -12,16 +12,14 @@ import kr.bb.store.domain.coupon.exception.CouponInconsistencyException;
 import kr.bb.store.domain.coupon.exception.UnAuthorizedCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
-import kr.bb.store.util.RedisUtils;
-import kr.bb.store.util.RedisOperation;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import kr.bb.store.util.RedisOperation;
+import kr.bb.store.util.RedisUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,8 +30,6 @@ import java.util.stream.LongStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Testcontainers
-@SpringBootTest
 class CouponServiceTest extends RedisContainerTestEnv {
     @Autowired
     private CouponService couponService;

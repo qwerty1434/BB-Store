@@ -22,7 +22,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 class QuestionReaderTest extends BasicIntegrationTestEnv {
     @Autowired
     private QuestionReader questionReader;

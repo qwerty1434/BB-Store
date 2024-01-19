@@ -9,16 +9,14 @@ import kr.bb.store.domain.coupon.exception.CouponOutOfStockException;
 import kr.bb.store.domain.coupon.exception.ExpiredCouponException;
 import kr.bb.store.domain.coupon.repository.CouponRepository;
 import kr.bb.store.domain.coupon.repository.IssuedCouponRepository;
-import kr.bb.store.util.RedisOperation;
-import kr.bb.store.util.RedisUtils;
 import kr.bb.store.domain.store.entity.Store;
 import kr.bb.store.domain.store.repository.StoreRepository;
+import kr.bb.store.util.RedisOperation;
+import kr.bb.store.util.RedisUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -27,8 +25,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Testcontainers
-@SpringBootTest
 @Transactional
 class CouponIssuerTest extends RedisContainerTestEnv {
     @Autowired
