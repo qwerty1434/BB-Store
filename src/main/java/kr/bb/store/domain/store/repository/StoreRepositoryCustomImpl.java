@@ -79,7 +79,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                         withinRadius(centerLat, centerLon, meter),
                         store.isDeleted.isFalse()
                 )
-                .orderBy(nearbyStoreOrderer(centerLat,centerLon))
+                .orderBy(store.averageRating.desc())
                 .fetch();
     }
 
@@ -103,6 +103,7 @@ public class StoreRepositoryCustomImpl implements StoreRepositoryCustom{
                         gugun != null ? storeAddress.gugun.eq(gugun) : null,
                         store.isDeleted.isFalse()
                 )
+                .orderBy(store.averageRating.desc())
                 .fetch();
     }
 
