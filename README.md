@@ -25,7 +25,7 @@ Store서비스의 Layer는 5단계(Controller → Facade → Service → Handler
 
 Service Layer는 핵심 비즈니스 로직이 작성되며 주로 하나의 트랜잭션으로 묶이는 작업들이 존재합니다. 
 
-Facade Layer는 트랜잭션으로 묶이지 않는 FeignClient통신, Kafka Pub/Sub, SQS Pub/Sub등의 작업을 진행합니다. 이를 통해 Service Layer의 트랜잭션이 불필요한 작업으로 길어지는 걸 방지하고 있습니다.
+Facade Layer는 트랜잭션으로 묶이지 않는 FeignClient통신, Kafka Pub/Sub, SQS Pub/Sub등의 작업을 진행합니다. 이는 불필요한 작업으로 Service Layer의 트랜잭션이 길어지는 걸 방지하기 위함입니다.
 
 Handler Layer는 Repository Layer의 작업을 한층 더 추상화 해 Service Layer코드의 가독성을 높여주고 데이터 접근과 관련된 중복 코드를 줄여줍니다.
 
