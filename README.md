@@ -4,11 +4,20 @@
 
 Blooming Blooms는 픽업과 배송이 가능한 컴포저블 서비스로 MSA기반 화훼 쇼핑몰 플랫폼입니다. 다양한 주문(배달주문, 픽업주문, 구독주문)이 존재하며, 몰인몰 형태로 Seller가 입점해 제품을 판매하는 형태의 쇼핑몰입니다.
 
+## 제작 기간
+- 2023년 10월 31일 ~ 2024년 1월 29일
+
 # Store서비스 소개
 
 Store서비스는 가게 사장(Seller)과 관련된 기능이 구현되어 있는 MicroService입니다. 
 </br>
 주요 도메인으로는 가게와 관련된 로직을 수행하는 Store, 가게의 재고를 담당하는 Cargo, 가게사장이 생성하고 유저가 사용하는 Coupon, 상품에 대한 문의인 Question이 존재합니다. 
+
+## 구현 기능
+![image](https://github.com/qwerty1434/BB-Store/assets/25142537/f0c2a8a9-1629-4a93-aa75-456c0888d66c)
+![image](https://github.com/qwerty1434/BB-Store/assets/25142537/a33b17d4-423b-4286-8e58-ebe018d972b9)
+
+
 
 # 서비스 아키텍처
 
